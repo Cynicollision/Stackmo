@@ -1,7 +1,7 @@
 import { Room } from './../../engine/vastgame';
 import { Guy } from './../actors/guy';
 
-export const demoRoom = new Room();
+export const demoRoom = Room.define();
 
 demoRoom.onStart(() => {
     demoRoom.createActor(Guy);

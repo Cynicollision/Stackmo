@@ -8,10 +8,6 @@ export interface GameLifecycleCallback {
 
 export class Vastgame {
 
-    static defineActor(): Actor {
-        return new Actor();
-    }
-
     static start(room: Room) {
         room.start();
     }

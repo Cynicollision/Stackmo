@@ -17,6 +17,11 @@ export class ActorInstance {
 }
 
 export class Actor {
+
+    static define(): Actor {
+        return new Actor();
+    }
+
     private create: LifecycleCallback;
     private step: LifecycleCallback;
     private destroy: LifecycleCallback;

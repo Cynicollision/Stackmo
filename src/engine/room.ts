@@ -5,6 +5,10 @@ export class Room {
 
     private static currentActorID = 0;
 
+    static define(): Room {
+        return new Room();
+    }
+
     private actors = new Map<number, ActorInstance>();
 
     start: GameLifecycleCallback;
