@@ -1,0 +1,32 @@
+{
+  "name": "vastgame",
+  "version": "0.0.1",
+  "description": "",
+  "main": "vastgame.js",
+  "scripts": {
+    "test": "karma start",
+    "clean": "gulp clean",
+    "build": "tsc --listEmittedFiles && webpack",
+    "watch": "concurrently \"tsc -w\" \"webpack -w\""
+  },
+  "author": "Sean Normoyle",
+  "license": "ISC",
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.1.3",
+    "concurrently": "^3.4.0",
+    "gulp": "^3.9.1",
+    "gulp-clean-compiled-typescript": "^1.2.0",
+    "jasmine": "^2.6.0",
+    "karma": "^1.7.0",
+    "karma-chrome-launcher": "^2.1.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^2.0.3",
+    "typescript": "^2.3.2",
+    "webpack": "^2.5.0"
+  },
+  "dependencies": {
+    "es6-shim": "^0.35.3"
+  }
+}

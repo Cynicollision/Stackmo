@@ -1,0 +1,6 @@
+.vscode
+dist
+node_modules
+typings
+public/dist
+src/**/*.js*
