@@ -1,19 +1,26 @@
 import { Actor, ActorInstance } from './actor';
+import { Room } from './room';
 
 describe('Actor', () => {
 
-    let testActor;
+    let TestActor: Actor;
+    let testInstance: ActorInstance;
+    let testRoom: Room;
 
     beforeEach(() => {
-        testActor = new Actor({
+        TestActor = new Actor({
             typeName: 'testActor',
         });
+
+        testRoom = new Room();
+        testInstance = testRoom.createActor(TestActor);
     });
 
-    it('needs tests', () => {
-        console.log('there are no tests yet but this one runs at least');
-
-        expect(true).toBe(true);
+    it('tracks instances of the Actor', () => {
+        expect(TestActor.instances[0]).toBe(testInstance);
     });
 
+    it('the parent of its instances', () => {
+        expect(testInstance.parent).toBe(TestActor);
+    })
 });

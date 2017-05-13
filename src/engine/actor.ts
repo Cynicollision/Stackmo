@@ -35,7 +35,7 @@ export class Actor {
     private step: LifecycleCallback;
     private destroy: LifecycleCallback;
 
-    private instances: ActorInstance[] = [];
+    readonly instances: ActorInstance[] = [];
     readonly typeName: string;
 
     private collisionHandlers: CollisionCollback[] = [];

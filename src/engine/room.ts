@@ -22,14 +22,15 @@ export class Room {
         let newActor: ActorInstance = actorConfig.createInstance(newActorID);
 
         this.actors.set(newActorID, newActor);
-
-        newActor.create(newActor);
+            
+        if (newActor.create) {
+            newActor.create(newActor);   
+        }
 
         return newActor;
     }
 
-    // TODO: call as part of main game loop
     step(): void {
-
+        console.log('room.step!');
     }
 }
