@@ -1,11 +1,13 @@
 import { CanvasHTML2D, GameCanvas } from './canvas';
 import { GameRunner, GameOptions } from './runner';
 import { Room } from './room';
+import { Util } from './util';
 
 // export public modules
 export * from './actor';
 export { GameOptions } from './runner';
 export * from './room';
+export * from './sprite';
 
 export interface GameLifecycleCallback {
     (): void;
@@ -28,7 +30,7 @@ class VastgameHTML2D implements IVastgame {
 
     constructor(private canvasElementID: string, options?: GameOptions) {
         this.options = options || {};
-        this.options.targetFPS = getValueOrDefault(this.options.targetFPS, 60);
+        this.options.targetFPS = Util.getValueOrDefault(this.options.targetFPS, 60);
     }
 
     start(initialRoom: Room) {
@@ -40,13 +42,4 @@ class VastgameHTML2D implements IVastgame {
     private initGameCanvas(elementID: string): GameCanvas {
         return new CanvasHTML2D(<HTMLCanvasElement>document.getElementById(elementID));
     }
-}
-
-function getValueOrDefault(value: any, defaultValue: any): any {
-    
-    if (value === null || value === undefined) {
-        return defaultValue;
-    }
-
-    return value;
 }

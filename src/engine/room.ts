@@ -9,7 +9,7 @@ export class Room {
         return new Room();
     }
 
-    private actors = new Map<number, ActorInstance>();
+    private readonly actors = new Map<number, ActorInstance>();
 
     start: GameLifecycleCallback;
 
@@ -28,6 +28,10 @@ export class Room {
         }
 
         return newActor;
+    }
+    
+    getActorInstances(): ActorInstance[] {
+        return Array.from(this.actors.values());
     }
 
     step(): void {
