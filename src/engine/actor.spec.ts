@@ -9,7 +9,7 @@ describe('Actor', () => {
     });
 
     it('needs tests', () => {
-        console.log('needs tests');
+        console.log('there are no tests yet but this one runs at least');
 
         expect(true).toBe(true);
     });

@@ -7,7 +7,7 @@ module.exports = {
     devtool: 'inline-source-map', // TODO: only if production
     entry: { 
         'vastgame': './src/engine/vastgame.ts',
-        'demo': './src/demo/demo.ts',
+        'game': './src/game/game.ts',
     },
     output: {
         path: path.join(__dirname, './dist'),
