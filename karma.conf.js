@@ -4,7 +4,7 @@ module.exports = function (config) {
 
     config.set({
         basePath: './src',
-        frameworks: ['jasmine'],
+        frameworks: ['jasmine', 'es6-shim'],
         browsers: [ debugInChrome ? 'Chrome' : 'PhantomJS' ],
         files: [
             { pattern: 'test/main.js', watch: false },

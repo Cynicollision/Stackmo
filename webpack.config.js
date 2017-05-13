@@ -16,15 +16,7 @@ module.exports = {
     },
     module: {
         rules: [
-            { 
-                test: /\.ts$/, 
-                include: [
-                    path.resolve(__dirname, 'src')
-                ],
-                use: ['awesome-typescript-loader'] 
-            },
+            { test: /\.ts$/, include: path.resolve(__dirname, 'src'), use: 'ts-loader' },
         ]
     },
-    plugins: [
-    ]
 };
