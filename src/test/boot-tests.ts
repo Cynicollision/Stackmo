@@ -1,4 +1,4 @@
-// require all *.spec.ts files
+// require all *.spec.ts files (source: webpack docs)
 function requireAll(context: any) {
     return context.keys().map(context);
 }
