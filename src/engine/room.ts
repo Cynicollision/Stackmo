@@ -19,12 +19,17 @@ export class Room {
 
     createActor(actorConfig: Actor, x?: number, y?: number): ActorInstance {
         let newActorID = ++Room.currentActorID;
-        let newActor: ActorInstance = actorConfig.getInstance(newActorID);
+        let newActor: ActorInstance = actorConfig.createInstance(newActorID);
 
         this.actors.set(newActorID, newActor);
 
-        newActor.onCreate(newActor);
+        newActor.create(newActor);
 
         return newActor;
+    }
+
+    // TODO: call as part of main game loop
+    step(): void {
+
     }
 }

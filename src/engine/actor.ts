@@ -1,19 +1,24 @@
 
+interface CollisionCollback {
+    (self: ActorInstance, other: ActorInstance): void;
+}
+
 interface LifecycleCallback {
     (self: ActorInstance): void;
 }
 
 export class ActorInstance {
+    id: number;
+    source: Actor;
+    
+    create: LifecycleCallback;
+    step: LifecycleCallback;
+    destroy: LifecycleCallback;
 
-    constructor(id: number) {
+    constructor(source: Actor, id: number) {
+        this.source = source;
         this.id = id;
     }
-
-    id: number;
-    
-    onCreate: LifecycleCallback;
-    onStep: LifecycleCallback;
-    onDestroy: LifecycleCallback;
 }
 
 export class Actor {
@@ -25,6 +30,10 @@ export class Actor {
     private create: LifecycleCallback;
     private step: LifecycleCallback;
     private destroy: LifecycleCallback;
+
+    private instances: ActorInstance[] = [];
+
+    collisionHandlers: CollisionCollback[] = [];
 
     onCreate(create: LifecycleCallback): void {
         this.create = create;
@@ -38,10 +47,17 @@ export class Actor {
         this.destroy = destroy;
     }
 
-    getInstance(id: number): ActorInstance {
-        let actor = new ActorInstance(id);
-        actor.onCreate = this.create;
-        actor.onStep = this.step;
+    onCollide(collision: CollisionCollback): void {
+        this.collisionHandlers.push(collision);
+    }
+
+    createInstance(id: number): ActorInstance {
+        let actor = new ActorInstance(this, id);
+        actor.create = this.create;
+        actor.step = this.step;
+        actor.destroy = this.destroy;
+
+        this.instances.push(actor);
 
         return actor;
     }
