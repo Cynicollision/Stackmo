@@ -12,6 +12,8 @@
   "author": "Sean Normoyle",
   "license": "ISC",
   "devDependencies": {
+    "@types/es6-shim": "^0.31.33",
+    "@types/jasmine": "^2.5.47",
     "@types/node": "^7.0.18",
     "concurrently": "^3.4.0",
     "gulp": "^3.9.1",
