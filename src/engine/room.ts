@@ -3,38 +3,54 @@ import { GameLifecycleCallback } from './vastgame';
 
 export class Room {
 
-    private static currentActorID = 0;
+    private static nextActorInstanceID = (() => {
+        let currentID = 0;
+        return (() => ++currentID);
+    })();
 
     static define(): Room {
         return new Room();
     }
 
-    private readonly actors = new Map<number, ActorInstance>();
+    private readonly actorInstances = new Map<number, ActorInstance>();
 
     start: GameLifecycleCallback;
+
+    get instances(): ActorInstance[] {
+        return Array.from(this.actorInstances.values());
+    }
 
     onStart(start: GameLifecycleCallback): void {
         this.start = start;
     }
 
     createActor(actorConfig: Actor, x?: number, y?: number): ActorInstance {
-        let newActorID = ++Room.currentActorID;
-        let newActor: ActorInstance = actorConfig.createInstance(newActorID);
+        let newActorInstanceID = Room.nextActorInstanceID();
+        let newInstance: ActorInstance = actorConfig.createInstance(newActorInstanceID);
+        newInstance.x = x || 0;
+        newInstance.y = y || 0;
 
-        this.actors.set(newActorID, newActor);
+        this.actorInstances.set(newActorInstanceID, newInstance);
             
-        if (newActor.create) {
-            newActor.create(newActor);   
+        if (newInstance.create) {
+            newInstance.create(newInstance);   
         }
 
-        return newActor;
-    }
-    
-    getActorInstances(): ActorInstance[] {
-        return Array.from(this.actors.values());
+        return newInstance;
     }
 
     step(): void {
         console.log('room.step!');
+
+        this.instances.forEach(instance => {
+
+            if (instance.speed !== 0) {
+                instance.doMovement();
+            }
+
+            if (instance.step) {
+                instance.step(instance);
+            }
+        });
     }
 }

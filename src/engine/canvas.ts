@@ -15,9 +15,9 @@ export class CanvasHTML2D implements GameCanvas {
     }
 
     drawRoom(room: Room) {
-        let actorInstances = room.getActorInstances();
+        this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
 
-        actorInstances.forEach(instance => {
+        room.instances.forEach(instance => {
             
             if (instance.sprite) {
                 this.drawSprite(instance.sprite, instance.x, instance.y);

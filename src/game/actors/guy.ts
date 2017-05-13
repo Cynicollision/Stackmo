@@ -14,6 +14,8 @@ export const Guy = Actor.define({
 Guy.onCreate((self) => {
     console.log('My ID is ' + self.id);
     console.log('typeName = ' + self.parent.typeName);
+
+    self.speed = 4;
 });
 
 Guy.onStep((self) => {

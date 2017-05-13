@@ -1,13 +1,9 @@
+import { GameState } from './enum';
 import { GameCanvas } from './canvas';
 import { Room } from './room';
 
 export interface GameOptions {
     targetFPS?: number;
-}
-
-export enum GameState {
-    Running = 1,
-    Paused = 2,
 }
 
 export class GameRunner {
