@@ -1,4 +1,8 @@
-import { Vastgame } from './../engine/vastgame';
+import { GameOptions, Vastgame } from './../engine/vastgame';
 import { demoRoom } from './rooms/demo-room';
 
-Vastgame.start(demoRoom, 'game');
+let options: GameOptions = {
+    targetFPS: 60,
+};
+
+Vastgame.init('game', options).start(demoRoom);

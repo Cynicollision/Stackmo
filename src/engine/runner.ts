@@ -1,6 +1,10 @@
 import { GameCanvas } from './canvas';
 import { Room } from './room';
 
+export interface GameOptions {
+    targetFPS?: number;
+}
+
 export enum GameState {
     Running = 1,
     Paused = 2,
@@ -10,7 +14,7 @@ export class GameRunner {
 
     state: GameState = GameState.Paused;
 
-    constructor (private canvas: GameCanvas, private room: Room) {
+    constructor (private canvas: GameCanvas, private options: GameOptions, private room: Room) {
     }
 
     setRoom(room: Room) {
@@ -22,9 +26,6 @@ export class GameRunner {
     }
 
     start(): void {
-        let offset: number = 0;
-        let stepSize: number = 1 / 60;
-        let previous: number;
 
         let gameLoop: FrameRequestCallback = (): void => {
 
@@ -47,6 +48,10 @@ export class GameRunner {
             previous = current;
             requestAnimationFrame(gameLoop);
         };
+
+        let stepSize: number = 1 / this.options.targetFPS;
+        let offset: number = 0;
+        let previous: number;
 
         // start the game
         this.state = GameState.Running;
