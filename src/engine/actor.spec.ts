@@ -5,7 +5,9 @@ describe('Actor', () => {
     let testActor;
 
     beforeEach(() => {
-        testActor = new Actor();
+        testActor = new Actor({
+            typeName: 'testActor',
+        });
     });
 
     it('needs tests', () => {

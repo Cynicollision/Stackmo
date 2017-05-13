@@ -7,24 +7,28 @@ interface LifecycleCallback {
     (self: ActorInstance): void;
 }
 
+export interface ActorOptions {
+    typeName?: string;
+}
+
 export class ActorInstance {
     id: number;
-    source: Actor;
+    parent: Actor;
     
     create: LifecycleCallback;
     step: LifecycleCallback;
     destroy: LifecycleCallback;
 
     constructor(source: Actor, id: number) {
-        this.source = source;
+        this.parent = source;
         this.id = id;
     }
 }
 
 export class Actor {
 
-    static define(): Actor {
-        return new Actor();
+    static define(options?: ActorOptions): Actor {
+        return new Actor(options);
     }
 
     private create: LifecycleCallback;
@@ -32,8 +36,15 @@ export class Actor {
     private destroy: LifecycleCallback;
 
     private instances: ActorInstance[] = [];
+    readonly typeName: string;
 
-    collisionHandlers: CollisionCollback[] = [];
+    private collisionHandlers: CollisionCollback[] = [];
+
+    constructor(options?: ActorOptions) {
+        options = options || {};
+
+        this.typeName = options.typeName;
+    }
 
     onCreate(create: LifecycleCallback): void {
         this.create = create;
