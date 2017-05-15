@@ -4,30 +4,22 @@ import { Sprite } from './sprite';
 import { Util } from './util';
 
 export class ActorInstance {
-    id: number;
-    parent: Actor;
+    private previousX: number;
+    private previousY: number;
+    private state: ActorState;
 
     _onCreate: LifecycleCallback;
     _onStep: LifecycleCallback;
     _onDestroy: LifecycleCallback;
 
-    private previousX: number;
-    private previousY: number;
-    private state: ActorState;
-
-    x: number = 0;
-    y: number = 0;
     speed: number = 0;
     direction: number = Direction.Right;
 
-    constructor(source: Actor, id: number, lifecycle: ActorLifecycle) {
-        this.parent = source;
-        this.id = id;
-
+    constructor(public parent: Actor, public id: number, public x: number, public y: number, lifecycle: ActorLifecycle) {
         this._onCreate = lifecycle.onCreate;
         this._onStep = lifecycle.onStep;
         this._onDestroy = lifecycle.onDestroy;
-
+        
         this.previousX = this.x;
         this.previousY = this.y;
         this.state = ActorState.Active;
@@ -48,7 +40,7 @@ export class ActorInstance {
     collidesWith(other: ActorInstance): boolean {
         let haveBoundariesMoved = this.hasMoved || other.hasMoved;
         let selfBoundary = this.parent.boundary;
-        let otherBoundary = this.parent.boundary;
+        let otherBoundary = other.parent.boundary;
 
         if (haveBoundariesMoved && selfBoundary && otherBoundary) {
             return selfBoundary.atPosition(this.x, this.y).collidesWith(otherBoundary.atPosition(other.x, other.y));
@@ -65,9 +57,17 @@ export class ActorInstance {
 
             this.setPositionRelative(offsetX, offsetY);
         }
+        else {
+            this.previousX = this.x;
+            this.previousY = this.y;
+        }
     }
 
-    setPositionRelative(offsetX: number, offsetY: number): void {
+    destroy(): void {
+        this.state = ActorState.Destroyed;
+    }
+
+    private setPositionRelative(offsetX: number, offsetY: number): void {
         let newX = this.x + offsetX;
         let newY = this.y + offsetY;
 
@@ -80,9 +80,5 @@ export class ActorInstance {
             this.previousY = this.y;
             this.y = newY;
         }
-    }
-
-    destroy(): void {
-        this.state = ActorState.Destroyed;
     }
 }

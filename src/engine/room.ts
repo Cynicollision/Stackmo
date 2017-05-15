@@ -68,9 +68,7 @@ export class Room {
 
     createActor(actorConfig: Actor, x?: number, y?: number): ActorInstance {
         let newActorInstanceID = Room.nextActorInstanceID();
-        let newInstance: ActorInstance = actorConfig.createInstance(newActorInstanceID);
-        newInstance.x = x || 0;
-        newInstance.y = y || 0;
+        let newInstance: ActorInstance = actorConfig.createInstance(newActorInstanceID, x, y);
 
         this.actorInstanceMap.set(newActorInstanceID, newInstance);
 

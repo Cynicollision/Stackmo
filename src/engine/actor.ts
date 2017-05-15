@@ -72,8 +72,8 @@ export class Actor {
         this.collisionHandlers.set(actor, callback);
     }
 
-    createInstance(id: number): ActorInstance {
-        let newInstance = this.newActorInstance(id);
+    createInstance(id: number, x?: number, y?: number): ActorInstance {
+        let newInstance = this.newActorInstance(id, x, y);
         this.instanceMap.set(id, newInstance);
 
         if (newInstance._onCreate) {
@@ -97,8 +97,9 @@ export class Actor {
         }
     }
 
-    private newActorInstance(id: number): ActorInstance {
-        let actor = new ActorInstance(this, id, {
+    private newActorInstance(id: number, x: number = 0, y: number = 0): ActorInstance {
+
+        let actor = new ActorInstance(this, id, x, y, {
             onCreate: this._onCreate,
             onStep: this._onStep,
             onDestroy: this._onDestroy,
