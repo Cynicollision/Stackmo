@@ -12,6 +12,8 @@ describe('Actor', () => {
             typeName: 'testActor',
         });
 
+        TestActor.onDestroy(() => null);
+
         testInstance = TestActor.createInstance(0, 0, 0);
     });
 
@@ -19,8 +21,12 @@ describe('Actor', () => {
         expect(TestActor.instanceMap.has(testInstance.id)).toBe(true);
     });
 
-    it('destroys an instance by id', () => {
+    it('destroys an instance by id and calls the lifecycle callback', () => {
+        let onDestroySpy = spyOn(testInstance, '_onDestroy').and.callThrough();
+
         TestActor.destroyInstance(testInstance.id);
+        
         expect(TestActor.instanceMap.has(testInstance.id)).toBe(false);
+        expect(onDestroySpy).toHaveBeenCalled();
     });
 });
