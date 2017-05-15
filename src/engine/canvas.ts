@@ -15,10 +15,12 @@ export class CanvasHTML2D implements GameCanvas {
     }
 
     drawRoom(room: Room) {
+
+        // clear the canvas
         this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
 
-        room.instances.forEach(instance => {
-            
+        // draw sprites
+        room.getInstances().forEach(instance => {
             if (instance.sprite) {
                 this.drawSprite(instance.sprite, instance.x, instance.y);
             }

@@ -5,6 +5,8 @@ import { Util } from './util';
 
 // export public modules
 export * from './actor';
+export * from './boundary';
+export * from './enum';
 export { GameOptions } from './runner';
 export * from './room';
 export * from './sprite';

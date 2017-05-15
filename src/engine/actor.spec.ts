@@ -1,4 +1,5 @@
-import { Actor, ActorInstance } from './actor';
+import { Actor } from './actor';
+import { ActorInstance } from './actor-instance';
 import { Direction } from './enum';
 import { Room } from './room';
 
@@ -18,32 +19,41 @@ describe('Actor', () => {
     });
 
     it('tracks instances of the Actor', () => {
-        expect(TestActor.instances[0]).toBe(testInstance);
+        expect(TestActor.instanceMap.has(testInstance.id)).toBe(true);
     });
 
-    it('the parent of its instances', () => {
-        expect(testInstance.parent).toBe(TestActor);
+    it('destroys an instance by id', () => {
+        TestActor.destroyInstance(testInstance.id);
+        expect(TestActor.instanceMap.has(testInstance.id)).toBe(false);
     });
 
-    describe('when applying motion', () => {
+    describe('ActorInstance', () => {
 
-        it('changes relative x position when there is speed', () => {
-            testInstance.direction = Direction.Right;
-            testInstance.speed = 2;
-            testInstance.doMovement();
-            
-            expect(testInstance.hasMoved).toBe(true);
-            expect(testInstance.x > 0).toBe(true);
+        it('is an instance of its parent Actor', () => {
+            expect(testInstance.parent).toBe(TestActor);
         });
 
-        it('does not change relative x position when there is no speed', () => {
-            testInstance.direction = Direction.Right
+        describe('when applying motion', () => {
 
-            testInstance.speed = 0;
-            testInstance.doMovement();
-            
-            expect(testInstance.hasMoved).toBe(false);
-            expect(testInstance.x).toBe(0);
+            it('changes relative x position when there is speed', () => {
+                testInstance.direction = Direction.Right;
+                testInstance.speed = 2;
+                testInstance.doMovement();
+                
+                expect(testInstance.hasMoved).toBe(true);
+                expect(testInstance.x > 0).toBe(true);
+            });
+
+            it('does not change relative x position when there is no speed', () => {
+                testInstance.direction = Direction.Right
+
+                testInstance.speed = 0;
+                testInstance.doMovement();
+                
+                expect(testInstance.hasMoved).toBe(false);
+                expect(testInstance.x).toBe(0);
+            });
         });
+
     });
 });

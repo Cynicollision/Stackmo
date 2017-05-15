@@ -1,4 +1,5 @@
-import { Actor, ActorInstance } from './actor';
+import { Actor } from './actor';
+import { ActorInstance } from './actor-instance';
 import { GameLifecycleCallback } from './vastgame';
 
 export class Room {
@@ -12,16 +13,55 @@ export class Room {
         return new Room();
     }
 
-    private readonly actorInstances = new Map<number, ActorInstance>();
+    private readonly actorInstanceMap = new Map<number, ActorInstance>();
 
     start: GameLifecycleCallback;
 
-    get instances(): ActorInstance[] {
-        return Array.from(this.actorInstances.values());
-    }
-
     onStart(start: GameLifecycleCallback): void {
         this.start = start;
+    }
+
+    step(): void {
+        let calledHandlers: Actor[] = [];
+
+        this.getInstances().forEach(instance => {
+            let parent = instance.parent;
+
+            if (instance.isActive) {
+                // apply actor movement
+                if (instance.speed !== 0) {
+                    instance.doMovement();
+                }
+
+                // call collision handlers
+                if (!calledHandlers.some(handler => handler === parent)) {
+                    this.checkCollisions(instance);
+                }
+
+                // call actor 'step' callbacks
+                if (instance._onStep) {
+                    instance._onStep(instance);
+                }
+            }
+            else {
+                // destroy instance
+                parent.destroyInstance(instance.id);
+                this.actorInstanceMap.delete(instance.id);
+            }
+        });
+    }
+
+    private checkCollisions(selfInstance: ActorInstance): void {
+        
+        Array.from(selfInstance.parent.collisionHandlers.entries()).forEach(kvp => {
+            let [otherActor, callback] = kvp;
+
+            otherActor.instanceMap.forEach(other => {
+                if (selfInstance !== other && selfInstance.collidesWith(other)) {
+                    callback(selfInstance, other);
+                }
+            });
+        });
     }
 
     createActor(actorConfig: Actor, x?: number, y?: number): ActorInstance {
@@ -30,27 +70,12 @@ export class Room {
         newInstance.x = x || 0;
         newInstance.y = y || 0;
 
-        this.actorInstances.set(newActorInstanceID, newInstance);
-            
-        if (newInstance.create) {
-            newInstance.create(newInstance);   
-        }
+        this.actorInstanceMap.set(newActorInstanceID, newInstance);
 
         return newInstance;
     }
 
-    step(): void {
-        console.log('room.step!');
-
-        this.instances.forEach(instance => {
-
-            if (instance.speed !== 0) {
-                instance.doMovement();
-            }
-
-            if (instance.step) {
-                instance.step(instance);
-            }
-        });
+    getInstances(): ActorInstance[] {
+        return Array.from(this.actorInstanceMap.values());
     }
 }

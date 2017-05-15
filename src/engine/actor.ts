@@ -1,18 +1,32 @@
+import { ActorInstance } from './actor-instance';
+import { Boundary } from './boundary';
 import { Direction } from './enum';
 import { Sprite } from './sprite';
 import { Util } from './util';
 
-interface CollisionCollback {
-    (self: ActorInstance, other: ActorInstance): void;
+export interface ActorLifecycle {
+    onCreate: LifecycleCallback;
+    onStep: LifecycleCallback;
+    onDestroy: LifecycleCallback;
 }
 
-interface LifecycleCallback {
+export interface LifecycleCallback {
     (self: ActorInstance): void;
 }
 
-export interface ActorOptions {
-    typeName?: string;
+export enum ActorState {
+    Active = 1,
+    Destroyed = 2,
+}
+
+interface ActorOptions {
+    boundary?: Boundary;
     sprite?: Sprite;
+    typeName?: string;
+}
+
+interface CollisionCollback {
+    (self: ActorInstance, other: ActorInstance): void;
 }
 
 export class Actor {
@@ -21,109 +35,75 @@ export class Actor {
         return new Actor(options);
     }
 
-    private create: LifecycleCallback;
-    private step: LifecycleCallback;
-    private destroy: LifecycleCallback;
-    private collisionHandlers: CollisionCollback[] = [];
+    private _onCreate: LifecycleCallback;
+    private _onStep: LifecycleCallback;
+    private _onDestroy: LifecycleCallback;
+    readonly collisionHandlers: Map<Actor, CollisionCollback>;
+    readonly instanceMap: Map<number, ActorInstance>;
 
-    readonly instances: ActorInstance[] = [];
+    readonly boundary: Boundary;
     readonly typeName: string;
     readonly sprite: Sprite;
 
     constructor(options?: ActorOptions) {
         options = options || {};
 
-        this.typeName = options.typeName;
+        this.boundary = options.boundary;
         this.sprite = options.sprite;
+        this.typeName = options.typeName;
+
+        this.collisionHandlers = new Map<Actor, CollisionCollback>();
+        this.instanceMap = new Map<number, ActorInstance>();
     }
 
     onCreate(create: LifecycleCallback): void {
-        this.create = create;
+        this._onCreate = create;
     }
 
     onStep(step: LifecycleCallback): void {
-        this.step = step;
+        this._onStep = step;
     }
 
     onDestroy(destroy: LifecycleCallback): void {
-        this.destroy = destroy;
+        this._onDestroy = destroy;
     }
 
-    onCollide(collision: CollisionCollback): void {
-        this.collisionHandlers.push(collision);
+    onCollide(actor: Actor, callback: CollisionCollback): void {
+        this.collisionHandlers.set(actor, callback);
     }
 
     createInstance(id: number): ActorInstance {
-        let actor = this.newActorInstance(id);
-        this.instances.push(actor);
+        let newInstance = this.newActorInstance(id);
+        this.instanceMap.set(id, newInstance);
 
-        return actor;
+        if (newInstance._onCreate) {
+            newInstance._onCreate(newInstance);   
+        }
+
+        return newInstance;
+    }
+
+    destroyInstance(id: number): void {
+        let instance = this.instanceMap.get(id);
+
+        if (!instance) {
+            throw new Error('destroyInstance called with invalid instance ID.');
+        }
+
+        this.instanceMap.delete(id);
+
+        if (instance._onDestroy) {
+            instance._onDestroy(instance);
+        }
     }
 
     private newActorInstance(id: number): ActorInstance {
-        let actor = new ActorInstance(this, id);
-        actor.create = this.create;
-        actor.step = this.step;
-        actor.destroy = this.destroy;
+        let actor = new ActorInstance(this, id, {
+            onCreate: this._onCreate,
+            onStep: this._onStep,
+            onDestroy: this._onDestroy,
+        });
 
         return actor;
-    }
- }
-
-export class ActorInstance {
-    id: number;
-    parent: Actor;
-    
-    create: LifecycleCallback;
-    step: LifecycleCallback;
-    destroy: LifecycleCallback;
-
-    private previousX: number;
-    private previousY: number;
-
-    x: number = 0;
-    y: number = 0;
-    speed: number = 0;
-    direction: number = Direction.Right;
-
-    constructor(source: Actor, id: number) {
-        this.parent = source;
-        this.id = id;
-
-        this.previousX = this.x;
-        this.previousY = this.y;
-    }
-
-    get sprite(): Sprite {
-        return this.parent.sprite;
-    }
-    
-    get hasMoved(): boolean {
-        return (this.x !== this.previousX || this.y !== this.previousY);
-    }
-
-    doMovement(): void {
-
-        if (this.speed !== 0) {
-            let offsetX = Math.round((Util.Math.getLengthDirectionX(this.speed, this.direction) / 1));
-            let offsetY = Math.round((Util.Math.getLengthDirectionY(this.speed, this.direction) / 1));
-
-            this.setPositionRelative(offsetX, offsetY);
-        }
-    }
-
-    setPositionRelative(offsetX: number, offsetY: number): void {
-        let newX = this.x + offsetX;
-        let newY = this.y + offsetY;
-
-        if (this.x !== newX) {
-            this.previousX = this.x;
-            this.x = newX;
-        }
-
-        if (this.y !== newY) {
-            this.previousY = this.y;
-            this.y = newY;
-        }
     }
 }
