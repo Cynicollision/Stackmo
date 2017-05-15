@@ -21,5 +21,13 @@ export class Util {
 
         return value;
     }
+
+    static arrayFromMap<K, V>(map: Map<K, V>): Array<[K, V]> {
+        return Array.from(map.entries());
+    }
+
+    static valuesFromMap<K, V>(map: Map<K, V>): Array<V> {
+        return Array.from(map.values());
+    }
 }
 

@@ -56,16 +56,16 @@ export class Actor {
         this.instanceMap = new Map<number, ActorInstance>();
     }
 
-    onCreate(create: LifecycleCallback): void {
-        this._onCreate = create;
+    onCreate(callback: LifecycleCallback): void {
+        this._onCreate = callback;
     }
 
-    onStep(step: LifecycleCallback): void {
-        this._onStep = step;
+    onStep(callback: LifecycleCallback): void {
+        this._onStep = callback;
     }
 
-    onDestroy(destroy: LifecycleCallback): void {
-        this._onDestroy = destroy;
+    onDestroy(callback: LifecycleCallback): void {
+        this._onDestroy = callback;
     }
 
     onCollide(actor: Actor, callback: CollisionCollback): void {

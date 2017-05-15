@@ -11,10 +11,6 @@ export { GameOptions } from './runner';
 export * from './room';
 export * from './sprite';
 
-export interface GameLifecycleCallback {
-    (): void;
-}
-
 export class Vastgame {
 
     static init(canvasElementID: string, options?: GameOptions): IVastgame {

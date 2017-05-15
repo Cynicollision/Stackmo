@@ -2,6 +2,10 @@ import { GameState } from './enum';
 import { GameCanvas } from './canvas';
 import { Room } from './room';
 
+export interface GameLifecycleCallback {
+    (): void;
+}
+
 export interface GameOptions {
     targetFPS?: number;
 }
@@ -51,7 +55,7 @@ export class GameRunner {
 
         // start the game
         this.state = GameState.Running;
-        this.room.start();
+        this.room._onStart();
 
         previous = window.performance.now();
         requestAnimationFrame(gameLoop);

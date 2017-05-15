@@ -1,6 +1,7 @@
 import { Actor } from './actor';
 import { ActorInstance } from './actor-instance';
-import { GameLifecycleCallback } from './vastgame';
+import { GameLifecycleCallback } from './runner';
+import { Util } from './util';
 
 export class Room {
 
@@ -15,10 +16,10 @@ export class Room {
 
     private readonly actorInstanceMap = new Map<number, ActorInstance>();
 
-    start: GameLifecycleCallback;
+    _onStart: GameLifecycleCallback;
 
-    onStart(start: GameLifecycleCallback): void {
-        this.start = start;
+    onStart(callback: GameLifecycleCallback): void {
+        this._onStart = callback;
     }
 
     step(): void {
@@ -52,8 +53,9 @@ export class Room {
     }
 
     private checkCollisions(selfInstance: ActorInstance): void {
+        let parent = selfInstance.parent;
         
-        Array.from(selfInstance.parent.collisionHandlers.entries()).forEach(kvp => {
+        Util.arrayFromMap(parent.collisionHandlers).forEach(kvp => {
             let [otherActor, callback] = kvp;
 
             otherActor.instanceMap.forEach(other => {
@@ -76,6 +78,6 @@ export class Room {
     }
 
     getInstances(): ActorInstance[] {
-        return Array.from(this.actorInstanceMap.values());
+        return Util.valuesFromMap(this.actorInstanceMap);
     }
 }
