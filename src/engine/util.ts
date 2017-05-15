@@ -13,15 +13,6 @@ export class Util {
 
     static Math = MathUtil;
 
-    static getValueOrDefault<T>(value: T, defaultValue: T): T {
-    
-        if (value === null || value === undefined) {
-            return defaultValue;
-        }
-
-        return value;
-    }
-
     static arrayFromMap<K, V>(map: Map<K, V>): Array<[K, V]> {
         return Array.from(map.entries());
     }

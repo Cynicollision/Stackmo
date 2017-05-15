@@ -1,6 +1,7 @@
 import { CanvasHTML2D, GameCanvas } from './canvas';
-import { GameRunner, GameOptions } from './runner';
+import { InputHandler } from './input';
 import { Room } from './room';
+import { GameRunner, GameOptions } from './runner';
 import { Util } from './util';
 
 // export public modules
@@ -10,6 +11,8 @@ export * from './enum';
 export { GameOptions } from './runner';
 export * from './room';
 export * from './sprite';
+
+const FPS = 30;
 
 export class Vastgame {
 
@@ -23,21 +26,20 @@ interface IVastgame {
 }
 
 class VastgameHTML2D implements IVastgame {
-    
     private options: GameOptions;
 
     constructor(private canvasElementID: string, options?: GameOptions) {
         this.options = options || {};
-        this.options.targetFPS = Util.getValueOrDefault(this.options.targetFPS, 60);
+        this.options.targetFPS = this.options.targetFPS || FPS;
     }
 
     start(initialRoom: Room) {
-        let gameCanvas = this.initGameCanvas(this.canvasElementID);
-        let gameRunner = new GameRunner(gameCanvas, this.options, initialRoom);
-        gameRunner.start();
-    }
+        let element = <HTMLCanvasElement>document.getElementById(this.canvasElementID);
+        let canvas = new CanvasHTML2D(element);
+        let inputHandler = new InputHandler(element);
 
-    private initGameCanvas(elementID: string): GameCanvas {
-        return new CanvasHTML2D(<HTMLCanvasElement>document.getElementById(elementID));
+        let gameRunner = new GameRunner(canvas, inputHandler, this.options);
+        gameRunner.setRoom(initialRoom);
+        gameRunner.start();
     }
 }

@@ -49,11 +49,23 @@ export class ActorInstance {
         return false;
     }
 
+    occupiesPosition(x: number, y: number): boolean {
+        let boundary = this.parent.boundary;
+
+        if (boundary) {
+            return boundary.atPosition(this.x, this.y).containsPosition(x, y);
+        }
+
+        return false;
+    }
+
     doMovement(): void {
 
         if (this.speed !== 0) {
-            let offsetX = Math.round((Util.Math.getLengthDirectionX(this.speed, this.direction) / 1));
-            let offsetY = Math.round((Util.Math.getLengthDirectionY(this.speed, this.direction) / 1));
+            let offsetX = Math.round(Util.Math.getLengthDirectionX(this.speed, this.direction) / 1);
+            let offsetY = Math.round(Util.Math.getLengthDirectionY(this.speed, this.direction) / 1);
+
+            // TODO: adjust offsets to nearest x, y until that place is free
 
             this.setPositionRelative(offsetX, offsetY);
         }

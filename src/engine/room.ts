@@ -1,5 +1,6 @@
 import { Actor } from './actor';
 import { ActorInstance } from './actor-instance';
+import { ClickEvent } from './input';
 import { GameLifecycleCallback } from './runner';
 import { Util } from './util';
 
@@ -77,5 +78,15 @@ export class Room {
 
     getInstances(): ActorInstance[] {
         return Util.valuesFromMap(this.actorInstanceMap);
+    }
+
+    handleClick(event: ClickEvent): void {
+        this.getInstances().forEach(instance => {
+            let onClick = instance.parent._onClick;
+
+            if (onClick && instance.occupiesPosition(event.x, event.y)) {
+                onClick(instance, event);
+            }
+        });
     }
 }

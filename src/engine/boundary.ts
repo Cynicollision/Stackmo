@@ -20,6 +20,18 @@ class PositionedBoundary {
 
         return true;
     }
+
+    containsPosition(x: number, y: number): boolean {
+        if (this.x > x || x > this.x + this.width) {
+            return false;
+        }
+
+        if (this.y > y || y > this.y + this.height) {
+            return false;
+        }
+
+        return true;
+    }
 }
 
 export class Boundary {

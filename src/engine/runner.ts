@@ -1,5 +1,6 @@
 import { GameState } from './enum';
 import { GameCanvas } from './canvas';
+import { InputHandler } from './input';
 import { Room } from './room';
 
 export interface GameLifecycleCallback {
@@ -11,18 +12,20 @@ export interface GameOptions {
 }
 
 export class GameRunner {
-
+    private room: Room;
     state: GameState = GameState.Paused;
 
-    constructor (private canvas: GameCanvas, private options: GameOptions, private room: Room) {
+    constructor(private canvas: GameCanvas, private inputHandler: InputHandler, private options: GameOptions) {
+        this.inputHandler.onMouseDown(event => this.room.handleClick(event));
     }
 
-    setRoom(room: Room) {
-        this.room = room;
-    }
-
-    isRunning(): boolean {
+    get isRunning(): boolean {
         return this.state === GameState.Running;
+    }
+
+    setRoom(room: Room): void {
+        this.room = room;
+        this.room._onStart();
     }
 
     start(): void {
@@ -34,14 +37,14 @@ export class GameRunner {
             
             while (offset > stepSize) {
 
-                if (this.isRunning()) {
+                if (this.isRunning) {
                     this.room.step();
                 }
 
                 offset -= stepSize;
             }
 
-            if (this.isRunning()) {
+            if (this.isRunning) {
                 this.canvas.drawRoom(this.room);
             }
 
@@ -55,8 +58,6 @@ export class GameRunner {
 
         // start the game
         this.state = GameState.Running;
-        this.room._onStart();
-
         previous = window.performance.now();
         requestAnimationFrame(gameLoop);
     }

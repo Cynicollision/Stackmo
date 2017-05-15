@@ -7,7 +7,7 @@ export interface GameCanvas {
 
 export class CanvasHTML2D implements GameCanvas {
 
-    constructor(private canvasElement: HTMLCanvasElement) {
+    constructor(public readonly canvasElement: HTMLCanvasElement) {
     }
 
     private get context(): CanvasRenderingContext2D {

@@ -27,9 +27,16 @@ Guy.onCollide(Guy, (self, other) => {
 });
 
 Guy.onStep((self) => {
+    
+    if (self.x > 640) {
+        self.x = 0;
+    }
+});
 
+Guy.onClick((self, event) => {
+    console.log('actor ' + self.id + ' clicked at x = ' + event.x + ', y = ' + event.y);
 });
 
 Guy.onDestroy((self) => {
-    console.log('actor instance ID ' + self.id + ' says OUCH');
+    console.log('actor ' + self.id + ' destroyed');
 });
