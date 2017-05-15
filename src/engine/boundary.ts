@@ -28,7 +28,10 @@ export class Boundary {
         return new Boundary(sprite.height, sprite.width);
     }
 
-    constructor(public height, public width) {
+    constructor(public height: number, public width: number) {
+        if (height <= 0 || width <= 0) {
+            throw new Error('Height and width must both be greater than zero.');
+        }
     }
 
     atPosition(x: number, y: number): PositionedBoundary {
