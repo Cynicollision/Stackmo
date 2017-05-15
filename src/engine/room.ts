@@ -23,10 +23,10 @@ export class Room {
     }
 
     step(): void {
-        let calledHandlers: Actor[] = [];
 
         this.getInstances().forEach(instance => {
             let parent = instance.parent;
+            let hasCollisionHandler = !!parent.collisionHandlers.size;
 
             if (instance.isActive) {
                 // apply actor movement
@@ -35,7 +35,7 @@ export class Room {
                 }
 
                 // call collision handlers
-                if (!calledHandlers.some(handler => handler === parent)) {
+                if (hasCollisionHandler) {
                     this.checkCollisions(instance);
                 }
 
@@ -46,7 +46,7 @@ export class Room {
             }
             else {
                 // destroy instance
-                parent.destroyInstance(instance.id);
+                instance.parent.destroyInstance(instance.id);
                 this.actorInstanceMap.delete(instance.id);
             }
         });

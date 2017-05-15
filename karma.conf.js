@@ -1,6 +1,6 @@
 module.exports = function (config) {
 
-    var debugInChrome = false;
+    var debugInChrome = true;
 
     config.set({
         basePath: './src',

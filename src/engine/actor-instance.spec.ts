@@ -15,7 +15,6 @@ describe('ActorInstance', () => {
         TestActorA.onCollide(TestActorB, (self, other) => {
         });
 
-        // initial state: side-by-side
         testInstanceA = TestActorA.createInstance(1, 0, 0);
         testInstanceB = TestActorA.createInstance(2, 0, 0);
 
