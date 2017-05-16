@@ -23,7 +23,6 @@ export enum ActorState {
 interface ActorOptions {
     boundary?: Boundary;
     sprite?: Sprite;
-    typeName?: string;
 }
 
 interface ClickEventCallback {
@@ -53,12 +52,9 @@ export class Actor {
 
     _onClick: ClickEventCallback;
 
-    constructor(options?: ActorOptions) {
-        options = options || {};
-
+    constructor(options: ActorOptions = {}) {
         this.boundary = options.boundary;
         this.sprite = options.sprite;
-        this.typeName = options.typeName;
 
         this.collisionHandlers = new Map<Actor, CollisionCallback>();
         this.instanceMap = new Map<number, ActorInstance>();

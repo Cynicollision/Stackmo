@@ -1,10 +1,10 @@
 import { Sprite } from './sprite';
 
-class PositionedBoundary {
+export class PositionedBoundary {
     private height: number;
     private width: number;
 
-    constructor(private x: number, private y: number, boundary: Boundary) {
+    constructor(public x: number, public y: number, boundary: Boundary) {
         this.height = boundary.height;
         this.width = boundary.width;
     }
@@ -36,11 +36,11 @@ class PositionedBoundary {
 
 export class Boundary {
 
-    static fromSprite(sprite: Sprite): Boundary {
-        return new Boundary(sprite.height, sprite.width);
+    static fromSprite(sprite: Sprite, solid: boolean = false): Boundary {
+        return new Boundary(sprite.height, sprite.width, solid);
     }
 
-    constructor(public height: number, public width: number) {
+    constructor(public height: number, public width: number, public solid: boolean = false) {
         if (height <= 0 || width <= 0) {
             throw new Error('Height and width must both be greater than zero.');
         }

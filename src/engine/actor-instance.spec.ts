@@ -29,12 +29,11 @@ describe('ActorInstance', () => {
         let boundarySpy: jasmine.Spy;
 
         beforeEach(() => {
-            boundarySpy = spyOn(testInstanceA.parent.boundary, 'atPosition').and.callThrough();
+            boundarySpy = spyOn(testInstanceA.boundary, 'atPosition').and.callThrough();
         });
     
         it('checks for collisions when either instance has moved', () => {
-            testInstanceA.speed = 2;
-            testInstanceA.doMovement();
+            testInstanceA.setPosition(2, 0);
 
             testInstanceA.collidesWith(testInstanceB);
 
@@ -42,41 +41,11 @@ describe('ActorInstance', () => {
         });
 
         it('skips collision checking when neither instance has moved', () => {
-            testInstanceA.speed = 0;
-            testInstanceA.doMovement();
+            testInstanceA.setPosition(0, 0);
 
             testInstanceA.collidesWith(testInstanceB);
 
             expect(boundarySpy).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('when applying motion', () => {
-
-        it('changes relative x position when there is speed', () => {
-            testInstanceA.speed = 2;
-            testInstanceA.doMovement();
-            
-            expect(testInstanceA.x > 0).toBe(true);
-        });
-
-        it('does not change relative x position when there is no speed', () => {
-            testInstanceA.speed = 0;
-            testInstanceA.doMovement();
-            
-            expect(testInstanceA.x).toBe(0);
-        });
-
-        it('toggles hasMoved depending on actual movement', () => {
-            testInstanceA.speed = 2;
-            testInstanceA.doMovement();
-            
-            expect(testInstanceA.hasMoved).toBe(true);
-
-            testInstanceA.speed = 0;
-            testInstanceA.doMovement();
-            
-            expect(testInstanceA.hasMoved).toBe(false);
         });
     });
 });

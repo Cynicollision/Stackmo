@@ -8,10 +8,7 @@ describe('Actor', () => {
     let testInstance: ActorInstance;
 
     beforeEach(() => {
-        TestActor = new Actor({
-            typeName: 'testActor',
-        });
-
+        TestActor = new Actor();
         TestActor.onDestroy(() => null);
 
         testInstance = TestActor.createInstance(0, 0, 0);

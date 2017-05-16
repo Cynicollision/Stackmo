@@ -32,7 +32,7 @@ export class Room {
             if (instance.isActive) {
                 // apply actor movement
                 if (instance.speed !== 0) {
-                    instance.doMovement();
+                    this.applyInstanceMovement(instance);
                 }
 
                 // call collision handlers
@@ -44,6 +44,9 @@ export class Room {
                 if (instance._onStep) {
                     instance._onStep(instance);
                 }
+
+                // internal 'post-step'
+                instance.onPostStep();
             }
             else {
                 // destroy instance
@@ -51,6 +54,29 @@ export class Room {
                 this.actorInstanceMap.delete(instance.id);
             }
         });
+    }
+
+    isPositionFree(x: number, y: number, solid: boolean = false): boolean {
+        let instances = this.getInstances();
+
+        for (let instance of instances) {
+            let isInstanceSolid = instance.boundary.solid;
+
+            if (instance.occupiesPosition(x, y) && isInstanceSolid === solid) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private applyInstanceMovement(instance: ActorInstance): void {
+        let offsetX = Math.round(instance.getMovementOffsetX());
+        let offsetY = Math.round(instance.getMovementOffsetY());
+
+        if (offsetX !== 0 || offsetY !== 0) {
+            instance.setPositionRelative(offsetX, offsetY);
+        }
     }
 
     private checkCollisions(selfInstance: ActorInstance): void {

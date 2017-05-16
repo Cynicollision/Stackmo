@@ -5,7 +5,7 @@ export enum GameState {
 
 export enum Direction {
     Right = 0,
-    Up = 90,
+    Down = 90,
     Left = 180,
-    Down = 270,
+    Up = 270,
 }

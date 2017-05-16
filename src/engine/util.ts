@@ -1,11 +1,11 @@
 class MathUtil {
 
     static getLengthDirectionX(length: number, direction: number): number {
-        return Math.floor(length * Math.cos(direction * (Math.PI / 180)));
+        return length * Math.cos(direction * (Math.PI / 180));
     }
 
     static getLengthDirectionY(length: number, direction: number) {
-        return Math.floor(length * Math.sin(direction * (Math.PI / 180)));
+        return length * Math.sin(direction * (Math.PI / 180));
     }
 }
 
