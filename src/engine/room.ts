@@ -83,7 +83,8 @@ export class Room {
         let parent = selfInstance.parent;
         
         Util.arrayFromMap(parent.collisionHandlers).forEach(kvp => {
-            let [otherActor, callback] = kvp;
+            let [otherActorName, callback] = kvp;
+            let otherActor = Actor.get(otherActorName);
 
             otherActor.instanceMap.forEach(other => {
                 if (selfInstance !== other && selfInstance.collidesWith(other)) {

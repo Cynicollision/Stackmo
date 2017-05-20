@@ -1,24 +1,12 @@
 import { Actor, Boundary, Sprite } from './../../engine/vastgame';
 
-let Stone = Sprite.define({
-    imageSource: 'img/stone.png',
-    height: 64,
-    width: 64,
-});
-
-export const Wall = Actor.define({
-    boundary: Boundary.fromSprite(Stone, true),
-    sprite: Stone,
-});
-
-
 let TankStrip = Sprite.define({
     imageSource: 'img/tank_strip.png',
     height: 64,
     width: 64,
 });
 
-export const Guy = Actor.define({
+let Guy = Actor.define('Guy', {
     boundary: Boundary.fromSprite(TankStrip),
     sprite: TankStrip,
 });
@@ -27,14 +15,14 @@ Guy.onCreate((self) => {
     self.speed = self.id;
 });
 
-Guy.onCollide(Guy, (self, other) => {
+Guy.onCollide('Guy', (self, other) => {
      
      if (self.speed > other.speed) {
          other.destroy();
      }
 });
 
-Guy.onCollide(Wall, (self, other) => {
+Guy.onCollide('Wall', (self, other) => {
     self.speed = 0;
 });
 

@@ -5,14 +5,13 @@ import { Direction } from './enum';
 import { Sprite } from './sprite';
 
 describe('ActorInstance', () => {
-    let TestActorA: Actor, TestActorB: Actor;
+    let options = { boundary: new Boundary(5, 5) };
+    let TestActorA: Actor = Actor.define('TestActorA', options);
+    let TestActorB: Actor = Actor.define('TestActorB', options);
     let testInstanceA: ActorInstance, testInstanceB: ActorInstance;
 
     beforeEach(() => {
-        TestActorA = new Actor({ boundary: new Boundary(5, 5) });
-        TestActorB = new Actor({ boundary: new Boundary(5, 5) });
-
-        TestActorA.onCollide(TestActorB, (self, other) => {
+        TestActorA.onCollide('TestActorB', (self, other) => {
         });
 
         testInstanceA = TestActorA.createInstance(1, 0, 0);
@@ -32,7 +31,7 @@ describe('ActorInstance', () => {
             boundarySpy = spyOn(testInstanceA.boundary, 'atPosition').and.callThrough();
         });
     
-        it('checks for collisions when either instance has moved', () => {
+        it('checks for collisions when the instance has moved', () => {
             testInstanceA.setPosition(2, 0);
 
             testInstanceA.collidesWith(testInstanceB);
@@ -40,7 +39,7 @@ describe('ActorInstance', () => {
             expect(boundarySpy).toHaveBeenCalled();
         });
 
-        it('skips collision checking when neither instance has moved', () => {
+        it('skips collision checking when the instance has not moved', () => {
             testInstanceA.setPosition(0, 0);
 
             testInstanceA.collidesWith(testInstanceB);

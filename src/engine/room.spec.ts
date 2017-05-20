@@ -35,7 +35,7 @@ describe('Room', () => {
 });
 
 function buildTestActorWithLifecycle(): Actor {
-    let actor = new Actor();
+    let actor = new Actor('TestActor');
 
     actor.onCreate(() => null);
     actor.onStep(() => null);

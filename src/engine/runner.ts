@@ -1,3 +1,4 @@
+import { Actor } from './actor';
 import { GameState } from './enum';
 import { GameCanvas } from './canvas';
 import { InputHandler } from './input';
@@ -12,10 +13,11 @@ export interface GameOptions {
 }
 
 export class GameRunner {
-    private room: Room;
+    private room: Room; // TODO: consider moving to GameContext
     state: GameState = GameState.Paused;
 
     constructor(private canvas: GameCanvas, private inputHandler: InputHandler, private options: GameOptions) {
+        // TODO: consider moving to setRoom
         this.inputHandler.onMouseDown(event => this.room.handleClick(event));
     }
 

@@ -52,9 +52,7 @@ export class ActorInstance {
     }
 
     collidesWith(other: ActorInstance): boolean {
-        let haveBoundariesMoved = this.hasMoved || other.hasMoved;
-
-        if (haveBoundariesMoved && this.boundary && other.boundary) {
+        if (this.hasMoved && this.boundary && other.boundary) {
             return this.boundary.atPosition(this.x, this.y).collidesWith(other.boundary.atPosition(other.x, other.y));
         }
 

@@ -1,14 +1,22 @@
-import { Direction, GameOptions, Room, Vastgame } from './../engine/vastgame';
-import { Guy, Wall } from './actors/guy';
-// import { Wall } from './actors/Wall';
+import { Actor, Direction, GameOptions, Room, Vastgame } from './../engine/vastgame';
 
+// initialization
 let options: GameOptions = {
     targetFPS: 60,
 };
 
+let demoGame = Vastgame.init('game', options);
+
+require('./actors/guy');
+require('./actors/wall');
+
+// create a demo room with some actor instnaces
 let demoRoom = Room.define();
 
 demoRoom.onStart(() => {
+    let Guy = Actor.get('Guy');
+    let Wall = Actor.get('Wall');
+
     let guy1 = demoRoom.createActor(Guy);
     let guy2 = demoRoom.createActor(Guy, 0, 200);
     let guy3 = demoRoom.createActor(Guy, 0, 400);
@@ -24,4 +32,5 @@ demoRoom.onStart(() => {
     [guy4, guy5, guy6].forEach(guy => guy.direction = Direction.Left);
 });
 
-Vastgame.init('game', options).start(demoRoom);
+// start the game
+demoGame.start(demoRoom);

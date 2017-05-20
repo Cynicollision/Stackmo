@@ -4,6 +4,7 @@ import { Direction } from './enum';
 import { ClickEvent } from './input';
 import { Sprite } from './sprite';
 import { Util } from './util';
+import { Vastgame } from './vastgame';
 
 export interface ActorLifecycle {
     onCreate: LifecycleCallback;
@@ -35,28 +36,36 @@ interface CollisionCallback {
 
 export class Actor {
 
-    static define(options?: ActorOptions): Actor {
-        return new Actor(options);
+    static define(name: string, options?: ActorOptions): Actor {
+        let actor = new Actor(name, options);
+        Vastgame.getContext().defineActor(name, actor);
+
+        return actor;
+    }
+
+    static get(name: string): Actor {
+        return Vastgame.getContext().getActor(name);
     }
 
     private _onCreate: LifecycleCallback;
     private _onStep: LifecycleCallback;
     private _onDestroy: LifecycleCallback;
 
-    readonly collisionHandlers: Map<Actor, CollisionCallback>;
+    readonly collisionHandlers: Map<string, CollisionCallback>;
     readonly instanceMap: Map<number, ActorInstance>;
 
     readonly boundary: Boundary;
-    readonly typeName: string;
+    readonly name: string;
     readonly sprite: Sprite;
 
     _onClick: ClickEventCallback;
 
-    constructor(options: ActorOptions = {}) {
+    constructor(name: string, options: ActorOptions = {}) {
         this.boundary = options.boundary;
+        this.name = name;
         this.sprite = options.sprite;
 
-        this.collisionHandlers = new Map<Actor, CollisionCallback>();
+        this.collisionHandlers = new Map<string, CollisionCallback>();
         this.instanceMap = new Map<number, ActorInstance>();
     }
 
@@ -72,8 +81,8 @@ export class Actor {
         this._onDestroy = callback;
     }
 
-    onCollide(actor: Actor, callback: CollisionCallback): void {
-        this.collisionHandlers.set(actor, callback);
+    onCollide(actorName: string, callback: CollisionCallback): void {
+        this.collisionHandlers.set(actorName, callback);
     }
 
     onClick(callback: ClickEventCallback): void {
