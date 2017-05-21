@@ -3,4 +3,7 @@ dist
 node_modules
 typings
 public/dist
-src/**/*.js*
+src/**/*.js.map
+src/engine/**/*.js*
+src/game/**/*.js*
+src/test/boot-tests.js
