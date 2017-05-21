@@ -10,7 +10,7 @@ let demoGame = Vastgame.init('game', options);
 require('./actors/guy');
 require('./actors/wall');
 
-// create a demo room with some actor instnaces
+// create a demo room with some actor instances
 let demoRoom = Room.define();
 
 demoRoom.onStart(() => {
