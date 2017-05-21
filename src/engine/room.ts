@@ -1,7 +1,7 @@
 import { Actor } from './actor';
 import { ActorInstance } from './actor-instance';
-import { ClickEvent } from './input';
-import { GameLifecycleCallback } from './runner';
+import { ClickEvent } from './canvas';
+import { GameLifecycleCallback } from './vastgame';
 import { Util } from './util';
 
 export class Room {

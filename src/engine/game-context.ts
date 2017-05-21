@@ -1,8 +1,19 @@
 import { Actor } from './actor';
+import { CanvasHTML2D } from './canvas';
+import { Room } from './room';
 
-// TODO: add current room, remove from GameRunner
 export class GameContext {
     private actorMap = new Map<string, Actor>();
+    private canvas: CanvasHTML2D;
+    private currentRoom: Room;
+
+    get room(): Room {
+        return this.currentRoom;
+    }
+
+    setCanvas(canvas: CanvasHTML2D): void {
+        this.canvas = canvas;
+    }
 
     defineActor(name: string, actor: Actor): void {
         if (this.actorMap.has(name)) {
@@ -18,5 +29,10 @@ export class GameContext {
         }
 
         return this.actorMap.get(name);
+    }
+
+    setCurrentRoom(room: Room): void {
+        this.canvas.onMouseDown(event => room.handleClick(event));
+        this.currentRoom = room;
     }
 }

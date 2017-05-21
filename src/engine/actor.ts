@@ -1,7 +1,7 @@
 import { ActorInstance } from './actor-instance';
 import { Boundary } from './boundary';
+import { ClickEvent } from './canvas';
 import { Direction } from './enum';
-import { ClickEvent } from './input';
 import { Sprite } from './sprite';
 import { Util } from './util';
 import { Vastgame } from './vastgame';
