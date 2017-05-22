@@ -21,7 +21,7 @@ export enum ActorState {
     Destroyed = 2,
 }
 
-interface ActorOptions {
+export interface ActorOptions {
     boundary?: Boundary;
     sprite?: Sprite;
 }

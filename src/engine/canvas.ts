@@ -23,6 +23,7 @@ const DefaultWidth = 640;
 const DefaultScale = ScaleMode.None;
 
 export class CanvasHTML2D implements GameCanvas {
+    private scale: number = 1;
 
     constructor(public readonly canvasElement: HTMLCanvasElement) {
     }
@@ -31,11 +32,21 @@ export class CanvasHTML2D implements GameCanvas {
         return this.canvasElement.getContext('2d');
     }
 
+    get height(): number {
+        return this.canvasElement.height / this.scale;
+    }
+
+    get width(): number {
+        return this.canvasElement.width / this.scale;
+    }
+
     init(options: CanvasOptions = {}): void {
         // set defaults
         options.height = options.height || DefaultHeight;
         options.scale = options.scale || DefaultScale;
         options.width = options.width || DefaultWidth;
+
+        this.scale = <number>options.scale;
 
         if (options.scale === ScaleMode.Fill) {
             this.canvasElement.height = window.innerHeight;

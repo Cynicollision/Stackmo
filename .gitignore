@@ -7,3 +7,4 @@ src/**/*.js.map
 src/engine/**/*.js*
 src/game/**/*.js*
 src/test/boot-tests.js
+src/test/test-util.js
