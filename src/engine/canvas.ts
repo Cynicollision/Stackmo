@@ -1,10 +1,10 @@
-import { ScaleMode } from './enum';
+import { SizeMode, SizeMode } from './enum';
 import { Room } from './room';
 import { Sprite } from './sprite';
 
 export interface CanvasOptions {
     height?: number;
-    scale?: number | ScaleMode;
+    scale?: number | SizeMode;
     width?: number;
 }
 
@@ -20,7 +20,7 @@ export interface GameCanvas {
 
 const DefaultHeight = 480;
 const DefaultWidth = 640;
-const DefaultScale = ScaleMode.None;
+const DefaultScale = SizeMode.Fixed;
 
 export class CanvasHTML2D implements GameCanvas {
     private scale: number = 1;
@@ -48,7 +48,7 @@ export class CanvasHTML2D implements GameCanvas {
 
         this.scale = <number>options.scale;
 
-        if (options.scale === ScaleMode.Fill) {
+        if (options.scale === SizeMode.Fill) {
             this.canvasElement.height = window.innerHeight;
             this.canvasElement.width = window.innerWidth;
         }
