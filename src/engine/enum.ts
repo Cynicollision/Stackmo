@@ -9,9 +9,3 @@ export enum GameState {
     Running = 1,
     Paused = 2,
 }
-
-// negative values are used to avoid conflict with actual scale values
-export enum SizeMode {
-    Fixed = 1,
-    Fill = -2, // aka "vastengine.Config.scaleCenter"
-}

@@ -9,14 +9,8 @@ enum ViewMode {
 
 export class View {
 
-    static fromCanvas(canvas: CanvasHTML2D) {
-        return new View(0, 0, canvas.height, canvas.width);
-    }
-
     private followInstance: ActorInstance;
-    private viewMode: ViewMode = ViewMode.SamePosition;
-    private canvasHeight: number;
-    private canvasWidth: number;
+    private viewMode: ViewMode;
     
     constructor(
         public x: number, 

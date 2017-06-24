@@ -3,6 +3,7 @@ import { ActorInstance } from './actor-instance';
 import { ClickEvent } from './canvas';
 import { GameLifecycleCallback } from './vastgame';
 import { Util } from './util';
+import { View } from './view';
 
 export class Room {
 
@@ -16,11 +17,18 @@ export class Room {
     }
 
     private readonly actorInstanceMap = new Map<number, ActorInstance>();
+    private view: View;
 
     _onStart: GameLifecycleCallback;
 
     onStart(callback: GameLifecycleCallback): void {
         this._onStart = callback;
+    }
+
+    defineView(x: number, y: number, width: number, height: number): View {
+        this.view = new View(x, y, width, height);
+
+        return this.view;
     }
 
     step(): void {
@@ -30,7 +38,7 @@ export class Room {
             let hasCollisionHandler = !!parent.collisionHandlers.size;
 
             if (instance.isActive) {
-                // apply actor movement
+                // apply actor instance movement
                 if (instance.speed !== 0) {
                     this.applyInstanceMovement(instance);
                 }
@@ -105,6 +113,10 @@ export class Room {
 
     getInstances(): ActorInstance[] {
         return Util.valuesFromMap(this.actorInstanceMap);
+    }
+
+    getView(): View {
+        return this.view;
     }
 
     handleClick(event: ClickEvent): void {

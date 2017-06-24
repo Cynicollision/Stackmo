@@ -1,10 +1,8 @@
-import { SizeMode, SizeMode } from './enum';
 import { Room } from './room';
 import { Sprite } from './sprite';
 
 export interface CanvasOptions {
     height?: number;
-    scale?: number | SizeMode;
     width?: number;
 }
 
@@ -20,10 +18,8 @@ export interface GameCanvas {
 
 const DefaultHeight = 480;
 const DefaultWidth = 640;
-const DefaultScale = SizeMode.Fixed;
 
 export class CanvasHTML2D implements GameCanvas {
-    private scale: number = 1;
 
     constructor(public readonly canvasElement: HTMLCanvasElement) {
     }
@@ -33,29 +29,16 @@ export class CanvasHTML2D implements GameCanvas {
     }
 
     get height(): number {
-        return this.canvasElement.height / this.scale;
+        return this.canvasElement.height;
     }
 
     get width(): number {
-        return this.canvasElement.width / this.scale;
+        return this.canvasElement.width;
     }
 
     init(options: CanvasOptions = {}): void {
-        // set defaults
-        options.height = options.height || DefaultHeight;
-        options.scale = options.scale || DefaultScale;
-        options.width = options.width || DefaultWidth;
-
-        this.scale = <number>options.scale;
-
-        if (options.scale === SizeMode.Fill) {
-            this.canvasElement.height = window.innerHeight;
-            this.canvasElement.width = window.innerWidth;
-        }
-        else {
-            this.canvasElement.height = options.height * options.scale;
-            this.canvasElement.width = options.width * options.scale;
-        }
+        this.canvasElement.height = options.height || DefaultHeight;
+        this.canvasElement.width = options.width || DefaultWidth;
     }
 
     onMouseDown(callback: (event: ClickEvent) => void): void {
@@ -69,10 +52,22 @@ export class CanvasHTML2D implements GameCanvas {
         // clear the canvas
         this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
 
+        // get view offset
+        let view = room.getView();
+        let offsetX = 0;
+        let offsetY = 0;
+
+        if (view) {
+            view.updatePosition();
+
+            offsetX = view.x;
+            offsetY = view.y;
+        }
+
         // draw sprites
         room.getInstances().forEach(instance => {
             if (instance.sprite) {
-                this.drawSprite(instance.sprite, instance.x, instance.y);
+                this.drawSprite(instance.sprite, instance.x - offsetX, instance.y - offsetY);
             }
         });
     }
