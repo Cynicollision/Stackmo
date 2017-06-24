@@ -1,11 +1,12 @@
 module.exports = function (config) {
 
-    var debugInChrome = true;
+    var useChrome = false,
+        singleRun = false;
 
     config.set({
         basePath: './src',
         frameworks: ['jasmine', 'es6-shim'],
-        browsers: [ debugInChrome ? 'Chrome' : 'PhantomJS' ],
+        browsers: [ useChrome ? 'Chrome' : 'PhantomJS' ],
         files: [
             { pattern: 'test/main.js', watch: false },
         ],
@@ -18,7 +19,7 @@ module.exports = function (config) {
         reporters: ['dots'],
         port: 9876,
         colors: true,
-        singleRun: !debugInChrome,
+        singleRun: singleRun,
         phantomjsLauncher: {
             exitOnResourceError: true,
         },
