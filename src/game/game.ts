@@ -32,8 +32,27 @@ require('./actors/wall');
 let demoRoom = Room.define();
 
 demoRoom.onStart(() => {
+    let Wall = Actor.get('Wall');
+
     let instances = populateRoom(demoRoom);
     let player = instances.find(actorInstance => actorInstance.parent === Actor.get('Player'));
+
+    demoRoom.defineGrid(64).onClick(event => {
+
+        if (event.getCell().getContents().some(instance => instance.parent === Wall)) {
+            return;
+        }
+        
+        let leftCell = event.getCell().getAdjacentCell(Direction.Left);
+        let rightCell = event.getCell().getAdjacentCell(Direction.Right);
+
+        if (rightCell.getContents().some(instance => instance === player)) {
+            player.x -= 64;
+        }
+        else if (leftCell.getContents().some(instance => instance === player)) {
+            player.x += 64;
+        }
+    });
 
     demoRoom.defineView(0, 0, canvasWidth, canvasHeight)
         .follow(player, true);

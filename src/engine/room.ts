@@ -2,6 +2,7 @@ import { Actor } from './actor';
 import { ActorInstance } from './actor-instance';
 import { ClickEvent } from './canvas';
 import { GameLifecycleCallback } from './vastgame';
+import { Grid } from './grid';
 import { Util } from './util';
 import { View } from './view';
 
@@ -17,12 +18,20 @@ export class Room {
     }
 
     private readonly actorInstanceMap = new Map<number, ActorInstance>();
+
+    private grid: Grid;
     private view: View;
 
     _onStart: GameLifecycleCallback;
 
     onStart(callback: GameLifecycleCallback): void {
         this._onStart = callback;
+    }
+
+    defineGrid(tileSize: number): Grid {
+        this.grid = new Grid(tileSize, this);
+
+        return this.grid;
     }
 
     defineView(x: number, y: number, width: number, height: number): View {
@@ -64,19 +73,19 @@ export class Room {
         });
     }
 
-    isPositionFree(x: number, y: number, solid: boolean = false): boolean {
-        let instances = this.getInstances();
+    // isPositionFree(x: number, y: number, solid: boolean = false): boolean {
+    //     let instances = this.getInstances();
 
-        for (let instance of instances) {
-            let isInstanceSolid = instance.boundary.solid;
+    //     for (let instance of instances) {
+    //         let isInstanceSolid = instance.boundary.solid;
 
-            if (instance.occupiesPosition(x, y) && isInstanceSolid === solid) {
-                return false;
-            }
-        }
+    //         if (instance.occupiesPosition(x, y) && isInstanceSolid === solid) {
+    //             return false;
+    //         }
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
     private applyInstanceMovement(instance: ActorInstance): void {
         let offsetX = Math.round(instance.getMovementOffsetX());
@@ -115,15 +124,31 @@ export class Room {
         return Util.valuesFromMap(this.actorInstanceMap);
     }
 
+    getInstancesAtPosition(x: number, y: number): ActorInstance[] {
+        return this.getInstances().filter(instance => instance.occupiesPosition(x, y));
+    }
+
     getView(): View {
         return this.view;
     }
 
     handleClick(event: ClickEvent): void {
-        this.getInstances().forEach(instance => {
+        let clickX = event.x;
+        let clickY = event.y;
+
+        if (this.view) {
+            clickX += this.view.x;
+            clickY += this.view.y;
+        }
+
+        if (this.grid) {
+            this.grid.raiseClickEvent(clickX, clickY);
+        }
+
+        this.getInstancesAtPosition(clickX, clickY).forEach(instance => {
             let onClick = instance.parent._onClick;
 
-            if (onClick && instance.occupiesPosition(event.x, event.y)) {
+            if (onClick && instance.occupiesPosition(clickX, clickY)) {
                 onClick(instance, event);
             }
         });
