@@ -33,6 +33,7 @@ require('./actors/wall');
 let demoRoom = Room.define();
 
 demoRoom.onStart(() => {
+    let Block = Actor.get('Block');
     let Wall = Actor.get('Wall');
 
     let instances = populateRoom(demoRoom);
@@ -48,12 +49,25 @@ demoRoom.onStart(() => {
 
         let leftCell = clickedCell.getAdjacentCell(Direction.Left);
         let rightCell = clickedCell.getAdjacentCell(Direction.Right);
+        let downCell = clickedCell.getAdjacentCell(Direction.Down);
+
+        let downLeftCell = leftCell.getAdjacentCell(Direction.Down);
+        let downRightCell = rightCell.getAdjacentCell(Direction.Down);
         
-        if (rightCell.containsInstance(player)) {
+        if (clickedCell.containsInstanceOf(Block)) {
+            player.raiseEvent('lift', { block: clickedCell.getContents()[0], targetCell: clickedCell });
+        }
+        else if (rightCell.containsInstance(player)) {
             player.raiseEvent('move', { direction: Direction.Left, targetCell: clickedCell });
         }
         else if (leftCell.containsInstance(player)) {
             player.raiseEvent('move', { direction: Direction.Right, targetCell: clickedCell });
+        }
+        else if (downLeftCell.containsInstance(player) && (downCell.containsInstanceOf(Block) || downCell.containsInstanceOf(Wall))) {
+            player.raiseEvent('jump', { direction: Direction.Right, targetCell: clickedCell });
+        }
+        else if (downRightCell.containsInstance(player) && (downCell.containsInstanceOf(Block) || downCell.containsInstanceOf(Wall))) {
+            player.raiseEvent('jump', { direction: Direction.Left, targetCell: clickedCell });
         }
     });
 

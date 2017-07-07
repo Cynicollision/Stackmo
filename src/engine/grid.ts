@@ -1,4 +1,4 @@
-import { ActorInstance } from './actor';
+import { Actor, ActorInstance } from './actor';
 import { Direction } from './enum';
 import { Room } from './room';
 
@@ -55,6 +55,10 @@ export class GridCell {
 
     containsInstance(instance: ActorInstance): boolean {
         return this.getContents().some(contents => contents === instance);
+    }
+
+    containsInstanceOf(actor: Actor): boolean {
+        return this.getContents().some(contents => contents.parent === actor);
     }
 }
 
