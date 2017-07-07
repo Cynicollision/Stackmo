@@ -1,8 +1,9 @@
 import { Boundary } from './boundary';
 import { ClickEvent } from './canvas';
-import { Direction } from './enum';
+import { ActorState, Direction } from './enum';
+import { DeferredEvent } from './events';
 import { Sprite } from './sprite';
-import { Util } from './util';
+import { MathUtil } from './util';
 import { Vastgame } from './vastgame';
 
 export interface ActorLifecycle {
@@ -15,9 +16,13 @@ export interface LifecycleCallback {
     (self: ActorInstance): void;
 }
 
-export enum ActorState {
-    Active = 1,
-    Destroyed = 2,
+export interface ActorEvent {
+    name: string;
+    callback: ActorEventCallback;
+}
+
+export interface ActorEventCallback {
+    (self?: ActorInstance, eventArgs?: any): void;
 }
 
 export interface ActorOptions {
@@ -29,7 +34,7 @@ interface ClickEventCallback {
     (self: ActorInstance, event: ClickEvent): void;
 }
 
-interface CollisionCallback {
+export interface CollisionCallback {
     (self: ActorInstance, other: ActorInstance): void;
 }
 
@@ -46,102 +51,94 @@ export class Actor {
         return Vastgame.getContext().getActor(name);
     }
 
-    private _onCreate: LifecycleCallback;
-    private _onStep: LifecycleCallback;
-    private _onDestroy: LifecycleCallback;
+    // lifecycle callbacks
+    private onCreateCallback: LifecycleCallback;
+    private onStepCallback: LifecycleCallback;
+    private onDestroyCallback: LifecycleCallback;
 
-    readonly collisionHandlers: Map<string, CollisionCallback>;
-    readonly instanceMap: Map<number, ActorInstance>;
+    // input callbacks
+    private onClickCallback: ClickEventCallback;
+
+    // game event handlers
+    readonly collisionHandlers: { [index: string]: CollisionCallback } = {};
+    readonly actorEventHandlers: { [index: string] : ActorEventCallback } = {};
 
     readonly boundary: Boundary;
     readonly name: string;
     readonly sprite: Sprite;
 
-    _onClick: ClickEventCallback;
-
     constructor(name: string, options: ActorOptions = {}) {
         this.boundary = options.boundary;
         this.name = name;
         this.sprite = options.sprite;
+    }
 
-        this.collisionHandlers = new Map<string, CollisionCallback>();
-        this.instanceMap = new Map<number, ActorInstance>();
+    get hasCreate(): boolean {
+        return !!this.onCreateCallback;
     }
 
     onCreate(callback: LifecycleCallback): void {
-        this._onCreate = callback;
+        this.onCreateCallback = callback;
+    }
+
+    callCreate(selfInstance: ActorInstance): void {
+        this.onCreateCallback(selfInstance);
+    }
+
+    get hasStep(): boolean {
+        return !!this.onStepCallback;
     }
 
     onStep(callback: LifecycleCallback): void {
-        this._onStep = callback;
+        this.onStepCallback = callback;
+    }
+
+    callStep(selfInstance: ActorInstance): void {
+        this.onStepCallback(selfInstance);
+    }
+
+    get hasDestroy(): boolean {
+        return !!this.onDestroyCallback;
     }
 
     onDestroy(callback: LifecycleCallback): void {
-        this._onDestroy = callback;
+        this.onDestroyCallback = callback;
     }
 
-    onCollide(actorName: string, callback: CollisionCallback): void {
-        this.collisionHandlers.set(actorName, callback);
+    callDestroy(selfInstance: ActorInstance): void {
+        this.onDestroyCallback(selfInstance);
+    }
+
+    get hasClick(): boolean {
+        return !!this.onClickCallback;
     }
 
     onClick(callback: ClickEventCallback): void {
-        this._onClick = callback;
+        this.onClickCallback = callback;
     }
 
-    createInstance(id: number, x?: number, y?: number): ActorInstance {
-        let newInstance = this.newActorInstance(id, x, y);
-        this.instanceMap.set(id, newInstance);
-
-        if (newInstance._onCreate) {
-            newInstance._onCreate(newInstance);   
-        }
-
-        return newInstance;
+    callClickCallback(selfInstance: ActorInstance, event: ClickEvent): void {
+        this.onClickCallback(selfInstance, event);
     }
 
-    destroyInstance(id: number): void {
-        let instance = this.instanceMap.get(id);
-
-        if (!instance) {
-            throw new Error('destroyInstance called with invalid instance ID.');
-        }
-
-        this.instanceMap.delete(id);
-
-        if (instance._onDestroy) {
-            instance._onDestroy(instance);
-        }
+    onCollide(actorName: string, callback: CollisionCallback): void {
+        this.collisionHandlers[actorName] = callback;
     }
 
-    private newActorInstance(id: number, x: number = 0, y: number = 0): ActorInstance {
-
-        let actor = new ActorInstance(this, id, x, y, {
-            onCreate: this._onCreate,
-            onStep: this._onStep,
-            onDestroy: this._onDestroy,
-        });
-
-        return actor;
+    onEvent(eventName: string, callback: ActorEventCallback): void {
+        this.actorEventHandlers[eventName] = callback;
     }
 }
 
 export class ActorInstance {
     private state: ActorState;
 
-    _onCreate: LifecycleCallback;
-    _onStep: LifecycleCallback;
-    _onDestroy: LifecycleCallback;
-
     previousX: number;
     previousY: number;
     speed: number = 0;
     direction: number = Direction.Right;
 
-    constructor(public parent: Actor, public id: number, public x: number, public y: number, lifecycle: ActorLifecycle) {
-        this._onCreate = lifecycle.onCreate;
-        this._onStep = lifecycle.onStep;
-        this._onDestroy = lifecycle.onDestroy;
-        
+    constructor(public parent: Actor, public id: number, public x: number = 0, public y: number = 0) {
         this.state = ActorState.Active;
         this.previousX = this.x;
         this.previousY = this.y;
@@ -163,16 +160,40 @@ export class ActorInstance {
         return this.parent.sprite;
     }
 
+    raiseEvent(eventName: string, eventArgs?: any): void {
+        // register an event to fire immediately
+        this.raiseEventWhen(eventName, () => true, eventArgs);
+    }
+
+    raiseEventWhen(eventName: string, conditionCallback: () => boolean, eventArgs: any = {}): void {
+        this.setGameContextEventArgs(eventArgs);
+
+        let callback: ActorEventCallback = this.parent.actorEventHandlers[eventName];
+
+        if (!callback) {
+            throw new Error(`Attempting to raise undefined Event: ${eventName}`);
+        }
+
+        DeferredEvent.register(new DeferredEvent(conditionCallback, callback.bind(null, this, eventArgs)));
+    }
+
+    private setGameContextEventArgs(eventArgs: any): void {
+        eventArgs.game = {
+            currentRoom: Vastgame.getContext().room,
+        };
+    }
+
     destroy(): void {
         this.state = ActorState.Destroyed;
     }
 
-    onPostStep(): void {
+    doPostStep(): void {
         this.previousX = this.x;
         this.previousY = this.y;
     }
 
     collidesWith(other: ActorInstance): boolean {
+
         if (this.hasMoved && this.boundary && other.boundary) {
             return this.boundary.atPosition(this.x, this.y).collidesWith(other.boundary.atPosition(other.x, other.y));
         }
@@ -181,11 +202,11 @@ export class ActorInstance {
     }
 
     getMovementOffsetX(): number {
-        return Util.Math.getLengthDirectionX(this.speed * 100, this.direction) / 100;
+        return MathUtil.getLengthDirectionX(this.speed * 100, this.direction) / 100;
     }
 
     getMovementOffsetY(): number {
-        return Util.Math.getLengthDirectionY(this.speed * 100, this.direction) / 100;
+        return MathUtil.getLengthDirectionY(this.speed * 100, this.direction) / 100;
     }
 
     setPositionRelative(x: number, y: number): void {
@@ -198,6 +219,11 @@ export class ActorInstance {
 
         this.x = x;
         this.y = y;
+    }
+
+    move(speed: number, direction?: Direction): void {
+        this.speed = speed;
+        this.direction = direction;
     }
 
     occupiesPosition(x: number, y: number): boolean {

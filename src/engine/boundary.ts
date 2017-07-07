@@ -10,11 +10,11 @@ export class PositionedBoundary {
     }
 
     collidesWith(other: PositionedBoundary): boolean {
-        if (this.x > other.x + other.width || other.x > this.x + this.width) {
+        if (this.x > other.x + other.width || other.x >= this.x + this.width) {
             return false;
         }
 
-        if (this.y > other.y + other.height || other.y > this.y + this.height) {
+        if (this.y > other.y + other.height || other.y >= this.y + this.height) {
             return false;
         }
 

@@ -1,4 +1,4 @@
-class MathUtil {
+export class MathUtil {
 
     static getLengthDirectionX(length: number, direction: number): number {
         return length * Math.cos(direction * (Math.PI / 180));
@@ -8,17 +8,3 @@ class MathUtil {
         return length * Math.sin(direction * (Math.PI / 180));
     }
 }
-
-export class Util {
-
-    static Math = MathUtil;
-
-    static arrayFromMap<K, V>(map: Map<K, V>): Array<[K, V]> {
-        return Array.from(map.entries());
-    }
-
-    static valuesFromMap<K, V>(map: Map<K, V>): Array<V> {
-        return Array.from(map.values());
-    }
-}
-

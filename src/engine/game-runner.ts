@@ -33,6 +33,7 @@ export class GameRunner {
             while (offset > stepSize) {
 
                 if (this.isRunning) {
+                    context.checkAndFireEvents();
                     room.step();
                 }
                 else {

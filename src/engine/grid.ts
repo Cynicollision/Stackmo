@@ -27,10 +27,6 @@ export class GridCell {
     constructor(private grid: Grid, public x: number, public y: number) {
     }
 
-    getContents(): ActorInstance[] {
-        return this.grid.room.getInstancesAtPosition(this.x + 1, this.y + 1);
-    }
-
     getAdjacentCell(direction: Direction): GridCell {
         let offsetX = 0;
         let offsetY = 0;
@@ -51,6 +47,14 @@ export class GridCell {
         }
 
         return new GridCell(this.grid, this.x + offsetX, this.y + offsetY);
+    }
+
+    getContents(): ActorInstance[] {
+        return this.grid.room.getInstancesAtPosition(this.x + this.grid.tileSize / 2, this.y + this.grid.tileSize / 2);
+    }
+
+    containsInstance(instance: ActorInstance): boolean {
+        return this.getContents().some(contents => contents === instance);
     }
 }
 

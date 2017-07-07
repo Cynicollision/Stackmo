@@ -11,7 +11,7 @@ describe('View', () => {
     });
 
     it('matches the position of the ActorInstance it is following', () => {
-        let actorInstance = ActorBuilder.instance(200, 200, { boundary: new Boundary(20, 20) })
+        let actorInstance = ActorBuilder.newInstance(200, 200, { boundary: new Boundary(20, 20) })
         testView.follow(actorInstance);
 
         testView.updatePosition();
@@ -21,7 +21,7 @@ describe('View', () => {
     });
 
     it('centers around the ActorInstance it is following', () => {
-        let actorInstance = ActorBuilder.instance(200, 200, { boundary: new Boundary(20, 20) })
+        let actorInstance = ActorBuilder.newInstance(200, 200, { boundary: new Boundary(20, 20) })
         testView.follow(actorInstance, true);
 
         testView.updatePosition();
@@ -31,7 +31,7 @@ describe('View', () => {
     });
 
     it('throws an error when trying to follow an ActorInstance with no boundary', () => {
-        let actorInstance = ActorBuilder.instance();
+        let actorInstance = ActorBuilder.newInstance();
 
         testView.follow(actorInstance);
         

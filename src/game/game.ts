@@ -2,7 +2,8 @@ import {
     Actor, 
     ActorInstance, 
     Direction, 
-    GameOptions, 
+    GameOptions,
+    GridCell,
     Room, 
     Vastgame,
 } from './../engine/vastgame';
@@ -37,20 +38,22 @@ demoRoom.onStart(() => {
     let instances = populateRoom(demoRoom);
     let player = instances.find(actorInstance => actorInstance.parent === Actor.get('Player'));
 
-    demoRoom.defineGrid(64).onClick(event => {
+    demoRoom.defineGrid(64).onClick(gridClickEvent => {
+        let clickedCell = gridClickEvent.getCell();
 
-        if (event.getCell().getContents().some(instance => instance.parent === Wall)) {
+        // do nothing if the player is moving or if a wall was clicked on
+        if (player.speed || clickedCell.getContents().some(instance => instance.parent === Wall)) {
             return;
         }
-        
-        let leftCell = event.getCell().getAdjacentCell(Direction.Left);
-        let rightCell = event.getCell().getAdjacentCell(Direction.Right);
 
-        if (rightCell.getContents().some(instance => instance === player)) {
-            player.x -= 64;
+        let leftCell = clickedCell.getAdjacentCell(Direction.Left);
+        let rightCell = clickedCell.getAdjacentCell(Direction.Right);
+        
+        if (rightCell.containsInstance(player)) {
+            player.raiseEvent('move', { direction: Direction.Left, targetCell: clickedCell });
         }
-        else if (leftCell.getContents().some(instance => instance === player)) {
-            player.x += 64;
+        else if (leftCell.containsInstance(player)) {
+            player.raiseEvent('move', { direction: Direction.Right, targetCell: clickedCell });
         }
     });
 

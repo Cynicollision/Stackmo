@@ -2,12 +2,12 @@ import { CanvasHTML2D, CanvasOptions, GameCanvas } from './canvas';
 import { GameContext } from './game-context';
 import { GameRunner } from './game-runner';
 import { Room } from './room';
-import { Util } from './util';
 
 // export public modules
 export * from './actor';
 export * from './boundary';
 export * from './enum';
+export { Grid, GridCell } from './grid';
 export * from './room';
 export * from './sprite';
 
