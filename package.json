@@ -26,8 +26,8 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.3",
-    "ts-loader": "^2.0.3",
-    "typescript": "^2.3.2",
+    "ts-loader": "^2.2.1",
+    "typescript": "^2.4.1",
     "webpack": "^2.5.0"
   },
   "dependencies": {
