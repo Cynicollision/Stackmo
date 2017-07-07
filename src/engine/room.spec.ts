@@ -1,5 +1,4 @@
-import { Actor } from './actor';
-import { ActorInstance } from './actor-instance';
+import { Actor, ActorInstance } from './actor';
 import { Room } from './room';
 
 describe('Room', () => {

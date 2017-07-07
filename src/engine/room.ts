@@ -1,5 +1,4 @@
-import { Actor } from './actor';
-import { ActorInstance } from './actor-instance';
+import { Actor, ActorInstance } from './actor';
 import { ClickEvent } from './canvas';
 import { GameLifecycleCallback } from './vastgame';
 import { Grid } from './grid';
@@ -71,21 +70,12 @@ export class Room {
                 this.actorInstanceMap.delete(instance.id);
             }
         });
+
+        // update view posiition
+        if (this.view) {
+            this.view.updatePosition();
+        }
     }
-
-    // isPositionFree(x: number, y: number, solid: boolean = false): boolean {
-    //     let instances = this.getInstances();
-
-    //     for (let instance of instances) {
-    //         let isInstanceSolid = instance.boundary.solid;
-
-    //         if (instance.occupiesPosition(x, y) && isInstanceSolid === solid) {
-    //             return false;
-    //         }
-    //     }
-
-    //     return true;
-    // }
 
     private applyInstanceMovement(instance: ActorInstance): void {
         let offsetX = Math.round(instance.getMovementOffsetX());

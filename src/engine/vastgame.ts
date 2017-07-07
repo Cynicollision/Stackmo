@@ -6,7 +6,6 @@ import { Util } from './util';
 
 // export public modules
 export * from './actor';
-export { ActorInstance } from './actor-instance';
 export * from './boundary';
 export * from './enum';
 export * from './room';

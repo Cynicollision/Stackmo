@@ -1,5 +1,4 @@
-import { Actor, ActorOptions } from './../engine/actor';
-import { ActorInstance } from './../engine/actor-instance';
+import { Actor, ActorInstance, ActorOptions } from './../engine/actor';
 import { Boundary } from './../engine/boundary';
 
 export class ActorBuilder {

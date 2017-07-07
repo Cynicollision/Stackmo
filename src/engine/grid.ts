@@ -1,4 +1,4 @@
-import { ActorInstance } from './actor-instance';
+import { ActorInstance } from './actor';
 import { Direction } from './enum';
 import { Room } from './room';
 
