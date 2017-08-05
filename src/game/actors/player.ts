@@ -24,9 +24,10 @@ const PlayerJumpSpeed = 8;
 const PlayerFallSpeed = 8;
 
 let TankStrip = Sprite.define({
-    imageSource: 'img/tank_strip.png',
+    imageSource: 'img/bot_sheet.png',
     height: 64,
     width: 64,
+    frameBorder: 1,
 });
 
 let Player = Actor.define('Player', {
@@ -36,6 +37,17 @@ let Player = Actor.define('Player', {
 
 let heldBlock: ActorInstance;
 let lastDirection: Direction;
+
+// test code...
+Player.onCreate(self => {
+    let playerSprite = self.sprite;
+
+    playerSprite.frame = 0;
+    
+    setInterval(() => {
+        playerSprite.frame = playerSprite.frame === 0 ? 1 : 0;
+    }, 250);
+});
 
 Player.onStep(self => {
 
