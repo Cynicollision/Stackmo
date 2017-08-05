@@ -65,20 +65,21 @@ export class CanvasHTML2D implements GameCanvas {
     }
 
     private getViewOffset(view: View): [number, number] {
-        
-        let offsetX = view ? view.x : 0,
-            offsetY = view ? view.y : 0;
+        let offsetX = view ? view.x : 0;
+        let offsetY = view ? view.y : 0;
 
         return [offsetX, offsetY];
     }
 
     private drawSprite(sprite: Sprite, x: number, y: number): void {
+        let image = sprite.image;
+        let frame = sprite.frame;
+        let frameBorder = sprite.frameBorder;
+        let width = sprite.width;
+        let height = sprite.height;
 
-        let image = sprite.image,
-            frame = sprite.frame,
-            width = sprite.width,
-            height = sprite.height;
+        let frameOffset = frame * frameBorder;
 
-        this.context.drawImage(image, frame * width, 0, width, height, x, y, width, height);
+        this.context.drawImage(image, frame * width + frameOffset, 0, width, height, x, y, width, height);
     }
 }

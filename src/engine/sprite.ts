@@ -3,6 +3,7 @@ export interface SpriteOptions {
     height: number;
     width: number;
     frame?: number;
+    frameBorder?: number;
 }
 
 export class Sprite {
@@ -16,6 +17,7 @@ export class Sprite {
     readonly width: number;
     
     frame: number;
+    readonly frameBorder: number;
 
     constructor(options: SpriteOptions) {
         this.image = new Image();
@@ -23,5 +25,6 @@ export class Sprite {
         this.height = options.height;
         this.width = options.width;
         this.frame = options.frame || 0;
+        this.frameBorder = options.frameBorder || 0;
     }    
 }
