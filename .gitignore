@@ -6,5 +6,6 @@ public/dist
 src/**/*.js.map
 src/engine/**/*.js*
 src/game/**/*.js*
+src/test/**/*.js*
 src/test/boot-tests.js
 src/test/test-util.js

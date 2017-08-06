@@ -1,6 +1,6 @@
-import { ActorBuilder } from './../test/test-util';
-import { Boundary } from './boundary';
-import { View } from './view';
+import { ActorBuilder } from './../test-util';
+import { Boundary } from './../../engine/boundary';
+import { View } from './../../engine/view';
 
 describe('View', () => {
 

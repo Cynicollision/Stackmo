@@ -1,6 +1,6 @@
-import { Actor, ActorInstance } from './actor';
-import { Boundary } from './boundary';
-import { Direction } from './enum';
+import { Actor, ActorInstance } from './../../engine/actor';
+import { Boundary } from './../../engine/boundary';
+import { Direction } from './../../engine/enum';
 
 describe('ActorInstance', () => {
     let options = { boundary: new Boundary(5, 5) };

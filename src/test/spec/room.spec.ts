@@ -1,5 +1,5 @@
-import { Actor, ActorInstance } from './actor';
-import { Room } from './room';
+import { Actor, ActorInstance } from './../../engine/actor';
+import { Room } from './../../engine/room';
 
 describe('Room', () => {
     let TestActor: Actor;

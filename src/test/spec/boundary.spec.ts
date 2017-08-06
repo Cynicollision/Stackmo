@@ -1,5 +1,5 @@
-import { Boundary } from './boundary';
-import { Sprite } from './sprite';
+import { Boundary } from './../../engine/boundary';
+import { Sprite } from './../../engine/sprite';
 
 describe('Boundary', () => {
 
