@@ -73,8 +73,8 @@ export class CanvasHTML2D implements GameCanvas {
 
     private drawSprite(sprite: Sprite, x: number, y: number): void {
         let image = sprite.image;
-        let frame = sprite.frame;
-        let frameBorder = sprite.frameBorder;
+        let frame = sprite.animation.frame;
+        let frameBorder = sprite.animation.frameBorder;
         let width = sprite.width;
         let height = sprite.height;
 
