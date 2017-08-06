@@ -1,7 +1,7 @@
 import { Actor, Boundary, Sprite } from './../../engine/vastgame';
 
 let Stone = Sprite.define({
-    imageSource: 'img/stone.png',
+    imageSource: 'img/wall_sheet.png',
     height: 64,
     width: 64,
 });
