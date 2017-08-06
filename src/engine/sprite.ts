@@ -28,7 +28,7 @@ export interface SpriteOptions {
 
 class SpriteAnimation {
     private current: number = 0;
-    private paused: boolean;
+    private timer: any;
 
     constructor(frame: number = 0, readonly frameBorder: number = 0) {
         this.current = frame;
@@ -39,24 +39,22 @@ class SpriteAnimation {
     }
 
     start(start: number, end: number, delay?: number): void {
+        this.stop();
         this.current = start;
 
-        let animate = (): void => {
-            if (!this.paused) {
-                this.current = this.current === end ? start : this.current + 1;
-            }
-        };
-
-        setInterval(() => {
-            animate();
+        this.timer = setInterval(() => {
+            this.current = this.current === end ? start : this.current + 1;
         }, delay);
     }
 
-    pause(): void {
-        this.paused = true;
+    stop(): void {
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
     }
 
-    resume(): void {
-        this.paused = false;
+    set(frame: number): void {
+        this.stop();
+        this.current = frame;
     }
 }

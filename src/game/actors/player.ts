@@ -23,7 +23,7 @@ const PlayerMoveSpeed = 4;
 const PlayerJumpSpeed = 8;
 const PlayerFallSpeed = 8;
 
-let BotStrip = Sprite.define({
+let BotSprite = Sprite.define({
     imageSource: 'img/bot_sheet.png',
     height: 64,
     width: 64,
@@ -31,21 +31,12 @@ let BotStrip = Sprite.define({
 });
 
 let Player = Actor.define('Player', {
-    boundary: Boundary.fromSprite(BotStrip),
-    sprite: BotStrip,
+    boundary: Boundary.fromSprite(BotSprite),
+    sprite: BotSprite,
 });
 
 let heldBlock: ActorInstance;
 let lastDirection: Direction;
-
-// test code...
-Player.onCreate(self => {
-    let playerSprite = self.sprite;
-
-    playerSprite.animation.start(4, 5, 250);
-    
-    
-});
 
 Player.onStep(self => {
 
@@ -64,6 +55,8 @@ Player.onEvent(PlayerEvent.Move, (player, args) => {
 
     player.move(PlayerMoveSpeed, direction);
     player.raiseEventWhen(PlayerEvent.Stop, stopCondition, args);
+
+    animate(player, direction, true);
 });
 
 // Falling
@@ -91,6 +84,9 @@ Player.onEvent(PlayerEvent.Stop, (player, args) => {
     if (room.isPositionFree(player.x + 1, player.y + 65)) {
         player.raiseEvent(PlayerEvent.Fall, args);
     }
+    else {
+        animate(player, lastDirection);
+    }
 });
 
 // Jumping
@@ -116,6 +112,7 @@ Player.onEvent(PlayerEvent.Lift, (player, args) => {
     }
     else if (targetCell.getAdjacentCell(validBlockLiftCell).containsInstance(player)) {
         heldBlock = block;
+        animate(player, lastDirection);
     }
 });
 
@@ -130,4 +127,26 @@ Player.onEvent(PlayerEvent.Drop, (player, args) => {
 
     block.setPositionRelative(offsetX, 0);
     block.raiseEvent('fall', args);
+
+    animate(player, lastDirection);
 });
+
+// Helpers
+function animate(player: ActorInstance, direction: Direction, isMoving: boolean = false): void {
+    let isHolding = !!heldBlock;
+    let start = 0;
+    
+    if (isHolding) {
+        start = direction === Direction.Right ? 4 : 6;
+    }
+    else {
+        start = direction === Direction.Right ? 0 : 2;
+    }
+
+    if (isMoving) {
+        player.sprite.animation.start(start, start + 1, 100);
+    }
+    else {
+        player.sprite.animation.set(start);
+    }
+}
