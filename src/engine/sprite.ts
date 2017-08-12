@@ -7,14 +7,14 @@ export class Sprite {
     readonly image: HTMLImageElement;
     readonly height: number;
     readonly width: number;
-    readonly animation: SpriteAnimation;
+    readonly frameBorder: number;
 
     constructor(options: SpriteOptions) {
         this.image = new Image();
         this.image.src = options.imageSource;
         this.height = options.height;
         this.width = options.width;
-        this.animation = new SpriteAnimation(options.frame, options.frameBorder);
+        this.frameBorder = options.frameBorder;
     }
 }
 
@@ -22,16 +22,15 @@ export interface SpriteOptions {
     imageSource: string;
     height: number;
     width: number;
-    frame?: number;
     frameBorder?: number;
 }
 
-class SpriteAnimation {
+export class SpriteAnimation {
     private current: number = 0;
     private timer: any;
 
-    constructor(frame: number = 0, readonly frameBorder: number = 0) {
-        this.current = frame;
+    constructor(readonly sprite: Sprite) {
+        this.current = 0;
     }
     
     get frame(): number { 

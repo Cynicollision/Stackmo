@@ -1,5 +1,5 @@
 import { Room } from './room';
-import { Sprite } from './sprite';
+import { Sprite, SpriteAnimation } from './sprite';
 import { View } from './view';
 
 export interface CanvasOptions {
@@ -59,7 +59,7 @@ export class CanvasHTML2D implements GameCanvas {
         room.getInstances().forEach(instance => {
 
             if (instance.sprite) {
-                this.drawSprite(instance.sprite, instance.x - offsetX, instance.y - offsetY);
+                this.drawSprite(instance.sprite, instance.x - offsetX, instance.y - offsetY, instance.spriteAnimation);
             }
         });
     }
@@ -71,10 +71,10 @@ export class CanvasHTML2D implements GameCanvas {
         return [offsetX, offsetY];
     }
 
-    private drawSprite(sprite: Sprite, x: number, y: number): void {
+    private drawSprite(sprite: Sprite, x: number, y: number, animation: SpriteAnimation): void {
         let image = sprite.image;
-        let frame = sprite.animation.frame;
-        let frameBorder = sprite.animation.frameBorder;
+        let frameBorder = sprite.frameBorder || 0;
+        let frame = animation.frame;
         let width = sprite.width;
         let height = sprite.height;
 

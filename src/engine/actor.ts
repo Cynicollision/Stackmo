@@ -2,7 +2,7 @@ import { Boundary } from './boundary';
 import { ClickEvent } from './canvas';
 import { ActorState, Direction } from './enum';
 import { DeferredEvent } from './events';
-import { Sprite } from './sprite';
+import { Sprite, SpriteAnimation } from './sprite';
 import { MathUtil } from './util';
 import { Vastgame } from './vastgame';
 
@@ -138,10 +138,16 @@ export class ActorInstance {
     speed: number = 0;
     direction: number = Direction.Right;
 
+    readonly spriteAnimation: SpriteAnimation;
+
     constructor(public parent: Actor, public id: number, public x: number = 0, public y: number = 0) {
         this.state = ActorState.Active;
         this.previousX = this.x;
         this.previousY = this.y;
+
+        if (this.parent.sprite) {
+            this.spriteAnimation = new SpriteAnimation(this.parent.sprite);
+        }
     }
 
     get hasMoved(): boolean {
