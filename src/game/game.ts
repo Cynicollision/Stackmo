@@ -75,6 +75,11 @@ demoRoom.onStart(() => {
         .follow(player, true);
 });
 
+
+// start the game
+demoGame.start(demoRoom);
+
+// TODO: LevelBuilder class
 function populateRoom(room: Room): ActorInstance[] {
     let Block = Actor.get('Block');
     let Player = Actor.get('Player');
@@ -100,7 +105,10 @@ function populateRoom(room: Room): ActorInstance[] {
                     break;
 
                 case '#':
-                    instances.push(demoRoom.createActor(Wall, j * 64, i * 64));
+                    let wall = demoRoom.createActor(Wall, j * 64, i * 64); 
+                    let frame = getWallFrame(levelMap, i, j);
+                    wall.spriteAnimation.set(frame);
+                    instances.push(wall);
                     break;
             }
         }
@@ -109,5 +117,90 @@ function populateRoom(room: Room): ActorInstance[] {
     return instances;
 }
 
-// start the game
-demoGame.start(demoRoom);
+function getWallFrame(levelMap: string[], row: number, position: number): number {
+
+    // enum values correspond to sprite sheet frames
+    enum WallStyle {
+        InnerCornerTopLeft = 0,
+        FlatTop = 1,
+        InnerCornerTopRight = 2,
+        OuterCornerTopLeft = 3,
+        OuterCornerBottomLeft = 4,
+        FlatLeft = 5,
+        Inner = 6,
+        FlatRight = 7,
+        OuterCornerTopRight = 8,
+        InnerCornerBottomLeft = 9,
+        FlatBottom = 10,
+        InnerCornerBottomRight = 11,
+        OuterCornerBottomRight = 12,
+        // TODO: need 6 more: CappedTop/Left/Right/Bottom, NarrowHorizontal/Vertical
+    }
+
+    let wallChar = '#';
+    let maxX = levelMap[0].length - 1;
+    let maxY = levelMap.length - 1;
+
+    let topFree = (row > 0) ? levelMap[row - 1][position] !== wallChar : false;
+    let topLeftFree = (row > 0 && position > 0) ? levelMap[row - 1][position - 1] !== wallChar : false;
+    let topRightFree = (row > 0 && position < maxX) ? levelMap[row - 1][position + 1] !== wallChar : false;
+    let bottomFree = (row < maxY) ? levelMap[row + 1][position] !== wallChar : false;
+    let bottomLeftFree = (row < maxY && position > 0) ? levelMap[row + 1][position - 1] !== wallChar : false;
+    let bottomRightFree = (row < maxY && position < maxX) ? levelMap[row + 1][position + 1] !== wallChar : false;
+    let leftFree = (position > 0) ? levelMap[row][position - 1] !== wallChar : false;
+    let rightFree = (position < maxX) ? levelMap[row][position + 1] !== wallChar : false;
+
+    if (!topFree && !topLeftFree && !topRightFree && !leftFree && !rightFree && !bottomLeftFree && !bottomFree && !bottomRightFree) {
+        return WallStyle.Inner;
+    }
+    
+    if (!topFree && !topLeftFree && !topRightFree && !leftFree && !rightFree && !bottomLeftFree && !bottomFree) {
+        return WallStyle.InnerCornerTopLeft
+    }
+
+    if (!topFree && !topLeftFree && !topRightFree && !leftFree && !rightFree && !bottomFree && !bottomRightFree) {
+        return WallStyle.InnerCornerTopRight;
+    }
+
+    if (!topFree && !topLeftFree && !leftFree && !rightFree && !bottomLeftFree && !bottomFree && !bottomRightFree) {
+        return WallStyle.InnerCornerBottomLeft;
+    }
+
+    if (!topFree&& !topRightFree && !leftFree && !rightFree && !bottomLeftFree && !bottomFree && !bottomRightFree) {
+        return WallStyle.InnerCornerBottomRight;
+    }
+
+    if (!topFree && !topLeftFree && !leftFree && !bottomLeftFree && !bottomFree) {
+        return WallStyle.FlatLeft;
+    }
+
+    if (!topFree && !topRightFree && !rightFree && !bottomRightFree && !bottomFree) {
+        return WallStyle.FlatRight;
+    }
+
+    if (!leftFree && !bottomLeftFree && !bottomFree && !bottomRightFree && !rightFree) {
+        return WallStyle.FlatBottom;
+    }
+
+    if (!leftFree && !topLeftFree && !topFree && !topRightFree && !rightFree) {
+        return WallStyle.FlatTop;
+    }
+
+    if (!leftFree && !bottomLeftFree && !bottomFree) {
+        return WallStyle.OuterCornerTopRight;
+    }
+
+    if (!leftFree && !topLeftFree && !topFree) {
+        return WallStyle.OuterCornerBottomRight;
+    }
+
+    if (!rightFree && !bottomRightFree && !rightFree) {
+        return WallStyle.OuterCornerTopLeft;
+    }
+    
+    if (!rightFree && !topRightFree && !topFree) {
+        return WallStyle.OuterCornerBottomLeft;
+    }
+
+    return WallStyle.Inner
+}

@@ -144,9 +144,9 @@ function animate(player: ActorInstance, direction: Direction, isMoving: boolean 
     }
 
     if (isMoving) {
-        player.sprite.animation.start(start, start + 1, 100);
+        player.spriteAnimation.start(start, start + 1, 100);
     }
     else {
-        player.sprite.animation.set(start);
+        player.spriteAnimation.set(start);
     }
 }
