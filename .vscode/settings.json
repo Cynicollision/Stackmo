@@ -1,0 +1,18 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+         "**/engine/**/*.js": true,
+        "**/engine/**/*.js.map": true,
+        "**/game/**/*.js": true,
+        "**/game/**/*.js.map": true,
+        "**/test/**/*.js.map": true,
+        "**/test/spec/*.js*": true,
+        "**/test/**/boot-tests.js": true,
+        "**/test/**/test-util.js": true
+    },
+    "git.ignoreLimitWarning": true
+}

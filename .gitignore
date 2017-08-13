@@ -1,4 +1,4 @@
-.vscode
+.vscode/launch.json
 dist
 node_modules
 typings
