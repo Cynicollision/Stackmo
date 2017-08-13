@@ -1,10 +1,11 @@
 import { Actor, Boundary, Sprite } from './../../engine/vastgame';
+import * as Constants from './../util/constants';
 import { ActorID } from './../util/enum';
 
 let Stone = Sprite.define({
     imageSource: 'resources/wall_sheet.png',
-    height: 64,
-    width: 64,
+    height: Constants.GridCellSize,
+    width: Constants.GridCellSize,
     frameBorder: 1,
 });
 

@@ -4,8 +4,8 @@ import { GameAction } from './../util/enum';
 
 let BlockSprite = Sprite.define({
     imageSource: 'resources/box.png',
-    height: 64,
-    width: 64,
+    height: Constants.GridCellSize,
+    width: Constants.GridCellSize,
 });
 
 let Block = Actor.define('Block', {
@@ -17,12 +17,12 @@ let Block = Actor.define('Block', {
 Block.onEvent(GameAction.Fall, (block, args) => {
     let room: Room = args.game.currentRoom;
 
-    if (!room.isPositionFree(block.x + 1, block.y + 65)) {
+    if (!room.isPositionFree(block.x + 1, block.y + Constants.GridCellSize + 1)) {
         return;
     }
 
     let startY = block.y;
-    let stopCondition = (): boolean =>  Math.abs(startY - block.y) >= 64;
+    let stopCondition = (): boolean =>  Math.abs(startY - block.y) >= Constants.GridCellSize;
 
     // move the target cell to the one below the previous target cell
     args.targetCell = args.targetCell.getAdjacentCell(Direction.Down);
@@ -41,7 +41,7 @@ Block.onEvent(GameAction.Stop, (block, args) => {
     block.setPosition(targetCell.x, targetCell.y);
 
     // check if falling
-    if (room.isPositionFree(block.x + 1, block.y + 65)) {
+    if (room.isPositionFree(block.x + 1, block.y + Constants.GridCellSize + 1)) {
         block.raiseEvent(GameAction.Fall, args);
     }
 });

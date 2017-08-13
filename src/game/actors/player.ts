@@ -1,11 +1,11 @@
-import { Actor, ActorInstance, Boundary,  Direction, GridCell, Room, Sprite } from './../../engine/vastgame';
+import { Actor, ActorInstance, Boundary, Direction, Input, GridCell, Room, Sprite } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, GameAction } from './../util/enum';
 
 let BotSprite = Sprite.define({
     imageSource: 'resources/bot_sheet.png',
-    height: 64,
-    width: 64,
+    height: Constants.GridCellSize,
+    width: Constants.GridCellSize,
     frameBorder: 1,
 });
 
@@ -20,7 +20,7 @@ let lastDirection: Direction;
 Player.onStep(self => {
 
     if (heldBlock) {
-        heldBlock.setPosition(self.x, self.y - 64);
+        heldBlock.setPosition(self.x, self.y - Constants.GridCellSize);
     }
 });
 
@@ -28,7 +28,7 @@ Player.onStep(self => {
 Player.onEvent(GameAction.Move, (player, args) => {
     let direction: Direction = args.direction;
     let startX = player.x;
-    let stopCondition = (): boolean => Math.abs(startX - player.x) >= 64;
+    let stopCondition = (): boolean => Math.abs(startX - player.x) >= Constants.GridCellSize;
 
     lastDirection = direction;
 
@@ -41,7 +41,7 @@ Player.onEvent(GameAction.Move, (player, args) => {
 // Falling
 Player.onEvent(GameAction.Fall, (player, args) => {
     let startY = player.y;
-    let stopCondition = (): boolean =>  Math.abs(startY - player.y) >= 64;
+    let stopCondition = (): boolean =>  Math.abs(startY - player.y) >= Constants.GridCellSize;
 
     // move the target cell to the one below the previous target cell
     args.targetCell = args.targetCell.getAdjacentCell(Direction.Down);
@@ -60,7 +60,7 @@ Player.onEvent(GameAction.Stop, (player, args) => {
     player.setPosition(targetCell.x, targetCell.y);
 
     // check if falling
-    if (room.isPositionFree(player.x + 1, player.y + 65)) {
+    if (room.isPositionFree(player.x + 1, player.y + Constants.GridCellSize + 1)) {
         player.raiseEvent(GameAction.Fall, args);
     }
     else {
@@ -73,7 +73,7 @@ Player.onEvent(GameAction.Jump, (player, args) => {
     let targetCell: GridCell = args.targetCell;
     let direction: Direction = args.direction;
     let startY = player.y;
-    let stopCondition = (): boolean => Math.abs(startY - player.y) >= 64;
+    let stopCondition = (): boolean => Math.abs(startY - player.y) >= Constants.GridCellSize;
 
     player.move(Constants.PlayerJumpSpeed, Direction.Up);
     player.raiseEventWhen(GameAction.Move, stopCondition, args);
@@ -98,7 +98,7 @@ Player.onEvent(GameAction.Lift, (player, args) => {
 // Drop
 Player.onEvent(GameAction.Drop, (player, args) => {
     let block: ActorInstance = args.block;
-    let offsetX = lastDirection === Direction.Left ? -64 : 64;
+    let offsetX = lastDirection === Direction.Left ? -Constants.GridCellSize : Constants.GridCellSize;
 
     args.targetCell = args.targetCell.getAdjacentCell(lastDirection);
     

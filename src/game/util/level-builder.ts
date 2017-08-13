@@ -1,21 +1,19 @@
-import { 
-    Actor,
-    ActorInstance, 
-    Room, 
-} from './../../engine/vastgame';
+import { Actor, ActorInstance, Room } from './../../engine/vastgame';
+import * as Constants from './../util/constants';
 
 export class LevelBuilder {
 
     static populateRoom(room: Room, roomID: number): ActorInstance[] {
+        let cellSize = Constants.GridCellSize;
+
         let Block = Actor.get('Block');
         let Player = Actor.get('Player');
         let Wall = Actor.get('Wall');
 
         let instances: ActorInstance[] = [];
-
         let levelMap = Levels.get(roomID);
 
-        room.setBackground('#0048b8', levelMap[0].length * 64, levelMap.length * 64);
+        room.setBackground(Constants.LevelBackgroundColor, levelMap[0].length * cellSize, levelMap.length * cellSize);
 
         for (let i = 0; i < levelMap.length; i++) {
             let row = levelMap[i];
@@ -25,15 +23,15 @@ export class LevelBuilder {
                 switch (row.charAt(j)) {
 
                     case 'X':
-                        instances.push(room.createActor(Block, j * 64, i * 64));
+                        instances.push(room.createActor(Block, j * cellSize, i * cellSize));
                         break;
 
                     case 'P':
-                        instances.push(room.createActor(Player, j * 64, i * 64));
+                        instances.push(room.createActor(Player, j * cellSize, i * cellSize));
                         break;
 
                     case '#':
-                        let wall = room.createActor(Wall, j * 64, i * 64); 
+                        let wall = room.createActor(Wall, j * cellSize, i * cellSize); 
                         let frame = this.getWallFrame(levelMap, i, j);
                         wall.spriteAnimation.set(frame);
                         instances.push(wall);
