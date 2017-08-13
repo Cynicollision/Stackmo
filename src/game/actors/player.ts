@@ -15,7 +15,7 @@ let Player = Actor.define(ActorID.Player, {
 });
 
 let heldBlock: ActorInstance;
-let lastDirection: Direction;
+let lastDirection: Direction = Direction.Right;
 
 Player.onStep(self => {
 
