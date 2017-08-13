@@ -1,29 +1,29 @@
 import { Actor, Key, Input, Room, Sprite, Vastgame } from './../../engine/vastgame';
-import { RoomID, Settings } from './../util/enum';
+import { ActorID, RoomID, Settings } from './../util/enum';
 import { Registry } from './../util/registry';
 
 const TitleWidth = 310;
 const TitleHeight = 150;
 
-let titleSprite = Sprite.define({
+let TitleSprite = Sprite.define({
     imageSource: 'resources/title.png',
     width: TitleWidth,
     height: TitleHeight,
 });
 
-let titleActor = Actor.define('Title', {
-    sprite: titleSprite,
+let TitleActor = Actor.define(ActorID.Title, {
+    sprite: TitleSprite,
 });
 
-let titleRoom = Room.define(RoomID.Title);
+let TitleRoom = Room.define(RoomID.Title);
 
-titleRoom.onStart(() => {
+TitleRoom.onStart(() => {
     let canvasWidth = Registry.get(Settings.CanvasWidth);
     let canvasHeight = Registry.get(Settings.CanvasHeight);
 
     let x = Math.floor((canvasWidth - TitleWidth) / 2);
     let y = Math.floor((canvasHeight - TitleHeight) / 4);
-    titleRoom.createActor(titleActor, x, y);
+    TitleRoom.createActor(TitleActor, x, y);
 
     Input.onClick(goToLevelSelect);
     Input.onKey(Key.Any, goToLevelSelect);
@@ -32,7 +32,7 @@ titleRoom.onStart(() => {
         Input.releaseClick();
         Input.releaseKey(Key.Any);
 
-        let gameRoom = Room.get(RoomID.Level);
-        Vastgame.get().setRoom(gameRoom);
+        let levelSelect = Room.get(RoomID.LevelSelect);
+        Vastgame.get().setRoom(levelSelect);
     }
 });

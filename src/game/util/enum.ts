@@ -5,7 +5,9 @@ export enum Settings {
 
 export enum ActorID {
     Block = 'Block',
+    LevelIcon = 'LevelIcon',
     Player = 'Player',
+    Title = 'Title',
     Wall = 'Wall',
 }
 

@@ -133,24 +133,44 @@ export class LevelBuilder {
 
 }
 
-class Levels {
+export class Levels {
+
+    static get count(): number {
+        let c = 0;
+        for (let p in this.levels) {
+            c++;
+        }
+        return c;
+    }
+
+    static levels: { [id: number]: string[] } = {
+        1: [
+            '##################',
+            '#                #',
+            '#       ##       #',
+            '#       ##       #',
+            '#XX              #',
+            '#####           X#',
+            '####### P      ###',
+            '##########    ####',
+            '##########  ######',
+            '##################',
+        ],
+        2: [
+            '##################',
+            '#                #',
+            '#                #',
+            '#                #',
+            '#                #',
+            '#                #',
+            '#                #',
+            '#       #   #    #',
+            '# PX X  # # #    #',
+            '##################',
+        ],
+    };
 
     static get(levelNumber: number) {
-        
-        switch (levelNumber) {
-            case 1: 
-                return [
-                    '##################',
-                    '#                #',
-                    '#       ##       #',
-                    '#       ##       #',
-                    '#XX              #',
-                    '#####           X#',
-                    '####### P      ###',
-                    '##########    ####',
-                    '##########  ######',
-                    '##################',
-                ];
-        }
+        return this.levels[levelNumber];
     }
 }

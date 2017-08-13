@@ -10,8 +10,7 @@ levelRoom.onStart(() => {
     let Block = Actor.get(ActorID.Block);
     let Wall = Actor.get(ActorID.Wall);
 
-    let instances = LevelBuilder.populateRoom(levelRoom, 1);
-    let player = instances.find(actorInstance => actorInstance.parent === Actor.get(ActorID.Player));
+    let player = levelRoom.getInstances().find(actorInstance => actorInstance.parent === Actor.get(ActorID.Player));
 
     // define a view that follows the player
     let canvasWidth = Registry.get(Settings.CanvasWidth);

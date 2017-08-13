@@ -9,6 +9,7 @@ require('./actors/player');
 require('./actors/wall');
 
 require('./rooms/level');
+require('./rooms/level-select');
 require('./rooms/title');
 
 // determine canvas dimensions based on viewport size
