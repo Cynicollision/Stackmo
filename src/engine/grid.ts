@@ -60,6 +60,10 @@ export class GridCell {
     containsInstanceOf(actor: Actor): boolean {
         return this.getContents().some(contents => contents.parent === actor);
     }
+
+    containsAnyInstance(): boolean {
+        return !!this.getContents().length;
+    }
 }
 
 export class Grid {
@@ -79,5 +83,9 @@ export class Grid {
         let event = new GridClickEvent(this, x, y);
 
         this._onClick(event);
+    }
+
+    getCellAtPosition(x: number, y: number): GridCell {
+        return new GridCell(this, x, y);
     }
 }

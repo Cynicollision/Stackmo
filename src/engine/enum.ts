@@ -18,4 +18,8 @@ export enum GameState {
 export enum Key {
     Any = -1,
     Space = 32,
+    Left = 37,
+    Up = 38,
+    Right = 39,
+    Down = 40,
 }
