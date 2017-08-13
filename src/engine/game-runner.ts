@@ -22,14 +22,14 @@ export class GameRunner {
     }
 
     start(): void {
-        let room = GameContext.getCurrentRoom();
         let stepSize: number = 1 / this.targetFPS;
         let offset: number = 0;
         let previous: number = window.performance.now();
 
         let gameLoop: FrameRequestCallback = (): void => {
-
+            let room = GameContext.getCurrentRoom();
             let current: number = window.performance.now();
+            
             offset += (Math.min(1, (current - previous) / 1000));
             
             while (offset > stepSize) {
