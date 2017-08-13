@@ -3,12 +3,14 @@ import { GameState } from './enum';
 import { GameContext } from './game-context';
 import { GameOptions } from './vastgame';
 
-const DefaultFPS = 30;
+const DefaultFPS = 60;
 
 export class GameRunner {
     private state: GameState = GameState.Paused;
+    readonly targetFPS: number;
 
     constructor(private canvas: GameCanvas, private options: GameOptions) {
+        this.targetFPS = options.targetFPS || DefaultFPS;
     }
 
     get isRunning(): boolean {
@@ -21,7 +23,7 @@ export class GameRunner {
 
     start(context: GameContext): void {
         let room = context.room;
-        let stepSize: number = 1 / this.options.targetFPS || DefaultFPS;
+        let stepSize: number = 1 / this.targetFPS;
         let offset: number = 0;
         let previous: number = window.performance.now();
 
@@ -54,6 +56,9 @@ export class GameRunner {
         // start the game loop
         this.state = GameState.Running;
         requestAnimationFrame(gameLoop);
-        room._onStart();
+
+        if (room.hasStart) {
+            room.callStart();
+        }
     }
 }

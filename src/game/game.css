@@ -1,0 +1,11 @@
+html {
+    touch-action: manipulation;
+}
+body {
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    overflow: hidden;
+}

@@ -4,6 +4,15 @@ import { GameLifecycleCallback } from './vastgame';
 import { Grid } from './grid';
 import { View } from './view';
 
+export class Background {
+    
+    constructor(
+        readonly color: string, 
+        readonly width: number, 
+        readonly height: number) {
+    }
+}
+
 export class Room {
 
     private static nextActorInstanceID = (() => {
@@ -20,10 +29,20 @@ export class Room {
     private grid: Grid;
     private view: View;
 
-    _onStart: GameLifecycleCallback;
+    private onStartCallback: GameLifecycleCallback;
+    
+    background: Background;
+
+    get hasStart(): boolean {
+        return !!this.onStartCallback;
+    }
 
     onStart(callback: GameLifecycleCallback): void {
-        this._onStart = callback;
+        this.onStartCallback = callback;
+    }
+
+    callStart(): void {
+        this.onStartCallback();
     }
 
     defineGrid(tileSize: number): Grid {
@@ -36,6 +55,10 @@ export class Room {
         this.view = new View(x, y, width, height);
 
         return this.view;
+    }
+
+    setBackground(color: string, width: number, height: number): void {
+        this.background = new Background(color, width, height);
     }
 
     step(): void {

@@ -16,7 +16,6 @@ let canvasWidth = fillScreen ? window.innerWidth : 800;
 let canvasHeight = fillScreen ? window.innerHeight : 600;
 
 let options: GameOptions = {
-    targetFPS: 60,
     canvas: { 
         width: canvasWidth, 
         height: canvasHeight,
@@ -75,7 +74,6 @@ demoRoom.onStart(() => {
         .follow(player, true);
 });
 
-
 // start the game
 demoGame.start(demoRoom);
 
@@ -88,6 +86,8 @@ function populateRoom(room: Room): ActorInstance[] {
     let instances: ActorInstance[] = [];
 
     let levelMap = Levels.get(1);
+
+    room.setBackground('#0048b8', levelMap[0].length * 64, levelMap.length * 64);
 
     for (let i = 0; i < levelMap.length; i++) {
         let row = levelMap[i];

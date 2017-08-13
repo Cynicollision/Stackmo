@@ -1,4 +1,4 @@
-import { Room } from './room';
+import { Background, Room } from './room';
 import { Sprite, SpriteAnimation } from './sprite';
 import { View } from './view';
 
@@ -44,17 +44,25 @@ export class CanvasHTML2D implements GameCanvas {
 
     onMouseDown(callback: (event: ClickEvent) => void): void {
         this.canvasElement.onmousedown = <any>((ev: MouseEvent) => {
-            callback({ button: ev.button, x: ev.pageX, y: ev.pageY });
+            callback({ button: ev.button, x: ev.offsetX, y: ev.offsetY });
         });
     }
 
     drawRoom(room: Room) {
-
+        
         // clear the canvas
         this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
 
         // get view offset
         let [offsetX, offsetY] = this.getViewOffset(room.getView());
+
+        // draw room background
+        if (room.background) {
+            this.context.beginPath();
+            this.context.rect(-offsetX, -offsetY, room.background.width, room.background.height);
+            this.context.fillStyle = room.background.color;
+            this.context.fill();
+        }
 
         room.getInstances().forEach(instance => {
 
