@@ -38,8 +38,16 @@ class VastgameHTML2D {
     }
 
     start(room: Room) {
-        this.context.setCurrentRoom(room);
+        this.setRoom(room);
         this.runner.start(this.context);
+    }
+
+    setRoom(room: Room) {
+        this.context.setCurrentRoom(room);
+
+        if (room.hasStart) {
+            room.callStart();
+        }
     }
 
     getContext(): GameContext {
@@ -51,13 +59,16 @@ export class Vastgame {
     private static readonly game = new VastgameHTML2D();
 
     static init(canvasElementID: string, options?: GameOptions): VastgameHTML2D {
-        Vastgame.game.init(canvasElementID, options);
+        this.game.init(canvasElementID, options);
 
-        return Vastgame.game;
+        return this.game;
+    }
+
+    static get(): VastgameHTML2D {
+        return this.game;
     }
 
     static getContext(): GameContext {
-        return Vastgame.game.getContext();
+        return this.game.getContext();
     }
 }
-

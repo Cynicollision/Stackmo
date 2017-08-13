@@ -22,7 +22,7 @@ export class GameRunner {
     }
 
     start(context: GameContext): void {
-        let room = context.room;
+        let room = context.getCurrentRoom();
         let stepSize: number = 1 / this.targetFPS;
         let offset: number = 0;
         let previous: number = window.performance.now();
@@ -56,9 +56,5 @@ export class GameRunner {
         // start the game loop
         this.state = GameState.Running;
         requestAnimationFrame(gameLoop);
-
-        if (room.hasStart) {
-            room.callStart();
-        }
     }
 }

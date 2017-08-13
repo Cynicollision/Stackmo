@@ -4,13 +4,14 @@ import { DeferredEvent } from './events';
 import { Room } from './room';
 
 export class GameContext {
-    private readonly actors: { [index: number]: Actor } = {};
+    private readonly actors: { [index: string]: Actor } = {};
     private readonly events: { [index: number]: DeferredEvent } = {};
+    private readonly rooms: { [index: string]: Room } = {};
 
     private canvas: CanvasHTML2D;
     private currentRoom: Room;
 
-    get room(): Room {
+    getCurrentRoom(): Room {
         return this.currentRoom;
     }
 
@@ -32,6 +33,22 @@ export class GameContext {
         }
 
         return this.actors[name];
+    }
+
+    defineRoom(name: string, room: Room): void {
+        if (this.rooms[name]) {
+            throw new Error(`Room ${room} has already been defined.`);
+        }
+
+        this.rooms[name] = room;
+    }
+
+    getRoom(name: string): Room {
+        if (!this.rooms[name]) {
+            throw new Error(`Room ${name} has not been defined.`);
+        }
+
+        return this.rooms[name];
     }
 
     registerEvent(event: DeferredEvent): void {

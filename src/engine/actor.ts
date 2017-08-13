@@ -185,7 +185,7 @@ export class ActorInstance {
 
     private setGameContextEventArgs(eventArgs: any): void {
         eventArgs.game = {
-            currentRoom: Vastgame.getContext().room,
+            currentRoom: Vastgame.getContext().getCurrentRoom(),
         };
     }
 
