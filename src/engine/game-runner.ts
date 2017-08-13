@@ -21,8 +21,8 @@ export class GameRunner {
         this.state = GameState.Paused;
     }
 
-    start(context: GameContext): void {
-        let room = context.getCurrentRoom();
+    start(): void {
+        let room = GameContext.getCurrentRoom();
         let stepSize: number = 1 / this.targetFPS;
         let offset: number = 0;
         let previous: number = window.performance.now();
@@ -35,7 +35,7 @@ export class GameRunner {
             while (offset > stepSize) {
 
                 if (this.isRunning) {
-                    context.checkAndFireEvents();
+                    GameContext.checkAndFireEvents();
                     room.step();
                 }
                 else {

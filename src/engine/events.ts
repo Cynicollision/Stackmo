@@ -1,9 +1,9 @@
-import { Vastgame } from './vastgame';
+import { GameContext } from './game-context';
 
 export class DeferredEvent {
 
     static register(event: DeferredEvent): void {
-        Vastgame.getContext().registerEvent(event);
+        GameContext.registerEvent(event);
     }
 
     constructor(

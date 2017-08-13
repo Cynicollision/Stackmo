@@ -1,8 +1,8 @@
 import { Actor, ActorInstance, CollisionCallback } from './actor';
 import { ClickEvent } from './canvas';
-import { GameLifecycleCallback } from './vastgame';
+import { GameContext } from './game-context';
 import { Grid } from './grid';
-import { Vastgame } from './vastgame';
+import { GameLifecycleCallback } from './vastgame';
 import { View } from './view';
 
 export class Background {
@@ -23,12 +23,12 @@ export class Room {
 
     static define(name: string): Room {
         let room = new Room();
-        Vastgame.getContext().defineRoom(name, room);
+        GameContext.defineRoom(name, room);
         return room;
     }
 
     static get(name: string): Room {
-        return Vastgame.getContext().getRoom(name);
+        return GameContext.getRoom(name);
     }
 
     private readonly actorInstanceMap: { [index: number]: ActorInstance } = {};

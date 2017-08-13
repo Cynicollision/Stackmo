@@ -21,37 +21,28 @@ export interface GameOptions {
 }
 
 class VastgameHTML2D {
-    private context: GameContext;
     private runner: GameRunner;
-
-    constructor() {
-        this.context = new GameContext();
-    }
 
     init(canvasElementID, options: GameOptions = {}): void {
         let element = <HTMLCanvasElement>document.getElementById(canvasElementID);
         let canvas = new CanvasHTML2D(element);
         canvas.init(options.canvas);
 
-        this.context.setCanvas(canvas);
+        GameContext.setCanvas(canvas);
         this.runner = new GameRunner(canvas, options);
     }
 
     start(room: Room) {
         this.setRoom(room);
-        this.runner.start(this.context);
+        this.runner.start();
     }
 
     setRoom(room: Room) {
-        this.context.setCurrentRoom(room);
+        GameContext.setCurrentRoom(room);
 
         if (room.hasStart) {
             room.callStart();
         }
-    }
-
-    getContext(): GameContext {
-        return this.context;
     }
 }
 
@@ -68,7 +59,7 @@ export class Vastgame {
         return this.game;
     }
 
-    static getContext(): GameContext {
-        return this.game.getContext();
-    }
+    // static getContext(): GameContext {
+    //     return this.game.getContext();
+    // }
 }

@@ -2,9 +2,9 @@ import { Boundary } from './boundary';
 import { ClickEvent } from './canvas';
 import { ActorState, Direction } from './enum';
 import { DeferredEvent } from './events';
+import { GameContext } from './game-context';
 import { Sprite, SpriteAnimation } from './sprite';
 import { MathUtil } from './util';
-import { Vastgame } from './vastgame';
 
 export interface ActorLifecycle {
     onCreate: LifecycleCallback;
@@ -42,13 +42,13 @@ export class Actor {
 
     static define(name: string, options?: ActorOptions): Actor {
         let actor = new Actor(name, options);
-        Vastgame.getContext().defineActor(name, actor);
+        GameContext.defineActor(name, actor);
 
         return actor;
     }
 
     static get(name: string): Actor {
-        return Vastgame.getContext().getActor(name);
+        return GameContext.getActor(name);
     }
 
     // lifecycle callbacks
@@ -185,7 +185,7 @@ export class ActorInstance {
 
     private setGameContextEventArgs(eventArgs: any): void {
         eventArgs.game = {
-            currentRoom: Vastgame.getContext().getCurrentRoom(),
+            currentRoom: GameContext.getCurrentRoom(),
         };
     }
 
