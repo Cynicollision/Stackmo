@@ -1,7 +1,9 @@
-import { Actor, ActorInstance, Boundary, Direction, GridCell, Room, Sprite } from './../../engine/vastgame';
+import { Actor, Boundary, Direction, GridCell, Room, Sprite } from './../../engine/vastgame';
+import * as Constants from './../util/constants';
+import { GameAction } from './../util/enum';
 
 let BlockSprite = Sprite.define({
-    imageSource: 'img/box.png',
+    imageSource: 'resources/box.png',
     height: 64,
     width: 64,
 });
@@ -11,11 +13,8 @@ let Block = Actor.define('Block', {
     sprite: BlockSprite,
 });
 
-// TODO: need a way to share Game-wide constants, enums, code
-const BlockFallSpeed = 8;
-
 // Falling
-Block.onEvent('fall', (block, args) => {
+Block.onEvent(GameAction.Fall, (block, args) => {
     let room: Room = args.game.currentRoom;
 
     if (!room.isPositionFree(block.x + 1, block.y + 65)) {
@@ -28,12 +27,12 @@ Block.onEvent('fall', (block, args) => {
     // move the target cell to the one below the previous target cell
     args.targetCell = args.targetCell.getAdjacentCell(Direction.Down);
 
-    block.move(BlockFallSpeed, Direction.Down);
-    block.raiseEventWhen('stop', stopCondition, args);
+    block.move(Constants.BlockFallSpeed, Direction.Down);
+    block.raiseEventWhen(GameAction.Stop, stopCondition, args);
 })
 
 // Stopping
-Block.onEvent('stop', (block, args) => {
+Block.onEvent(GameAction.Stop, (block, args) => {
     let room: Room = args.game.currentRoom;
     let targetCell: GridCell = args.targetCell;
 
@@ -43,6 +42,6 @@ Block.onEvent('stop', (block, args) => {
 
     // check if falling
     if (room.isPositionFree(block.x + 1, block.y + 65)) {
-        block.raiseEvent('fall', args);
+        block.raiseEvent(GameAction.Fall, args);
     }
 });

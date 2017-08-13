@@ -2,7 +2,7 @@ import {
     Actor,
     ActorInstance, 
     Room, 
-} from './../engine/vastgame';
+} from './../../engine/vastgame';
 
 export class LevelBuilder {
 

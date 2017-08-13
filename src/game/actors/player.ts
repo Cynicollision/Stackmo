@@ -1,36 +1,15 @@
-import { 
-    Actor,
-    ActorInstance,
-    Boundary, 
-    Direction,
-    Grid,
-    GridCell,
-    Room,
-    Sprite
-} from './../../engine/vastgame';
-
-enum PlayerEvent {
-    Drop = 'drop',
-    Fall = 'fall',
-    Jump = 'jump',
-    Lift = 'lift',
-    Move = 'move',
-    Stop = 'stop',
-}
-
-// TODO: need a way to share Game-wide constants, enums
-const PlayerMoveSpeed = 4;
-const PlayerJumpSpeed = 8;
-const PlayerFallSpeed = 8;
+import { Actor, ActorInstance, Boundary,  Direction, GridCell, Room, Sprite } from './../../engine/vastgame';
+import * as Constants from './../util/constants';
+import { ActorID, GameAction } from './../util/enum';
 
 let BotSprite = Sprite.define({
-    imageSource: 'img/bot_sheet.png',
+    imageSource: 'resources/bot_sheet.png',
     height: 64,
     width: 64,
     frameBorder: 1,
 });
 
-let Player = Actor.define('Player', {
+let Player = Actor.define(ActorID.Player, {
     boundary: Boundary.fromSprite(BotSprite),
     sprite: BotSprite,
 });
@@ -46,33 +25,33 @@ Player.onStep(self => {
 });
 
 // Walking
-Player.onEvent(PlayerEvent.Move, (player, args) => {
+Player.onEvent(GameAction.Move, (player, args) => {
     let direction: Direction = args.direction;
     let startX = player.x;
     let stopCondition = (): boolean => Math.abs(startX - player.x) >= 64;
 
     lastDirection = direction;
 
-    player.move(PlayerMoveSpeed, direction);
-    player.raiseEventWhen(PlayerEvent.Stop, stopCondition, args);
+    player.move(Constants.PlayerMoveSpeed, direction);
+    player.raiseEventWhen(GameAction.Stop, stopCondition, args);
 
     animate(player, direction, true);
 });
 
 // Falling
-Player.onEvent(PlayerEvent.Fall, (player, args) => {
+Player.onEvent(GameAction.Fall, (player, args) => {
     let startY = player.y;
     let stopCondition = (): boolean =>  Math.abs(startY - player.y) >= 64;
 
     // move the target cell to the one below the previous target cell
     args.targetCell = args.targetCell.getAdjacentCell(Direction.Down);
 
-    player.move(PlayerFallSpeed, Direction.Down);
-    player.raiseEventWhen(PlayerEvent.Stop, stopCondition, args);
+    player.move(Constants.PlayerFallSpeed, Direction.Down);
+    player.raiseEventWhen(GameAction.Stop, stopCondition, args);
 })
 
 // Stopping
-Player.onEvent(PlayerEvent.Stop, (player, args) => {
+Player.onEvent(GameAction.Stop, (player, args) => {
     let room: Room = args.game.currentRoom;
     let targetCell: GridCell = args.targetCell;
 
@@ -82,7 +61,7 @@ Player.onEvent(PlayerEvent.Stop, (player, args) => {
 
     // check if falling
     if (room.isPositionFree(player.x + 1, player.y + 65)) {
-        player.raiseEvent(PlayerEvent.Fall, args);
+        player.raiseEvent(GameAction.Fall, args);
     }
     else {
         animate(player, lastDirection);
@@ -90,25 +69,25 @@ Player.onEvent(PlayerEvent.Stop, (player, args) => {
 });
 
 // Jumping
-Player.onEvent(PlayerEvent.Jump, (player, args) => {
+Player.onEvent(GameAction.Jump, (player, args) => {
     let targetCell: GridCell = args.targetCell;
     let direction: Direction = args.direction;
     let startY = player.y;
     let stopCondition = (): boolean => Math.abs(startY - player.y) >= 64;
 
-    player.move(PlayerJumpSpeed, Direction.Up);
-    player.raiseEventWhen(PlayerEvent.Move, stopCondition, args);
+    player.move(Constants.PlayerJumpSpeed, Direction.Up);
+    player.raiseEventWhen(GameAction.Move, stopCondition, args);
 });
 
 // Lifting
-Player.onEvent(PlayerEvent.Lift, (player, args) => {
+Player.onEvent(GameAction.Lift, (player, args) => {
     let block: ActorInstance = args.block;
     let targetCell: GridCell = args.targetCell;
 
     let validBlockLiftCell = lastDirection === Direction.Left ? Direction.Right : Direction.Left;
     
     if (heldBlock && block === heldBlock) {
-        player.raiseEvent(PlayerEvent.Drop, args);
+        player.raiseEvent(GameAction.Drop, args);
     }
     else if (targetCell.getAdjacentCell(validBlockLiftCell).containsInstance(player)) {
         heldBlock = block;
@@ -117,7 +96,7 @@ Player.onEvent(PlayerEvent.Lift, (player, args) => {
 });
 
 // Drop
-Player.onEvent(PlayerEvent.Drop, (player, args) => {
+Player.onEvent(GameAction.Drop, (player, args) => {
     let block: ActorInstance = args.block;
     let offsetX = lastDirection === Direction.Left ? -64 : 64;
 
@@ -126,7 +105,7 @@ Player.onEvent(PlayerEvent.Drop, (player, args) => {
     heldBlock = null;
 
     block.setPositionRelative(offsetX, 0);
-    block.raiseEvent('fall', args);
+    block.raiseEvent(GameAction.Fall, args);
 
     animate(player, lastDirection);
 });
