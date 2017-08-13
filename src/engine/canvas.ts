@@ -88,6 +88,6 @@ export class CanvasHTML2D implements GameCanvas {
 
         let frameOffset = frame * frameBorder;
 
-        this.context.drawImage(image, frame * width + frameOffset, 0, width, height, x, y, width, height);
+        this.context.drawImage(image, frame * width + frameOffset, 0, width, height, Math.floor(x), Math.floor(y), width, height);
     }
 }
