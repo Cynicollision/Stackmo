@@ -16,6 +16,7 @@ let titleActor = Actor.define('Title', {
 });
 
 let titleRoom = Room.define(RoomID.Title);
+
 titleRoom.onStart(() => {
     let canvasWidth = Registry.get(Settings.CanvasWidth);
     let canvasHeight = Registry.get(Settings.CanvasHeight);
@@ -28,6 +29,9 @@ titleRoom.onStart(() => {
     Input.onKey(Key.Any, goToLevelSelect);
 
     function goToLevelSelect() {
+        Input.releaseClick();
+        Input.releaseKey(Key.Any);
+
         let gameRoom = Room.get(RoomID.Level);
         Vastgame.get().setRoom(gameRoom);
     }

@@ -1,12 +1,12 @@
 import { Key } from './enum';
 
 export class Input {
-    private static keyboardHandlers: { [keyCode: number]: () => void } = {};
+    private static keyboardHandlers: { [code: number]: () => void } = {};
 
     static init() {
 
         document.body.onkeydown = (event: KeyboardEvent) => {
-            let callback = this.keyboardHandlers[event.keyCode];
+            let callback = this.keyboardHandlers[event.keyCode || event.code];
 
             if (!callback) {
                 callback = this.keyboardHandlers[Key.Any];
@@ -24,5 +24,13 @@ export class Input {
 
     static onClick(callback: () => void): void {
         document.body.onclick = callback;
+    }
+
+    static releaseKey(key: Key): void {
+        delete this.keyboardHandlers[key];
+    }
+
+    static releaseClick(): void {
+        document.body.onclick = null;
     }
 }
