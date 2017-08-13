@@ -14,3 +14,8 @@ export enum GameState {
     Running = 1,
     Paused = 2,
 }
+
+export enum Key {
+    Any = -1,
+    Space = 32,
+}

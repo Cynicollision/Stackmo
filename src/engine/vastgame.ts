@@ -1,15 +1,17 @@
 import { CanvasHTML2D, CanvasOptions, GameCanvas } from './canvas';
+import { Input } from './input';
 import { GameContext } from './game-context';
 import { GameRunner } from './game-runner';
 import { Room } from './room';
 
 // export public modules
-export * from './actor';
-export * from './boundary';
+export { Actor, ActorInstance } from './actor';
+export { Boundary } from './boundary';
 export * from './enum';
+export { Input } from './input';
 export { Grid, GridCell } from './grid';
-export * from './room';
-export * from './sprite';
+export { Room } from './room';
+export { Sprite } from './sprite';
 
 export interface GameLifecycleCallback {
     (): void;
@@ -24,6 +26,8 @@ class VastgameHTML2D {
     private runner: GameRunner;
 
     init(canvasElementID, options: GameOptions = {}): void {
+        Input.init();
+        
         let element = <HTMLCanvasElement>document.getElementById(canvasElementID);
         let canvas = new CanvasHTML2D(element);
         canvas.init(options.canvas);
@@ -58,8 +62,4 @@ export class Vastgame {
     static get(): VastgameHTML2D {
         return this.game;
     }
-
-    // static getContext(): GameContext {
-    //     return this.game.getContext();
-    // }
 }
