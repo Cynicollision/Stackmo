@@ -60,7 +60,22 @@ export class LevelBuilder {
             FlatBottom = 10,
             InnerCornerBottomRight = 11,
             OuterCornerBottomRight = 12,
-            // TODO: need 10 more: CappedTop/Left/Right/Bottom, NarrowHorizontal/Vertical, TUp, TLeft, TRight, TBottom
+            NarrowHorizontal = 13,
+            NarrowVertical = 14,
+            CappedLeft = 15,
+            CappedTop = 16,
+            CappedRight = 17,
+            CappedBottom = 18,
+            ThreewayNarrowTop = 19,
+            ThreewayNarrowRight = 20,
+            ThreewayNarrowBottom = 21,
+            ThreewayNarrowLeft = 22,
+            Fourway = 23,
+            Solo = 24,
+            ThreewayTop = 25,
+            ThreewayRight = 26,
+            ThreewayBottom = 27,
+            ThreewayLeft = 28,
         }
 
         let wallChar = '#';
@@ -96,6 +111,22 @@ export class LevelBuilder {
             return WallStyle.InnerCornerBottomRight;
         }
 
+        if (!topFree && !topLeftFree && !leftFree && !bottomLeftFree && !bottomFree && !rightFree) {
+            return WallStyle.ThreewayRight;
+        }
+
+        if (!topFree && !topRightFree && !rightFree && !bottomRightFree && !bottomFree && !leftFree) {
+            return WallStyle.ThreewayLeft;
+        }
+
+        if (!leftFree && !bottomLeftFree && !bottomFree && !bottomRightFree && !rightFree && !topFree) {
+            return WallStyle.ThreewayTop;
+        }
+
+        if (!leftFree && !topLeftFree && !topFree && !topRightFree && !rightFree && !bottomFree) {
+            return WallStyle.ThreewayBottom;
+        }
+
         if (!topFree && !topLeftFree && !leftFree && !bottomLeftFree && !bottomFree) {
             return WallStyle.FlatLeft;
         }
@@ -112,6 +143,10 @@ export class LevelBuilder {
             return WallStyle.FlatTop;
         }
 
+        if (!topFree && !leftFree && !bottomFree && !rightFree) {
+            return WallStyle.Fourway;
+        }
+
         if (!leftFree && !bottomLeftFree && !bottomFree) {
             return WallStyle.OuterCornerTopRight;
         }
@@ -120,7 +155,7 @@ export class LevelBuilder {
             return WallStyle.OuterCornerBottomRight;
         }
 
-        if (!rightFree && !bottomRightFree && !rightFree) {
+        if (!rightFree && !bottomRightFree && !bottomFree) {
             return WallStyle.OuterCornerTopLeft;
         }
         
@@ -128,7 +163,47 @@ export class LevelBuilder {
             return WallStyle.OuterCornerBottomLeft;
         }
 
-        return WallStyle.Inner
+        if (!topFree && !bottomFree && !leftFree) {
+            return WallStyle.ThreewayNarrowLeft;
+        }
+
+        if (!topFree && !bottomFree && !rightFree) {
+            return WallStyle.ThreewayNarrowRight;
+        }
+
+        if (!topFree && !leftFree && !rightFree) {
+            return WallStyle.ThreewayNarrowTop;
+        }
+
+        if (!leftFree && !rightFree && !bottomFree) {
+            return WallStyle.ThreewayNarrowBottom;
+        }
+
+        if (!leftFree && !rightFree) {
+            return WallStyle.NarrowHorizontal;
+        }
+
+        if (!topFree && !bottomFree) { 
+            return WallStyle.NarrowVertical;
+        }
+
+        if (!topFree) {
+            return WallStyle.CappedBottom;
+        }
+
+        if (!leftFree) {
+            return WallStyle.CappedRight;
+        }
+
+        if (!bottomFree) {
+            return WallStyle.CappedTop;
+        }
+
+        if (!rightFree) {
+            return WallStyle.CappedLeft;
+        }
+
+        return WallStyle.Solo;
     }
 
 }
@@ -158,14 +233,14 @@ export class Levels {
         ],
         2: [
             '##################',
+            '#    #           #',
+            '#   ##   #       #',
+            '#P   #           #',
+            '##       #       #',
+            '#       ###  #####',
+            '####     #       #',
             '#                #',
-            '#                #',
-            '#                #',
-            '#                #',
-            '#                #',
-            '#                #',
-            '#       #   #    #',
-            '# PX X  # # #    #',
+            '# XX X  # # #  XX#',
             '##################',
         ],
     };
