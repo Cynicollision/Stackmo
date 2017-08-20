@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var copy = require('gulp-copy');
 var del = require('del');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
@@ -22,4 +23,11 @@ gulp.task('pack', function () {
     var gameTask = gulp.src(['dist/game.min.js']).pipe(gulp.dest('build/dist'))
 
     return [viewTask, resourcesTask, gameTask];
-})
+});
+
+gulp.task('copy-android', function () {
+
+    return gulp
+        .src(['./build/**/*'])
+        .pipe(copy('./android/vastdroid/app/src/main/assets', {}));
+});
