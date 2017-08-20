@@ -1,12 +1,14 @@
 export enum Settings {
     CanvasWidth = 'CanvasWidth',
     CanvasHeight = 'CanvasHeight',
+    UnlockedLevels = 'UnlockedLevels',
 }
 
 export enum ActorID {
     Block = 'Block',
     LevelIcon = 'LevelIcon',
     Player = 'Player',
+    ScrollArrow = 'ScrollArrow',
     Title = 'Title',
     Wall = 'Wall',
 }
