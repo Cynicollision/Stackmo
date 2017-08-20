@@ -9,3 +9,15 @@ src/game/**/*.js*
 src/test/**/*.js*
 src/test/boot-tests.js
 src/test/test-util.js
+
+*.jar
+*.iml
+.idea
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
