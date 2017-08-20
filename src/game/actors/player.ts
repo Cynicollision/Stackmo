@@ -73,10 +73,17 @@ Player.onEvent(GameAction.Jump, (player, args) => {
     let targetCell: GridCell = args.targetCell;
     let direction: Direction = args.direction;
     let startY = player.y;
-    let stopCondition = (): boolean => Math.abs(startY - player.y) >= Constants.GridCellSize;
 
-    player.move(Constants.PlayerJumpSpeed, Direction.Up);
-    player.raiseEventWhen(GameAction.Move, stopCondition, args);
+    // clearance check
+    let cellAbovePlayer = targetCell.getAdjacentCell(direction === Direction.Right ? Direction.Left : Direction.Right);
+    let cellAboveBox = !!heldBlock ? cellAbovePlayer.getAdjacentCell(Direction.Up) : null;
+
+    if (!cellAbovePlayer.containsAnyInstance() && (!cellAboveBox || cellAboveBox && !cellAboveBox.containsAnyInstance())) {
+        // stop after moving up one space
+        let stopCondition = (): boolean => Math.abs(startY - player.y) >= Constants.GridCellSize;
+        player.move(Constants.PlayerJumpSpeed, Direction.Up);
+        player.raiseEventWhen(GameAction.Move, stopCondition, args);
+    }
 });
 
 // Lifting
@@ -89,7 +96,7 @@ Player.onEvent(GameAction.Lift, (player, args) => {
     if (heldBlock && block === heldBlock) {
         player.raiseEvent(GameAction.Drop, args);
     }
-    else if (targetCell.getAdjacentCell(validBlockLiftCell).containsInstance(player)) {
+    else if (!heldBlock && targetCell.getAdjacentCell(validBlockLiftCell).containsInstance(player)) {
         heldBlock = block;
         animate(player, lastDirection);
     }
@@ -112,20 +119,19 @@ Player.onEvent(GameAction.Drop, (player, args) => {
 
 // Helpers
 function animate(player: ActorInstance, direction: Direction, isMoving: boolean = false): void {
-    let isHolding = !!heldBlock;
-    let start = 0;
+    let startFrame = 0;
     
-    if (isHolding) {
-        start = direction === Direction.Right ? 4 : 6;
+    if (!!heldBlock) {
+        startFrame = direction === Direction.Right ? 4 : 6;
     }
     else {
-        start = direction === Direction.Right ? 0 : 2;
+        startFrame = direction === Direction.Right ? 0 : 2;
     }
 
     if (isMoving) {
-        player.spriteAnimation.start(start, start + 1, 100);
+        player.spriteAnimation.start(startFrame, startFrame + 1, 100);
     }
     else {
-        player.spriteAnimation.set(start);
+        player.spriteAnimation.set(startFrame);
     }
 }
