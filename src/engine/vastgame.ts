@@ -12,6 +12,7 @@ export { Input } from './input';
 export { Grid, GridCell } from './grid';
 export { Room } from './room';
 export { Sprite } from './sprite';
+export { View } from './view';
 
 export interface GameLifecycleCallback {
     (): void;
