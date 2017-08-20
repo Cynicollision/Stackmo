@@ -18,6 +18,10 @@ export interface ActorInstanceDrawEvent {
     (self: ActorInstance, context: GameCanvasContext): void;
 }
 
+export interface RoomDrawEvent {
+    (context: GameCanvasContext): void;
+}
+
 export interface GameCanvas {
     drawRoom(room: Room);
     drawSprite(sprite: Sprite, x: number, y: number, frame: number): void;
@@ -71,8 +75,13 @@ export class CanvasHTML2D implements GameCanvas {
             this.context.fill();
         }
 
+        // call room draw event callback
+        if (room.hasDraw) {
+            room.callDraw(this.gameCanvasContext);
+        }
+
         room.getInstances().forEach(instance => {
-            // call draw event callbacks
+            // call actor draw event callbacks
             if (instance.parent.hasDraw) {
                 instance.parent.callDraw(instance, this.gameCanvasContext);
             }
@@ -101,14 +110,19 @@ export class CanvasHTML2D implements GameCanvas {
 
         this.context.drawImage(image, frame * width + frameOffset, 0, width, height, Math.floor(x), Math.floor(y), width, height);
     }
+
+    drawSpriteViewRelative(sprite: Sprite, x: number, y: number, frame: number, view: View): void {
+        let [offsetX, offsetY] = this.getViewOffset(view);
+        this.drawSprite(sprite, x - offsetX, y - offsetY, frame);
+    }
 }
 
 export class GameCanvasContext {
 
-    constructor(private gameCanvas: GameCanvas) {
+    constructor(private gameCanvas: CanvasHTML2D) {
     }
 
-    drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0) {
-        this.gameCanvas.drawSprite(sprite, x, y, frame);
+    drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0, view?: View) {
+        this.gameCanvas.drawSpriteViewRelative(sprite, x, y, frame, view);
     }
 }

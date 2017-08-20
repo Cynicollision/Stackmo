@@ -1,5 +1,5 @@
 import { Actor, ActorInstance, CollisionCallback } from './actor';
-import { CanvasClickEvent } from './canvas';
+import { CanvasClickEvent, GameCanvasContext, RoomDrawEvent } from './canvas';
 import { GameContext } from './game-context';
 import { Grid } from './grid';
 import { GameLifecycleCallback } from './vastgame';
@@ -37,6 +37,7 @@ export class Room {
     private view: View;
 
     private onStartCallback: GameLifecycleCallback;
+    private onDrawCallback: RoomDrawEvent;
     
     background: Background;
 
@@ -50,6 +51,18 @@ export class Room {
 
     callStart(): void {
         this.onStartCallback();
+    }
+
+    get hasDraw(): boolean {
+        return !!this.onDrawCallback;
+    }
+
+    onDraw(callback: RoomDrawEvent): void {
+        this.onDrawCallback = callback;
+    }
+
+    callDraw(gameCanvasContext: GameCanvasContext): void {
+        this.onDrawCallback(gameCanvasContext);
     }
 
     defineGrid(tileSize: number): Grid {
