@@ -1,5 +1,5 @@
 import { Actor, ActorInstance, CollisionCallback } from './actor';
-import { ClickEvent } from './canvas';
+import { CanvasClickEvent } from './canvas';
 import { GameContext } from './game-context';
 import { Grid } from './grid';
 import { GameLifecycleCallback } from './vastgame';
@@ -174,7 +174,7 @@ export class Room {
         return this.view;
     }
 
-    handleClick(event: ClickEvent): void {
+    handleClick(event: CanvasClickEvent): void {
         let clickX = event.x;
         let clickY = event.y;
 
@@ -191,7 +191,7 @@ export class Room {
             let parent = instance.parent;
 
             if (parent.hasClick && instance.occupiesPosition(clickX, clickY)) {
-                parent.callClickCallback(instance, event);
+                parent.callClick(instance, event);
             }
         });
     }

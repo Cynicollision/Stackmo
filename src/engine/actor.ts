@@ -1,5 +1,5 @@
 import { Boundary } from './boundary';
-import { ClickEvent } from './canvas';
+import { ActorInstanceDrawEvent, CanvasClickEvent, GameCanvasContext } from './canvas';
 import { ActorState, Direction } from './enum';
 import { DeferredEvent } from './events';
 import { GameContext } from './game-context';
@@ -31,7 +31,7 @@ export interface ActorOptions {
 }
 
 interface ClickEventCallback {
-    (self: ActorInstance, event: ClickEvent): void;
+    (self: ActorInstance, event: CanvasClickEvent): void;
 }
 
 export interface CollisionCallback {
@@ -55,6 +55,7 @@ export class Actor {
     private onCreateCallback: LifecycleCallback;
     private onStepCallback: LifecycleCallback;
     private onDestroyCallback: LifecycleCallback;
+    private onDrawCallback: ActorInstanceDrawEvent;
 
     // input callbacks
     private onClickCallback: ClickEventCallback;
@@ -117,8 +118,20 @@ export class Actor {
         this.onClickCallback = callback;
     }
 
-    callClickCallback(selfInstance: ActorInstance, event: ClickEvent): void {
+    callClick(selfInstance: ActorInstance, event: CanvasClickEvent): void {
         this.onClickCallback(selfInstance, event);
+    }
+
+    get hasDraw(): boolean {
+        return !!this.onDrawCallback;
+    }
+
+    onDraw(callback: ActorInstanceDrawEvent): void {
+        this.onDrawCallback = callback;
+    }
+
+    callDraw(selfInstance: ActorInstance, gameCanvasContext: GameCanvasContext): void {
+        this.onDrawCallback(selfInstance, gameCanvasContext);
     }
 
     onCollide(actorName: string, callback: CollisionCallback): void {

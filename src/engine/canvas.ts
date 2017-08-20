@@ -1,3 +1,4 @@
+import { ActorInstance } from './actor';
 import { Background, Room } from './room';
 import { Sprite, SpriteAnimation } from './sprite';
 import { View } from './view';
@@ -7,22 +8,29 @@ export interface CanvasOptions {
     width?: number;
 }
 
-export interface ClickEvent {
+export interface CanvasClickEvent {
     button: number;
     x: number;
     y: number;
 }
 
+export interface ActorInstanceDrawEvent {
+    (self: ActorInstance, context: GameCanvasContext): void;
+}
+
 export interface GameCanvas {
     drawRoom(room: Room);
+    drawSprite(sprite: Sprite, x: number, y: number, frame: number): void;
 }
 
 const DefaultHeight = 480;
 const DefaultWidth = 640;
 
 export class CanvasHTML2D implements GameCanvas {
+    private gameCanvasContext: GameCanvasContext;
 
     constructor(public readonly canvasElement: HTMLCanvasElement) {
+        this.gameCanvasContext = new GameCanvasContext(this);
     }
 
     private get context(): CanvasRenderingContext2D {
@@ -42,14 +50,13 @@ export class CanvasHTML2D implements GameCanvas {
         this.canvasElement.width = options.width || DefaultWidth;
     }
 
-    onMouseDown(callback: (event: ClickEvent) => void): void {
+    onMouseDown(callback: (event: CanvasClickEvent) => void): void {
         this.canvasElement.onmousedown = <any>((ev: MouseEvent) => {
             callback({ button: ev.button, x: ev.offsetX, y: ev.offsetY });
         });
     }
 
     drawRoom(room: Room) {
-        
         // clear the canvas
         this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
 
@@ -65,9 +72,14 @@ export class CanvasHTML2D implements GameCanvas {
         }
 
         room.getInstances().forEach(instance => {
+            // call draw event callbacks
+            if (instance.parent.hasDraw) {
+                instance.parent.callDraw(instance, this.gameCanvasContext);
+            }
 
+            // draw sprites
             if (instance.sprite) {
-                this.drawSprite(instance.sprite, instance.x - offsetX, instance.y - offsetY, instance.spriteAnimation);
+                this.drawSprite(instance.sprite, instance.x - offsetX, instance.y - offsetY, instance.spriteAnimation.frame);
             }
         });
     }
@@ -79,15 +91,24 @@ export class CanvasHTML2D implements GameCanvas {
         return [offsetX, offsetY];
     }
 
-    private drawSprite(sprite: Sprite, x: number, y: number, animation: SpriteAnimation): void {
+    drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0): void {
         let image = sprite.image;
         let frameBorder = sprite.frameBorder || 0;
-        let frame = animation.frame;
         let width = sprite.width;
         let height = sprite.height;
 
         let frameOffset = frame * frameBorder;
 
         this.context.drawImage(image, frame * width + frameOffset, 0, width, height, Math.floor(x), Math.floor(y), width, height);
+    }
+}
+
+export class GameCanvasContext {
+
+    constructor(private gameCanvas: GameCanvas) {
+    }
+
+    drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0) {
+        this.gameCanvas.drawSprite(sprite, x, y, frame);
     }
 }
