@@ -16,8 +16,11 @@
     "@types/jasmine": "^2.5.47",
     "@types/node": "^7.0.18",
     "concurrently": "^3.4.0",
+    "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-clean-compiled-typescript": "^1.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^3.0.0",
     "jasmine": "^2.6.0",
     "karma": "^1.7.0",
     "karma-chrome-launcher": "^2.1.1",
@@ -28,6 +31,7 @@
     "karma-webpack": "^2.0.3",
     "ts-loader": "^2.2.1",
     "typescript": "^2.4.1",
+    "uglify-js": "^3.0.28",
     "webpack": "^2.5.0"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 .vscode/launch.json
 dist
+build
 node_modules
-typings
 public/dist
 src/**/*.js.map
 src/engine/**/*.js*
