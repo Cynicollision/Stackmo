@@ -6,7 +6,7 @@ const TitleWidth = 310;
 const TitleHeight = 150;
 
 let TitleSprite = Sprite.define({
-    imageSource: 'resources/title.png',
+    imageSource: '../resources/title.png',
     width: TitleWidth,
     height: TitleHeight,
 });

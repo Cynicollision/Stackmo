@@ -3,7 +3,7 @@ import * as Constants from './../util/constants';
 import { ActorID, GameAction } from './../util/enum';
 
 let BotSprite = Sprite.define({
-    imageSource: 'resources/bot_sheet.png',
+    imageSource: '../resources/bot_sheet.png',
     height: Constants.GridCellSize,
     width: Constants.GridCellSize,
     frameBorder: 1,

@@ -3,7 +3,7 @@ import * as Constants from './../util/constants';
 import { GameAction } from './../util/enum';
 
 let BlockSprite = Sprite.define({
-    imageSource: 'resources/box.png',
+    imageSource: '../resources/box.png',
     height: Constants.GridCellSize,
     width: Constants.GridCellSize,
 });

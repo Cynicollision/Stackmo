@@ -71,7 +71,7 @@ LevelSelectRoom.onStart(() => {
 
 // draw the banner text
 const TextSprite = Sprite.define({
-    imageSource:'resources/text_sheet.png',
+    imageSource:'../resources/text_sheet.png',
     height: 32,
     width: 320,
 });
@@ -82,13 +82,13 @@ LevelSelectRoom.onDraw(context => {
 
 // Level icons
 const DigitsSprite = Sprite.define({
-    imageSource: 'resources/digits_32px.png',
+    imageSource: '../resources/digits_32px.png',
     height: Constants.GridCellSize / 2,
     width: Constants.GridCellSize / 2,
 });
 
 const LevelIconSprite = Sprite.define({
-    imageSource: 'resources/level_icon.png',
+    imageSource: '../resources/level_icon.png',
     width: Constants.GridCellSize,
     height: Constants.GridCellSize,
 });
@@ -131,7 +131,7 @@ LevelIcon.onDraw((self, context) => {
 
 // Scroll arrows
 const ArrowSprite = Sprite.define({
-    imageSource: 'resources/arrows.png',
+    imageSource: '../resources/arrows.png',
     height: Constants.GridCellSize,
     width: Constants.GridCellSize,
 });
