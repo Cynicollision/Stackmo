@@ -26,16 +26,20 @@ Player.onStep(self => {
 
 // Walking
 Player.onEvent(GameAction.Move, (player, args) => {
+    let targetCell: GridCell = args.targetCell;
     let direction: Direction = args.direction;
     let startX = player.x;
     let stopCondition = (): boolean => Math.abs(startX - player.x) >= Constants.GridCellSize;
 
     lastDirection = direction;
 
-    player.move(Constants.PlayerMoveSpeed, direction);
-    player.raiseEventWhen(GameAction.Stop, stopCondition, args);
-
-    animate(player, direction, true);
+    // don't if the held block prevents it
+    if (!heldBlock || (heldBlock && !targetCell.getAdjacentCell(Direction.Up).containsAnyInstance())) {
+        player.move(Constants.PlayerMoveSpeed, direction);
+        player.raiseEventWhen(GameAction.Stop, stopCondition, args);
+    
+        animate(player, direction, true);
+    }
 });
 
 // Falling
