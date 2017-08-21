@@ -57,10 +57,10 @@ levelRoom.onStart(() => {
         let leftCell = playerCell.getAdjacentCell(Direction.Left);
         let topLeftCell = leftCell.getAdjacentCell(Direction.Up);
 
-        if (!topLeftCell.containsAnyInstance() && (leftCell.containsInstanceOf(Wall) || leftCell.containsInstanceOf(Block))) {
+        if (topLeftCell.isFree() && (leftCell.containsInstanceOf(Wall) || leftCell.containsInstanceOf(Block))) {
             grid.raiseClickEvent(player.x - Constants.GridCellSize, player.y - Constants.GridCellSize);
         }
-        else if (!leftCell.containsAnyInstance()) {
+        else if (leftCell.isFree()) {
             grid.raiseClickEvent(player.x - Constants.GridCellSize, player.y);
         }
     });
@@ -70,10 +70,10 @@ levelRoom.onStart(() => {
         let rightCell = playerCell.getAdjacentCell(Direction.Right);
         let topRightCell = rightCell.getAdjacentCell(Direction.Up);
 
-        if (!topRightCell.containsAnyInstance() && (rightCell.containsInstanceOf(Wall) || rightCell.containsInstanceOf(Block))) {
+        if (topRightCell.isFree() && (rightCell.containsInstanceOf(Wall) || rightCell.containsInstanceOf(Block))) {
             grid.raiseClickEvent(player.x + Constants.GridCellSize, player.y - Constants.GridCellSize);
         }
-        else if (!rightCell.containsAnyInstance()) {
+        else if (rightCell.isFree()) {
             grid.raiseClickEvent(player.x + Constants.GridCellSize, player.y);
         }
     });
@@ -92,11 +92,11 @@ levelRoom.onStart(() => {
         }
         else {
             // lift
-            if (leftCell.containsInstanceOf(Block) && !topLeftCell.containsAnyInstance()) {
+            if (leftCell.containsInstanceOf(Block) && topLeftCell.isFree()) {
                 grid.raiseClickEvent(player.x - Constants.GridCellSize, player.y);
             }
 
-            if (rightCell.containsInstanceOf(Block) && !topRightCell.containsAnyInstance()) {
+            if (rightCell.containsInstanceOf(Block) && topRightCell.isFree()) {
                 grid.raiseClickEvent(player.x + Constants.GridCellSize, player.y);
             }
         }

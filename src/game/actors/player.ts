@@ -34,7 +34,7 @@ Player.onEvent(GameAction.Move, (player, args) => {
     lastDirection = direction;
 
     // don't if the held block prevents it
-    if (!heldBlock || (heldBlock && !targetCell.getAdjacentCell(Direction.Up).containsAnyInstance())) {
+    if (!heldBlock || (heldBlock && targetCell.getAdjacentCell(Direction.Up).isFree())) {
         player.move(Constants.PlayerMoveSpeed, direction);
         player.raiseEventWhen(GameAction.Stop, stopCondition, args);
     
@@ -83,8 +83,8 @@ Player.onEvent(GameAction.Jump, (player, args) => {
     let cellAboveBox = !!heldBlock ? cellAbovePlayer.getAdjacentCell(Direction.Up) : null;
 
     let canJump = !!cellAboveBox 
-        ? !cellAboveBox.containsAnyInstance() && !cellAboveBox.getAdjacentCell(direction).containsAnyInstance()
-        : !cellAbovePlayer.containsAnyInstance() ;
+        ? cellAboveBox.isFree() && cellAboveBox.getAdjacentCell(direction).isFree()
+        : cellAbovePlayer.isFree() ;
 
     if (canJump) {
         // stop after moving up one space
@@ -105,7 +105,7 @@ Player.onEvent(GameAction.Lift, (player, args) => {
     let aboveBoxCell = targetCell.getAdjacentCell(Direction.Up);
     let abovePlayerCell = aboveBoxCell.getAdjacentCell(validBlockLiftCell);
 
-    if (!heldBlock && (aboveBoxCell.containsAnyInstance() || abovePlayerCell.containsAnyInstance())) {
+    if (!heldBlock && !(aboveBoxCell.isFree() && abovePlayerCell.isFree())) {
         return;
     }
     
@@ -125,7 +125,7 @@ Player.onEvent(GameAction.Drop, (player, args) => {
     let offsetX = lastDirection === Direction.Left ? -Constants.GridCellSize : Constants.GridCellSize;
 
     // prevent dropping if there's something in the way of the box
-    if (!targetCell.getAdjacentCell(lastDirection).containsAnyInstance()) {
+    if (targetCell.getAdjacentCell(lastDirection).isFree()) {
         args.targetCell = args.targetCell.getAdjacentCell(lastDirection);
         
         heldBlock = null;

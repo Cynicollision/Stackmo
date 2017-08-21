@@ -61,8 +61,8 @@ export class GridCell {
         return this.getContents().some(contents => contents.parent === actor);
     }
 
-    containsAnyInstance(): boolean {
-        return !!this.getContents().length;
+    isFree(): boolean {
+        return !this.getContents().length;
     }
 }
 
