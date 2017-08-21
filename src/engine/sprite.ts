@@ -1,4 +1,9 @@
+export enum SpriteTransformation {
+    Opacity = 0,
+}
+
 export class Sprite {
+    private transformatons: { [index: number]: number } = {};
 
     static define(options: SpriteOptions): Sprite {
         return new Sprite(options);
@@ -15,6 +20,24 @@ export class Sprite {
         this.height = options.height;
         this.width = options.width;
         this.frameBorder = options.frameBorder;
+
+        this.setDefaultTransforms();
+    }
+
+    private setDefaultTransforms(): void {
+        this.transformatons[SpriteTransformation.Opacity] = 1;
+    }
+
+    getTransform(transformation: SpriteTransformation): number {
+        return this.transformatons[transformation];
+    }
+
+    transform(transformation: SpriteTransformation, delta: number): void {
+        this.transformatons[transformation] += delta;
+    }
+
+    setTransform(transformation: SpriteTransformation, value: number): void {
+        this.transformatons[transformation] = value;
     }
 }
 

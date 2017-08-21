@@ -1,6 +1,6 @@
 import { ActorInstance } from './actor';
 import { Background, Room } from './room';
-import { Sprite, SpriteAnimation } from './sprite';
+import { Sprite, SpriteAnimation, SpriteTransformation } from './sprite';
 import { View } from './view';
 
 export interface CanvasOptions {
@@ -29,6 +29,7 @@ export interface GameCanvas {
 
 const DefaultHeight = 480;
 const DefaultWidth = 640;
+const DefaultOpacity = 1;
 
 export class CanvasHTML2D implements GameCanvas {
     private gameCanvasContext: GameCanvasContext;
@@ -108,7 +109,20 @@ export class CanvasHTML2D implements GameCanvas {
 
         let frameOffset = frame * frameBorder;
 
+        let opacity = sprite.getTransform(SpriteTransformation.Opacity);
+        let previousOpacity: number = null;
+
+        if (opacity !== DefaultOpacity && opacity !== null && opacity !== undefined) {
+            previousOpacity = this.context.globalAlpha;
+            this.context.globalAlpha = opacity;
+        }
+
         this.context.drawImage(image, frame * width + frameOffset, 0, width, height, Math.floor(x), Math.floor(y), width, height);
+
+        // reset opacity
+        if (previousOpacity !== null) {
+            this.context.globalAlpha = previousOpacity;
+        }
     }
 
     drawSpriteViewRelative(sprite: Sprite, x: number, y: number, frame: number, view: View): void {

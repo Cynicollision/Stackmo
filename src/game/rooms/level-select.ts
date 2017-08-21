@@ -2,6 +2,7 @@ import { Actor, Boundary, Direction, Key, Input, Room, Sprite, Vastgame, View } 
 import * as Constants from './../util/constants';
 import { ActorID, RoomID, Settings } from './../util/enum';
 import { Levels, LevelBuilder } from './../util/level-builder';
+import { SpriteFader } from './../util/sprite-fader';
 import { Registry } from './../util/registry';
 
 let scrollView: View;
@@ -67,6 +68,8 @@ LevelSelectRoom.onStart(() => {
         downArrow.x = upArrow.x;
         (<any>downArrow).direction = Direction.Down;
     }
+
+    SpriteFader.fadeIn([TextSprite, DigitsSprite, LevelIconSprite, ArrowSprite]);
 });
 
 // draw the banner text
@@ -100,11 +103,14 @@ const LevelIcon = Actor.define(ActorID.LevelIcon, {
 
 LevelIcon.onClick(self => {
     if ((<any>self).enabled) {
-        let levelNumber: number = (<any>self).levelNumber;
-        let level = Room.get(RoomID.Level);
-    
-        LevelBuilder.populateRoom(level, levelNumber);
-        Vastgame.get().setRoom(level);
+
+        SpriteFader.fadeOut([TextSprite, DigitsSprite, LevelIconSprite, ArrowSprite], () => {
+            let levelNumber: number = (<any>self).levelNumber;
+            let level = Room.get(RoomID.Level);
+        
+            LevelBuilder.populateRoom(level, levelNumber);
+            Vastgame.get().setRoom(level);
+        });
     } 
 });
 
