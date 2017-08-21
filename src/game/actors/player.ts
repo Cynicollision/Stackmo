@@ -3,10 +3,10 @@ import * as Constants from './../util/constants';
 import { ActorID, GameAction } from './../util/enum';
 
 let BotSprite = Sprite.define({
-    imageSource: '../resources/bot_sheet.png',
+    imageSource: '../resources/stackmo_sheet.png',
     height: Constants.GridCellSize,
     width: Constants.GridCellSize,
-    frameBorder: 1,
+    frameBorder: 4,
 });
 
 let Player = Actor.define(ActorID.Player, {
@@ -45,6 +45,7 @@ Player.onEvent(GameAction.Move, (player, args) => {
 // Falling
 Player.onEvent(GameAction.Fall, (player, args) => {
     let startY = player.y;
+    let direction: Direction = args.direction;
     let stopCondition = (): boolean =>  Math.abs(startY - player.y) >= Constants.GridCellSize;
 
     // move the target cell to the one below the previous target cell
@@ -52,6 +53,8 @@ Player.onEvent(GameAction.Fall, (player, args) => {
 
     player.move(Constants.PlayerFallSpeed, Direction.Down);
     player.raiseEventWhen(GameAction.Stop, stopCondition, args);
+
+    animate(player, direction, false);
 })
 
 // Stopping
@@ -138,18 +141,35 @@ Player.onEvent(GameAction.Drop, (player, args) => {
 });
 
 // Helpers
+// enums values correspond to sprite sheet frames
+enum StackmoFrame {
+    StandLeft = 0,
+    MoveLeft1 = 1,
+    MoveLeft2 = 2,
+    StandRight = 3,
+    MoveRight1 = 4,
+    MoveRight2 = 5,
+    StandHoldLeft = 6,
+    MoveHoldLeft1 = 7,
+    MoveHoldLeft2 = 8,
+    StandHoldRight = 9,
+    MoveHoldRight1 = 10,
+    MoveHolddRight2 = 11,
+}
+
 function animate(player: ActorInstance, direction: Direction, isMoving: boolean = false): void {
-    let startFrame = 0;
+    const animationSpeed = 100;
+    let startFrame = StackmoFrame.StandRight;
     
     if (!!heldBlock) {
-        startFrame = direction === Direction.Right ? 4 : 6;
+        startFrame = direction === Direction.Right ? StackmoFrame.StandHoldRight : StackmoFrame.StandHoldLeft;
     }
     else {
-        startFrame = direction === Direction.Right ? 0 : 2;
+        startFrame = direction === Direction.Right ? StackmoFrame.StandRight : StackmoFrame.StandLeft;
     }
 
     if (isMoving) {
-        player.spriteAnimation.start(startFrame, startFrame + 1, 100);
+        player.spriteAnimation.start(startFrame + 1, startFrame + 2, animationSpeed);
     }
     else {
         player.spriteAnimation.set(startFrame);
