@@ -10,6 +10,7 @@ export class LevelBuilder {
         let Block = Actor.get('Block');
         let Player = Actor.get('Player');
         let Wall = Actor.get('Wall');
+        let Win = Actor.get('Win');
 
         let instances: ActorInstance[] = [];
         let levelMap = Levels.get(roomID);
@@ -34,6 +35,10 @@ export class LevelBuilder {
 
                     case 'P':
                         instances.push(room.createActor(Player, j * cellSize, i * cellSize));
+                        break;
+
+                    case 'W':
+                        instances.push(room.createActor(Win, j * cellSize, i * cellSize));
                         break;
 
                     case '#':
@@ -147,7 +152,7 @@ export class Levels {
             '#   ##   #  ##   #',
             '#P   #      #    #',
             '##       #       #',
-            '#       ###  #####',
+            '#W      ###  #####',
             '####     #       #',
             '#                #',
             '# XX X  #    XXXX#',

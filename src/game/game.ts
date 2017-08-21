@@ -7,6 +7,7 @@ import { Registry } from './util/registry';
 require('./actors/block');
 require('./actors/player');
 require('./actors/wall');
+require('./actors/win');
 
 require('./rooms/level');
 require('./rooms/level-select');

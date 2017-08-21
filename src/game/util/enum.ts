@@ -11,6 +11,7 @@ export enum ActorID {
     ScrollArrow = 'ScrollArrow',
     Title = 'Title',
     Wall = 'Wall',
+    Win = 'Win',
 }
 
 export enum RoomID {

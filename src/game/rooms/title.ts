@@ -3,7 +3,7 @@ import { ActorID, RoomID, Settings } from './../util/enum';
 import { SpriteFader } from './../util/sprite-fader';
 import { Registry } from './../util/registry';
 
-const TitleWidth = 310;
+const TitleWidth = 360;
 const TitleHeight = 150;
 
 let titleX: number = 0;
