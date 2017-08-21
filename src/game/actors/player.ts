@@ -101,8 +101,11 @@ Player.onEvent(GameAction.Lift, (player, args) => {
 
     let validBlockLiftCell = lastDirection === Direction.Left ? Direction.Right : Direction.Left;
 
-    // prevent lifting if there's something on top of the box
-    if (targetCell.getAdjacentCell(Direction.Up).containsAnyInstance()) {
+    // prevent lifting if there's something on top of the box or on top of the player
+    let aboveBoxCell = targetCell.getAdjacentCell(Direction.Up);
+    let abovePlayerCell = aboveBoxCell.getAdjacentCell(validBlockLiftCell);
+
+    if (!heldBlock && (aboveBoxCell.containsAnyInstance() || abovePlayerCell.containsAnyInstance())) {
         return;
     }
     
@@ -118,16 +121,20 @@ Player.onEvent(GameAction.Lift, (player, args) => {
 // Drop
 Player.onEvent(GameAction.Drop, (player, args) => {
     let block: ActorInstance = args.block;
+    let targetCell: GridCell = args.targetCell;
     let offsetX = lastDirection === Direction.Left ? -Constants.GridCellSize : Constants.GridCellSize;
 
-    args.targetCell = args.targetCell.getAdjacentCell(lastDirection);
+    // prevent dropping if there's something in the way of the box
+    if (!targetCell.getAdjacentCell(lastDirection).containsAnyInstance()) {
+        args.targetCell = args.targetCell.getAdjacentCell(lastDirection);
+        
+        heldBlock = null;
     
-    heldBlock = null;
-
-    block.setPositionRelative(offsetX, 0);
-    block.raiseEvent(GameAction.Fall, args);
-
-    animate(player, lastDirection);
+        block.setPositionRelative(offsetX, 0);
+        block.raiseEvent(GameAction.Fall, args);
+    
+        animate(player, lastDirection);
+    }
 });
 
 // Helpers
