@@ -1,5 +1,6 @@
-import { Actor, ActorInstance, Room } from './../../engine/vastgame';
-import * as Constants from './../util/constants';
+import { Actor, ActorInstance, Room, Vastgame } from './../../engine/vastgame';
+import { LevelBgColor } from './enum';
+import * as Constants from './constants';
 
 export class LevelBuilder {
 
@@ -13,7 +14,12 @@ export class LevelBuilder {
         let instances: ActorInstance[] = [];
         let levelMap = Levels.get(roomID);
 
-        room.setBackground(Constants.LevelBackgroundColor, levelMap[0].length * cellSize, levelMap.length * cellSize);
+        let colorEnumMap = {
+            0: [ LevelBgColor.Teal, LevelBgColor.DarkTeal ]
+        };
+
+        // TODO: randomize/cycle colors (take as parameter?)
+        room.setBackground(colorEnumMap[0][0], levelMap[0].length * cellSize, levelMap.length * cellSize, colorEnumMap[0][1]);
 
         for (let i = 0; i < levelMap.length; i++) {
             let row = levelMap[i];

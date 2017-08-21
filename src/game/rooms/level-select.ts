@@ -1,6 +1,6 @@
 import { Actor, Boundary, Direction, Key, Input, Room, Sprite, Vastgame, View } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
-import { ActorID, RoomID, Settings } from './../util/enum';
+import { ActorID, LevelBgColor, RoomID, Settings } from './../util/enum';
 import { Levels, LevelBuilder } from './../util/level-builder';
 import { SpriteFader } from './../util/sprite-fader';
 import { Registry } from './../util/registry';
@@ -20,7 +20,8 @@ const LevelSelectRoom = Room.define(RoomID.LevelSelect);
 LevelSelectRoom.onStart(() => {
     canvasWidth = Registry.get(Settings.CanvasWidth);
     canvasHeight = Registry.get(Settings.CanvasHeight);
-
+    
+    LevelSelectRoom.setBackground(Constants.Black, canvasWidth, canvasHeight);
     scrollView = LevelSelectRoom.defineView(0, 0, canvasWidth, canvasHeight);
 
     let iconsPerRow = Math.floor(canvasWidth / iconSizeWithPadding);

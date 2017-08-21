@@ -6,9 +6,10 @@ import { GameLifecycleCallback } from './vastgame';
 import { View } from './view';
 
 export class Background {
-    
+
     constructor(
-        readonly color: string, 
+        readonly color: string,
+        readonly pageColor: string = '#000', 
         readonly width: number, 
         readonly height: number) {
     }
@@ -77,8 +78,12 @@ export class Room {
         return this.view;
     }
 
-    setBackground(color: string, width: number, height: number): void {
-        this.background = new Background(color, width, height);
+    setBackground(color: string, width: number, height: number, pageColor?: string): void {
+        this.background = new Background(color, pageColor, width, height);
+
+        if (pageColor) {
+            document.body.style.backgroundColor = pageColor;
+        }
     }
 
     step(): void {

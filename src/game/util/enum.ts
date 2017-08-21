@@ -27,3 +27,9 @@ export enum GameAction {
     Move = 'Move',
     Stop = 'Stop',
 }
+
+// from top row of NES color palette (TODO: rest of them)
+export enum LevelBgColor {
+    DarkTeal = '#001820',
+    Teal = '#006070',
+}
