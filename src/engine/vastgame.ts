@@ -43,8 +43,12 @@ class VastgameHTML2D {
     }
 
     setRoom(room: Room) {
-        GameContext.setCurrentRoom(room);
+        let previousRoom = GameContext.getCurrentRoom();
+        if (previousRoom) {
+            previousRoom.end();
+        }
 
+        GameContext.setCurrentRoom(room);
         if (room.hasStart) {
             room.callStart();
         }

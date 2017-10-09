@@ -150,6 +150,7 @@ export class ActorInstance {
     previousY: number;
     speed: number = 0;
     direction: number = Direction.Right;
+    visible: boolean = true;
 
     readonly spriteAnimation: SpriteAnimation;
 
@@ -175,8 +176,8 @@ export class ActorInstance {
         return this.parent.boundary;
     }
 
-    get sprite(): Sprite {
-        return this.parent.sprite;
+    get animation(): SpriteAnimation {
+        return this.spriteAnimation;
     }
 
     raiseEvent(eventName: string, eventArgs?: any): void {

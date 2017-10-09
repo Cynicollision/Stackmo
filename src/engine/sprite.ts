@@ -62,12 +62,18 @@ export class SpriteAnimation {
     private current: number = 0;
     private timer: any;
 
+    depth: number = 0;
+
     constructor(readonly sprite: Sprite) {
         this.current = 0;
     }
     
     get frame(): number { 
         return this.current;
+    }
+
+    get source(): Sprite {
+        return this.sprite;
     }
 
     start(start: number, end: number, delay?: number): void {

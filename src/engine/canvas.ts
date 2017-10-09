@@ -31,6 +31,7 @@ const DefaultHeight = 480;
 const DefaultWidth = 640;
 const DefaultOpacity = 1;
 
+// TODO: rename, 'GameCanvasHTML2D'
 export class CanvasHTML2D implements GameCanvas {
     private gameCanvasContext: GameCanvasContext;
 
@@ -61,6 +62,7 @@ export class CanvasHTML2D implements GameCanvas {
         });
     }
 
+    // TODO: separate canvas interactions from room/instance logic
     drawRoom(room: Room) {
         // clear the canvas
         this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
@@ -81,15 +83,19 @@ export class CanvasHTML2D implements GameCanvas {
             room.callDraw(this.gameCanvasContext);
         }
 
-        room.getInstances().forEach(instance => {
+        let orderedInstances = room.getInstances().sort((a, b) => {
+            return (b.spriteAnimation ? b.spriteAnimation.depth : 0) - (a.spriteAnimation ? a.animation.depth : 0);
+        });
+
+        orderedInstances.forEach(instance => {
             // call actor draw event callbacks
             if (instance.parent.hasDraw) {
                 instance.parent.callDraw(instance, this.gameCanvasContext);
             }
 
             // draw sprites
-            if (instance.sprite) {
-                this.drawSprite(instance.sprite, instance.x - offsetX, instance.y - offsetY, instance.spriteAnimation.frame);
+            if (instance.animation && instance.visible) {
+                this.drawSprite(instance.animation.source, instance.x - offsetX, instance.y - offsetY, instance.spriteAnimation.frame);
             }
         });
     }

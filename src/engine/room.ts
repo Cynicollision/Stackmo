@@ -32,10 +32,14 @@ export class Room {
         return GameContext.getRoom(name);
     }
 
-    private readonly actorInstanceMap: { [index: number]: ActorInstance } = {};
+    static get current(): Room {
+        return GameContext.getCurrentRoom();
+    }
+
+    private actorInstanceMap: { [index: number]: ActorInstance } = {};
 
     private grid: Grid;
-    private view: View;
+    view: View;
 
     private onStartCallback: GameLifecycleCallback;
     private onDrawCallback: RoomDrawEvent;
@@ -212,5 +216,9 @@ export class Room {
                 parent.callClick(instance, event);
             }
         });
+    }
+
+    end(): void {
+        this.actorInstanceMap = {};
     }
 }
