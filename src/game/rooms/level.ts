@@ -1,7 +1,6 @@
 import { Actor, ActorInstance, Direction, GridCell, Input, Key, Room, Sprite } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, RoomID, SpriteID, GameAction, Settings } from './../util/enum';
-import { LevelBuilder } from './../util/level-builder';
 import { Registry } from './../util/registry';
 import { SpriteFader } from './../util/sprite-fader';
 import { Vastgame } from './../../engine/vastgame';
@@ -60,19 +59,6 @@ levelRoom.onStart(() => {
         }
     });
 
-    // animate the door panels when winning
-    WinActor.onDraw((self, context) => {
-        let offsetX = 0;
-        context.drawSprite(DoorSprite, self.x + offsetX, self.y, 0, playerView);
-        context.drawSprite(DoorSprite, self.x + offsetX + 16, self.y, 1, playerView);
-    });
-
-    PlayerActor.onEvent(GameAction.Win, (player, args) => {
-        console.log('WIN!');
-        // TODO: need to reset the room
-        //Vastgame.get().setRoom(Room.get(RoomID.LevelSelect));
-    });
-
     // Keyboard input
     Input.onKey(Key.Left, () => {
         let playerCell = grid.getCellAtPosition(player.x, player.y);
@@ -124,8 +110,3 @@ levelRoom.onStart(() => {
         }
     });
 });
-
-// door animation
-function win() {
-
-}

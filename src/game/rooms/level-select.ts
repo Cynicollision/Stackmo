@@ -108,7 +108,7 @@ LevelIcon.onClick(self => {
         SpriteFader.fadeOut([TextSprite, DigitsSprite, LevelIconSprite, ArrowSprite], () => {
             let levelNumber: number = (<any>self).levelNumber;
             let level = Room.get(RoomID.Level);
-        
+            
             LevelBuilder.populateRoom(level, levelNumber);
             Vastgame.get().setRoom(level);
         });

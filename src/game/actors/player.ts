@@ -17,6 +17,10 @@ let Player = Actor.define(ActorID.Player, {
 let heldBlock: ActorInstance;
 let lastDirection: Direction = Direction.Right;
 
+Player.onCreate(self => {
+    self.animation.depth = -50;
+});
+
 Player.onStep(self => {
 
     if (heldBlock) {
@@ -77,7 +81,8 @@ Player.onEvent(GameAction.Stop, (player, args) => {
 
     // check for victory
     if (targetCell.containsInstanceOf(WinActor)) {
-        player.raiseEvent(GameAction.Win);
+        let win = room.getInstances().find(actorInstance => actorInstance.parent === WinActor);
+        win.raiseEvent(GameAction.Win);
     }
 });
 
