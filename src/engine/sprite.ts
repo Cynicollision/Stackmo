@@ -1,3 +1,6 @@
+import { Actor } from './actor';
+import { GameContext } from './game-context';
+
 export enum SpriteTransformation {
     Opacity = 0,
 }
@@ -5,8 +8,15 @@ export enum SpriteTransformation {
 export class Sprite {
     private transformatons: { [index: number]: number } = {};
 
-    static define(options: SpriteOptions): Sprite {
-        return new Sprite(options);
+    static define(name: string, options: SpriteOptions): Sprite {
+        let sprite = new Sprite(options);
+        GameContext.defineSprite(name, sprite);
+
+        return sprite;
+    }
+
+    static get(name: string): Sprite {
+        return GameContext.getSprite(name);
     }
 
     readonly image: HTMLImageElement;

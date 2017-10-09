@@ -1,8 +1,8 @@
 import { Actor, Boundary, Direction, GridCell, Room, Sprite } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
-import { GameAction } from './../util/enum';
+import { GameAction, SpriteID } from './../util/enum';
 
-let BlockSprite = Sprite.define({
+let BlockSprite = Sprite.define(SpriteID.Box, {
     imageSource: '../resources/box.png',
     height: Constants.GridCellSize,
     width: Constants.GridCellSize,

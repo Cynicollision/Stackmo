@@ -1,6 +1,6 @@
 import { Actor, Boundary, Direction, Key, Input, Room, Sprite, Vastgame, View } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
-import { ActorID, LevelBgColor, RoomID, Settings } from './../util/enum';
+import { ActorID, LevelBgColor, RoomID, Settings, SpriteID } from './../util/enum';
 import { Levels, LevelBuilder } from './../util/level-builder';
 import { SpriteFader } from './../util/sprite-fader';
 import { Registry } from './../util/registry';
@@ -74,7 +74,7 @@ LevelSelectRoom.onStart(() => {
 });
 
 // draw the banner text
-const TextSprite = Sprite.define({
+const TextSprite = Sprite.define(SpriteID.TextSheet, {
     imageSource:'../resources/text_sheet.png',
     height: 32,
     width: 320,
@@ -85,13 +85,13 @@ LevelSelectRoom.onDraw(context => {
 })
 
 // Level icons
-const DigitsSprite = Sprite.define({
+const DigitsSprite = Sprite.define(SpriteID.Digits, {
     imageSource: '../resources/digits_32px.png',
     height: Constants.GridCellSize / 2,
     width: Constants.GridCellSize / 2,
 });
 
-const LevelIconSprite = Sprite.define({
+const LevelIconSprite = Sprite.define(SpriteID.LevelIcon, {
     imageSource: '../resources/level_icon.png',
     width: Constants.GridCellSize,
     height: Constants.GridCellSize,
@@ -137,7 +137,7 @@ LevelIcon.onDraw((self, context) => {
 });
 
 // Scroll arrows
-const ArrowSprite = Sprite.define({
+const ArrowSprite = Sprite.define(SpriteID.Arrows, {
     imageSource: '../resources/arrows.png',
     height: Constants.GridCellSize,
     width: Constants.GridCellSize,

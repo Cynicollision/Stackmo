@@ -20,6 +20,18 @@ export enum RoomID {
     Level = 'Level',
 }
 
+export enum SpriteID {
+    Arrows = 'Arrows',
+    Digits = 'Digits',
+    DoorSheet = 'DoorSheet',
+    Box = 'Box',
+    LevelIcon = 'LevelIcon',
+    StackmoSheet = 'StackmoSheet',
+    TextSheet = 'TextSheet',
+    Title = 'Title',
+    Wall = 'Wall',
+}
+
 export enum GameAction {
     Drop = 'Drop',
     Fall = 'Fall',
@@ -27,6 +39,7 @@ export enum GameAction {
     Lift = 'Lift',
     Move = 'Move',
     Stop = 'Stop',
+    Win = 'Win',
 }
 
 // from top row of NES color palette (TODO: rest of them)

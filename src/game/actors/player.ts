@@ -1,8 +1,8 @@
 import { Actor, ActorInstance, Boundary, Direction, Input, GridCell, Room, Sprite } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
-import { ActorID, GameAction } from './../util/enum';
+import { ActorID, GameAction, SpriteID } from './../util/enum';
 
-let BotSprite = Sprite.define({
+let BotSprite = Sprite.define(SpriteID.StackmoSheet, {
     imageSource: '../resources/stackmo_sheet.png',
     height: Constants.GridCellSize,
     width: Constants.GridCellSize,
@@ -61,6 +61,7 @@ Player.onEvent(GameAction.Fall, (player, args) => {
 Player.onEvent(GameAction.Stop, (player, args) => {
     let room: Room = args.game.currentRoom;
     let targetCell: GridCell = args.targetCell;
+    let WinActor = Actor.get(ActorID.Win);
 
     // snap to the grid
     player.move(0);
@@ -72,6 +73,11 @@ Player.onEvent(GameAction.Stop, (player, args) => {
     }
     else {
         animate(player, lastDirection);
+    }
+
+    // check for victory
+    if (targetCell.containsInstanceOf(WinActor)) {
+        player.raiseEvent(GameAction.Win);
     }
 });
 

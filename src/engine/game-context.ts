@@ -2,6 +2,7 @@ import { Actor } from './actor';
 import { CanvasHTML2D } from './canvas';
 import { DeferredEvent } from './events';
 import { Room } from './room';
+import { Sprite } from './sprite';
 
 export class GameContext {
     private static _instance: GameContext = new GameContext();
@@ -9,6 +10,7 @@ export class GameContext {
     private readonly actors: { [index: string]: Actor } = {};
     private readonly events: { [index: number]: DeferredEvent } = {};
     private readonly rooms: { [index: string]: Room } = {};
+    private readonly sprites: { [index: string]: Sprite} = {};
 
     private canvas: CanvasHTML2D;
     private currentRoom: Room;
@@ -37,7 +39,7 @@ export class GameContext {
     // rooms
     static defineRoom(name: string, room: Room): void {
         if (this._instance.rooms[name]) {
-            throw new Error(`Room ${room} has already been defined.`);
+            throw new Error(`Room ${name} has already been defined.`);
         }
 
         this._instance.rooms[name] = room;
@@ -58,6 +60,23 @@ export class GameContext {
     static setCurrentRoom(room: Room): void {
         this._instance.canvas.onMouseDown(event => room.handleClick(event));
         this._instance.currentRoom = room;
+    }
+
+    // sprites
+    static defineSprite(name: string, sprite: Sprite): void {
+        if (this._instance.sprites[name]) {
+            throw new Error(`Sprite ${name} has already been defined.`);
+        }
+
+        this._instance.sprites[name] = sprite;
+    }
+
+    static getSprite(name: string): Sprite {
+        if (!this._instance.sprites[name]) {
+            throw new Error (`Sprite ${name} has not been defined.`);
+        }
+
+        return this._instance.sprites[name];
     }
 
     // events

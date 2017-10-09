@@ -1,5 +1,5 @@
 import { Actor, Key, Input, Room, Sprite, SpriteTransformation, Vastgame } from './../../engine/vastgame';
-import { ActorID, RoomID, Settings } from './../util/enum';
+import { ActorID, RoomID, Settings, SpriteID } from './../util/enum';
 import { SpriteFader } from './../util/sprite-fader';
 import { Registry } from './../util/registry';
 
@@ -9,7 +9,7 @@ const TitleHeight = 150;
 let titleX: number = 0;
 let titleY: number = 0;
 
-let TitleSprite = Sprite.define({
+let TitleSprite = Sprite.define(SpriteID.Title, {
     imageSource: '../resources/title.png',
     width: TitleWidth,
     height: TitleHeight,
