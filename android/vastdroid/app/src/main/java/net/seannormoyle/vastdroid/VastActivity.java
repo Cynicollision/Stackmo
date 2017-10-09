@@ -8,7 +8,6 @@ import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
-
 public class VastActivity extends Activity
 {
     private final String URL = "file:///android_asset/build/view/game_min.html";
@@ -37,7 +36,7 @@ public class VastActivity extends Activity
         webView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                return (event.getAction() == MotionEvent.ACTION_MOVE);
+            return (event.getAction() == MotionEvent.ACTION_MOVE);
             }
         });
 
