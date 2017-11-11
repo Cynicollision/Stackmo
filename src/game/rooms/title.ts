@@ -24,9 +24,6 @@ TitleRoom.onStart(() => {
     titleX = Math.floor((canvasWidth - TitleWidth) / 2);
     titleY = Math.floor((canvasHeight - TitleHeight) / 4);
 
-    // Input.onClick(goToLevelSelect);
-    //Input.onKey(Key.Any, goToLevelSelect);
-
     SpriteFader.fadeIn([TitleSprite]);
 });
 
@@ -38,8 +35,6 @@ TitleRoom.onClick(goToLevelSelect);
 TitleRoom.onKey(Key.Any, goToLevelSelect);
 
 function goToLevelSelect() {
-    // Input.releaseClick();
-    // Input.releaseKey(Key.Any);
 
     SpriteFader.fadeOut([TitleSprite], () => {
         Vastgame.get().setRoom(RoomID.LevelSelect);

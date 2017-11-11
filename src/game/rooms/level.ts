@@ -8,6 +8,9 @@ import { Vastgame } from './../../engine/vastgame';
 let LevelRoom = Room.define(RoomID.Level);
 
 LevelRoom.onStart(() => {
+    let ExitButtonActor = Actor.get(ActorID.ExitButton);
+    LevelRoom.createActor(ExitButtonActor);
+
     let BlockActor = Actor.get(ActorID.Block);
     let PlayerActor = Actor.get(ActorID.Player);
     let WallActor = Actor.get(ActorID.Wall);
@@ -15,7 +18,7 @@ LevelRoom.onStart(() => {
 
     let DoorSprite = Sprite.get(SpriteID.DoorSheet);
 
-    SpriteFader.fadeIn([BlockActor.sprite, PlayerActor.sprite, WallActor.sprite, DoorSprite]);
+    SpriteFader.fadeIn([ExitButtonActor.sprite, BlockActor.sprite, PlayerActor.sprite, WallActor.sprite, DoorSprite]);
 
     let player = LevelRoom.getInstances().find(actorInstance => actorInstance.parent === PlayerActor);
 

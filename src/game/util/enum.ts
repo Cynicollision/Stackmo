@@ -5,6 +5,7 @@ export enum Settings {
 }
 
 export enum ActorID {
+    ExitButton = 'BackButton',
     Block = 'Block',
     LevelIcon = 'LevelIcon',
     Player = 'Player',
@@ -30,6 +31,7 @@ export enum SpriteID {
     TextSheet = 'TextSheet',
     Title = 'Title',
     Wall = 'Wall',
+    X = 'X',
 }
 
 export enum GameAction {

@@ -4,14 +4,8 @@ import { Settings, RoomID } from './util/enum';
 import { Registry } from './util/registry';
 
 // load game modules
-require('./actors/block');
-require('./actors/player');
-require('./actors/wall');
-require('./actors/win');
-
-require('./rooms/level');
-require('./rooms/level-select');
-require('./rooms/title');
+requireModules('actors', ['block', 'exit', 'player', 'wall', 'win']);
+requireModules('rooms', ['level', 'level-select', 'title']);
 
 // determine canvas dimensions based on viewport size
 let [canvasWidth, canvasHeight] = getCanvasDimensions();
@@ -38,6 +32,10 @@ let blockGame = Vastgame.init('game', {
 
 // start the game with the title room
 blockGame.start(RoomID.Title);
+
+function requireModules(rootDir: string, fileNames: string[]) {
+    fileNames.forEach(name => require('./' + rootDir + '/' + name));
+}
 
 function getCanvasDimensions(): [number, number] {
     let fillScreen = window.innerWidth < Constants.CanvasMaxWidth;

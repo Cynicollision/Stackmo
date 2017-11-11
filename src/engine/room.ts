@@ -106,6 +106,10 @@ export class Room {
 
     step(): void {
 
+        if (this.view) {
+            this.view.updatePosition();
+        }
+
         this.getInstances().forEach(instance => {
             let parent = instance.parent;
 
@@ -129,11 +133,6 @@ export class Room {
                 this.destroyActorInstance(instance);
             }
         });
-
-        // update view posiition
-        if (this.view) {
-            this.view.updatePosition();
-        }
     }
 
     private applyInstanceMovement(instance: ActorInstance): void {
