@@ -1,6 +1,6 @@
 import { ActorInstance } from './actor';
 import { Boundary } from './boundary';
-import { CanvasHTML2D } from './canvas';
+import { GameCanvasHTML2D } from './canvas';
 
 enum ViewMode {
     SamePosition = 1,

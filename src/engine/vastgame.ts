@@ -1,4 +1,4 @@
-import { CanvasHTML2D, CanvasOptions, GameCanvas } from './canvas';
+import { GameCanvasHTML2D, CanvasOptions, GameCanvas } from './canvas';
 import { Input } from './input';
 import { GameContext } from './game-context';
 import { GameRunner } from './game-runner';
@@ -30,7 +30,7 @@ class VastgameHTML2D {
         Input.init();
         
         let element = <HTMLCanvasElement>document.getElementById(canvasElementID);
-        let canvas = new CanvasHTML2D(element);
+        let canvas = new GameCanvasHTML2D(element);
         canvas.init(options.canvas);
 
         GameContext.setCanvas(canvas);

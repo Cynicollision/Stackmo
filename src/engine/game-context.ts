@@ -1,5 +1,5 @@
 import { Actor } from './actor';
-import { CanvasHTML2D } from './canvas';
+import { GameCanvasHTML2D } from './canvas';
 import { DeferredEvent } from './events';
 import { Room } from './room';
 import { Sprite } from './sprite';
@@ -12,10 +12,10 @@ export class GameContext {
     private readonly rooms: { [index: string]: Room } = {};
     private readonly sprites: { [index: string]: Sprite} = {};
 
-    private canvas: CanvasHTML2D;
+    private canvas: GameCanvasHTML2D;
     private currentRoom: Room;
 
-    static setCanvas(canvas: CanvasHTML2D): void {
+    static setCanvas(canvas: GameCanvasHTML2D): void {
         this._instance.canvas = canvas;
     }
 

@@ -21,3 +21,4 @@ src/test/test-util.js
 /build
 /captures
 .externalNativeBuild
+android/vastdroid/.idea/workspace.xml

@@ -31,8 +31,7 @@ const DefaultHeight = 480;
 const DefaultWidth = 640;
 const DefaultOpacity = 1;
 
-// TODO: rename, 'GameCanvasHTML2D'
-export class CanvasHTML2D implements GameCanvas {
+export class GameCanvasHTML2D implements GameCanvas {
     private gameCanvasContext: GameCanvasContext;
 
     constructor(public readonly canvasElement: HTMLCanvasElement) {
@@ -139,7 +138,7 @@ export class CanvasHTML2D implements GameCanvas {
 
 export class GameCanvasContext {
 
-    constructor(private gameCanvas: CanvasHTML2D) {
+    constructor(private gameCanvas: GameCanvasHTML2D) {
     }
 
     drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0, view?: View) {
