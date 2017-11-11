@@ -19,6 +19,7 @@ let lastDirection: Direction = Direction.Right;
 
 Player.onCreate(self => {
     self.animation.depth = -50;
+    heldBlock = null;
 });
 
 Player.onStep(self => {
@@ -67,9 +68,12 @@ Player.onEvent(GameAction.Stop, (player, args) => {
     let targetCell: GridCell = args.targetCell;
     let WinActor = Actor.get(ActorID.Win);
 
-    // snap to the grid
-    player.move(0);
-    player.setPosition(targetCell.x, targetCell.y);
+    // don't stop if the click/touch is still being held
+    if (!Input.clickActive) {
+        // snap to the grid
+        player.move(0);
+        player.setPosition(targetCell.x, targetCell.y);
+    }
 
     // check if falling
     if (room.isPositionFree(player.x + 1, player.y + Constants.GridCellSize + 1)) {

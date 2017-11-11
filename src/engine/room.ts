@@ -41,7 +41,7 @@ export class Room {
     private actorInstanceMap: { [index: number]: ActorInstance } = {};
 
     private eventHandlers: EventHandler[] = [];
-    // TODO: consider moving to extended class
+    // TODO: consider moving Grid to extended class or decorator
     private grid: Grid;
     view: View;
 
@@ -74,12 +74,12 @@ export class Room {
         this.onDrawCallback(gameCanvasContext);
     }
 
-    onClick(callback: Function) {
+    onClick(callback: (event: MouseEvent) => void) {
         let clickHandler = Input.registerClickHandler(callback);
         this.eventHandlers.push(clickHandler);
     }
 
-    onKey(key: Key, callback: Function) {
+    onKey(key: Key, callback: (event: KeyboardEvent) => void) {
         let keyHandler = Input.registerKeyHandler(key, callback);
         this.eventHandlers.push(keyHandler);
     }
@@ -106,9 +106,10 @@ export class Room {
 
     step(): void {
 
-        if (this.view) {
-            this.view.updatePosition();
-        }
+        // TODO: revisit. add "preStep"?
+        // if (this.view) {
+        //     this.view.updatePosition();
+        // }
 
         this.getInstances().forEach(instance => {
             let parent = instance.parent;
@@ -133,6 +134,10 @@ export class Room {
                 this.destroyActorInstance(instance);
             }
         });
+
+        if (this.view) {
+            this.view.updatePosition();
+        }
     }
 
     private applyInstanceMovement(instance: ActorInstance): void {
@@ -209,6 +214,7 @@ export class Room {
         return this.view;
     }
 
+    // TODO: remove CanvasClickEvent
     handleClick(event: CanvasClickEvent): void {
         let clickX = event.x;
         let clickY = event.y;

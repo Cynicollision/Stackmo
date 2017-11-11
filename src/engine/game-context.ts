@@ -1,6 +1,7 @@
 import { Actor } from './actor';
 import { GameCanvasHTML2D } from './canvas';
 import { DeferredEvent } from './events';
+import { Input } from './input';
 import { Room } from './room';
 import { Sprite } from './sprite';
 
@@ -17,6 +18,12 @@ export class GameContext {
 
     static setCanvas(canvas: GameCanvasHTML2D): void {
         this._instance.canvas = canvas;
+
+        Input.registerClickHandler(ev => {
+            if (this._instance.currentRoom) {
+                this._instance.currentRoom.handleClick({ button: ev.button, x: ev.offsetX, y: ev.offsetY });
+            }
+        })
     }
 
     // actors
@@ -58,7 +65,6 @@ export class GameContext {
     }
 
     static setCurrentRoom(room: Room): void {
-        this._instance.canvas.onMouseDown(event => room.handleClick(event));
         this._instance.currentRoom = room;
     }
 
