@@ -37,7 +37,7 @@ let blockGame = Vastgame.init('game', {
 });
 
 // start the game with the title room
-blockGame.start(Room.get(RoomID.Title));
+blockGame.start(RoomID.Title);
 
 function getCanvasDimensions(): [number, number] {
     let fillScreen = window.innerWidth < Constants.CanvasMaxWidth;

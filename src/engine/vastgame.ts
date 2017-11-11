@@ -37,18 +37,21 @@ class VastgameHTML2D {
         this.runner = new GameRunner(canvas, options);
     }
 
-    start(room: Room) {
-        this.setRoom(room);
+    start(roomID: string) {
+        this.setRoom(roomID);
         this.runner.start();
     }
 
-    setRoom(room: Room) {
+    setRoom(roomID: string) {
+        let room = Room.get(roomID);
+        
         let previousRoom = GameContext.getCurrentRoom();
         if (previousRoom) {
             previousRoom.end();
         }
 
         GameContext.setCurrentRoom(room);
+
         if (room.hasStart) {
             room.callStart();
         }

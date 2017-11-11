@@ -1,5 +1,7 @@
 import { Actor, ActorInstance, CollisionCallback } from './actor';
 import { CanvasClickEvent, GameCanvasContext, RoomDrawEvent } from './canvas';
+import { Key } from './enum';
+import { EventHandler, Input } from './input';
 import { GameContext } from './game-context';
 import { Grid } from './grid';
 import { GameLifecycleCallback } from './vastgame';
@@ -38,6 +40,8 @@ export class Room {
 
     private actorInstanceMap: { [index: number]: ActorInstance } = {};
 
+    private eventHandlers: EventHandler[] = [];
+    // TODO: consider moving to extended class
     private grid: Grid;
     view: View;
 
@@ -68,6 +72,16 @@ export class Room {
 
     callDraw(gameCanvasContext: GameCanvasContext): void {
         this.onDrawCallback(gameCanvasContext);
+    }
+
+    onClick(callback: Function) {
+        let clickHandler = Input.registerClickHandler(callback);
+        this.eventHandlers.push(clickHandler);
+    }
+
+    onKey(key: Key, callback: Function) {
+        let keyHandler = Input.registerKeyHandler(key, callback);
+        this.eventHandlers.push(keyHandler);
     }
 
     defineGrid(tileSize: number): Grid {
@@ -220,5 +234,6 @@ export class Room {
 
     end(): void {
         this.actorInstanceMap = {};
+        this.eventHandlers.forEach(eventHandler => eventHandler.dispose());
     }
 }

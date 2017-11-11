@@ -24,8 +24,8 @@ TitleRoom.onStart(() => {
     titleX = Math.floor((canvasWidth - TitleWidth) / 2);
     titleY = Math.floor((canvasHeight - TitleHeight) / 4);
 
-    Input.onClick(goToLevelSelect);
-    Input.onKey(Key.Any, goToLevelSelect);
+    // Input.onClick(goToLevelSelect);
+    //Input.onKey(Key.Any, goToLevelSelect);
 
     SpriteFader.fadeIn([TitleSprite]);
 });
@@ -34,12 +34,14 @@ TitleRoom.onDraw(context => {
     context.drawSprite(TitleSprite, titleX, titleY);
 });
 
+TitleRoom.onClick(goToLevelSelect);
+TitleRoom.onKey(Key.Any, goToLevelSelect);
+
 function goToLevelSelect() {
-    Input.releaseClick();
-    Input.releaseKey(Key.Any);
+    // Input.releaseClick();
+    // Input.releaseKey(Key.Any);
 
     SpriteFader.fadeOut([TitleSprite], () => {
-        let levelSelect = Room.get(RoomID.LevelSelect);
-        Vastgame.get().setRoom(levelSelect);
+        Vastgame.get().setRoom(RoomID.LevelSelect);
     });
 }

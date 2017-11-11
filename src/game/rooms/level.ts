@@ -5,9 +5,9 @@ import { Registry } from './../util/registry';
 import { SpriteFader } from './../util/sprite-fader';
 import { Vastgame } from './../../engine/vastgame';
 
-let levelRoom = Room.define(RoomID.Level);
+let LevelRoom = Room.define(RoomID.Level);
 
-levelRoom.onStart(() => {
+LevelRoom.onStart(() => {
     let BlockActor = Actor.get(ActorID.Block);
     let PlayerActor = Actor.get(ActorID.Player);
     let WallActor = Actor.get(ActorID.Wall);
@@ -17,16 +17,16 @@ levelRoom.onStart(() => {
 
     SpriteFader.fadeIn([BlockActor.sprite, PlayerActor.sprite, WallActor.sprite, DoorSprite]);
 
-    let player = levelRoom.getInstances().find(actorInstance => actorInstance.parent === PlayerActor);
+    let player = LevelRoom.getInstances().find(actorInstance => actorInstance.parent === PlayerActor);
 
     // define a view that follows the player
     let canvasWidth = Registry.get(Settings.CanvasWidth);
     let canvasHeight = Registry.get(Settings.CanvasHeight);
-    let playerView = levelRoom.defineView(0, 0, canvasWidth, canvasHeight);
+    let playerView = LevelRoom.defineView(0, 0, canvasWidth, canvasHeight);
     playerView.follow(player, true);
 
     // define the movement grid and player behavior
-    let grid = levelRoom.defineGrid(Constants.GridCellSize);
+    let grid = LevelRoom.defineGrid(Constants.GridCellSize);
     grid.onClick(gridClickEvent => {
         let clickedCell = gridClickEvent.getCell();
 
@@ -60,7 +60,7 @@ levelRoom.onStart(() => {
     });
 
     // Keyboard input
-    Input.onKey(Key.Left, () => {
+    LevelRoom.onKey(Key.Left, () => {
         let playerCell = grid.getCellAtPosition(player.x, player.y);
         let leftCell = playerCell.getAdjacentCell(Direction.Left);
         let topLeftCell = leftCell.getAdjacentCell(Direction.Up);
@@ -73,7 +73,7 @@ levelRoom.onStart(() => {
         }
     });
 
-    Input.onKey(Key.Right, () => {
+    LevelRoom.onKey(Key.Right, () => {
         let playerCell = grid.getCellAtPosition(player.x, player.y);
         let rightCell = playerCell.getAdjacentCell(Direction.Right);
         let topRightCell = rightCell.getAdjacentCell(Direction.Up);
@@ -86,7 +86,7 @@ levelRoom.onStart(() => {
         }
     });
 
-    Input.onKey(Key.Down, () => {
+    LevelRoom.onKey(Key.Down, () => {
         let playerCell = grid.getCellAtPosition(player.x, player.y);
         let leftCell = playerCell.getAdjacentCell(Direction.Left);
         let rightCell = playerCell.getAdjacentCell(Direction.Right);

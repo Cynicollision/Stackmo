@@ -66,6 +66,6 @@ WinActor.onEvent('home', (win, args) => {
     doorAnimationOffsetX = 0;
     closing = false;
     setTimeout(() => {
-        Vastgame.get().setRoom(Room.get(RoomID.LevelSelect));
+        Vastgame.get().setRoom(RoomID.LevelSelect);
     }, 500);
 });
