@@ -25,7 +25,7 @@ npm run watch
 Full build plus minification and a copy to the Android app's "assetss" folder:
 ```
 npm run build
-gulp minifiy
+gulp minify
 gulp pack
 gulp copy-android
 ```
