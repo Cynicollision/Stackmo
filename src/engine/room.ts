@@ -58,8 +58,8 @@ export class Room {
         this.onStartCallback = callback;
     }
 
-    callStart(): void {
-        this.onStartCallback();
+    callStart(args?: any): void {
+        this.onStartCallback(args);
     }
 
     get hasDraw(): boolean {

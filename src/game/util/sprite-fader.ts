@@ -5,6 +5,8 @@ const OpacityDelta = 0.25;
 
 export class SpriteFader {
     
+    // TODO (fortification): alternatives that accept Room objects, dynamically getting a unique collection of Sprites
+
     static fadeOut(sprites: Sprite[], callback: () => any): void {
         let fade = 1;
     

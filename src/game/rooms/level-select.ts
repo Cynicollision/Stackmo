@@ -17,9 +17,13 @@ const iconSizeWithPadding = Constants.GridCellSize + (iconPadding * 2);
 
 const LevelSelectRoom = Room.define(RoomID.LevelSelect);
 
-LevelSelectRoom.onStart(() => {
+let _lastLevelNumber = 1;
+
+LevelSelectRoom.onStart((args) => {
     canvasWidth = Registry.get(Settings.CanvasWidth);
     canvasHeight = Registry.get(Settings.CanvasHeight);
+
+    console.log(_lastLevelNumber);
     
     LevelSelectRoom.setBackground(Constants.Black, canvasWidth, canvasHeight);
     scrollView = LevelSelectRoom.defineView(0, 0, canvasWidth, canvasHeight);
@@ -29,7 +33,7 @@ LevelSelectRoom.onStart(() => {
     startX = Math.floor((canvasWidth - (iconsPerRow * iconSizeWithPadding)) / 2);
     startY = Math.floor(canvasHeight / 6);
 
-    // adjust iconsper row for scroll bar if rows overflow the canvas
+    // adjust icons per row for scroll bar if rows overflow the canvas
     let showScrollbars = false;
     let rowCount = Math.ceil(Levels.count / iconsPerRow);
     if (startY + (rowCount * iconSizeWithPadding) > canvasHeight) {
@@ -39,12 +43,14 @@ LevelSelectRoom.onStart(() => {
         showScrollbars = true;
     }
 
-    let currentRow = 0;
-    let currentPosition = 0;
-
-    let unlockedLevelCount = Registry.get(Settings.UnlockedLevels);
+    let unlockedLevelCount = Number(Registry.get(Settings.StackmoProgress));
+    if (args && args.win && _lastLevelNumber === unlockedLevelCount) {
+        Registry.set(Settings.StackmoProgress, unlockedLevelCount + 1, true);
+    }
 
     // create level icons
+    let currentRow = 0;
+    let currentPosition = 0;
     for (let i = 0; i < Levels.count; i++) {
         let icon = LevelSelectRoom.createActor(LevelIcon, startX + currentPosition * iconSizeWithPadding, startY + currentRow * iconSizeWithPadding);
         (<any>icon).levelNumber = i + 1;
@@ -111,6 +117,7 @@ LevelIcon.onClick(self => {
             
             LevelBuilder.populateRoom(level, levelNumber);
             
+            _lastLevelNumber = levelNumber;
             Vastgame.setRoom(RoomID.Level);
         });
     } 

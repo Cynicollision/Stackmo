@@ -16,7 +16,7 @@ export { Sprite, SpriteTransformation } from './sprite';
 export { View } from './view';
 
 export interface GameLifecycleCallback {
-    (): void;
+    (args: any): void;
 }
 
 export interface GameOptions {
@@ -43,7 +43,7 @@ class VastgameHTML2D {
         this.runner.start();
     }
 
-    setRoom(roomID: string) {
+    setRoom(roomID: string, startArgs?: any) {
         let room = Room.get(roomID);
         
         let previousRoom = GameContext.getCurrentRoom();
@@ -54,7 +54,7 @@ class VastgameHTML2D {
         GameContext.setCurrentRoom(room);
 
         if (room.hasStart) {
-            room.callStart();
+            room.callStart(startArgs);
         }
     }
 }
@@ -69,7 +69,7 @@ export class Vastgame {
         return this.game;
     }
 
-    static setRoom(roomID: string) {
-        this.game.setRoom(roomID);
+    static setRoom(roomID: string, startArgs?: any) {
+        this.game.setRoom(roomID, startArgs);
     }
 }

@@ -13,8 +13,10 @@ let [canvasWidth, canvasHeight] = buildCanvasDimensions();
 Registry.set(Settings.CanvasWidth, canvasWidth);
 Registry.set(Settings.CanvasHeight, canvasHeight);
 
-let unlockedCount = localStorage.getItem(Settings.LocalStorageKey) || 4;
-Registry.set(Settings.UnlockedLevels, Number(unlockedCount));
+// hacks:
+Registry.set(Settings.StackmoProgress, 1, true);
+
+Registry.load(Settings.StackmoProgress);
 
 // start the game with the title room
 Vastgame.start('game', RoomID.Title, {
