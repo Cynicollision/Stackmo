@@ -1,6 +1,7 @@
 export enum Settings {
     CanvasWidth = 'CanvasWidth',
     CanvasHeight = 'CanvasHeight',
+    LocalStorageKey = 'Stackmo_Progress',
     UnlockedLevels = 'UnlockedLevels',
 }
 

@@ -1,4 +1,4 @@
-import { Actor, ActorInstance, Direction, GridCell, Input, Key, Room, Sprite } from './../../engine/vastgame';
+import { Actor, ActorInstance, Enum, GridCell, Input, Room, Sprite } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, RoomID, SpriteID, GameAction, Settings } from './../util/enum';
 import { Registry } from './../util/registry';
@@ -40,35 +40,35 @@ LevelRoom.onStart(() => {
             return;
         }
 
-        let leftCell = clickedCell.getAdjacentCell(Direction.Left);
-        let rightCell = clickedCell.getAdjacentCell(Direction.Right);
-        let downCell = clickedCell.getAdjacentCell(Direction.Down);
+        let leftCell = clickedCell.getAdjacentCell(Enum.Direction.Left);
+        let rightCell = clickedCell.getAdjacentCell(Enum.Direction.Right);
+        let downCell = clickedCell.getAdjacentCell(Enum.Direction.Down);
 
-        let downLeftCell = leftCell.getAdjacentCell(Direction.Down);
-        let downRightCell = rightCell.getAdjacentCell(Direction.Down);
+        let downLeftCell = leftCell.getAdjacentCell(Enum.Direction.Down);
+        let downRightCell = rightCell.getAdjacentCell(Enum.Direction.Down);
         
         if (clickedCell.containsInstanceOf(BlockActor)) {
             player.raiseEvent(GameAction.Lift, { block: clickedCell.getContents()[0], targetCell: clickedCell });
         }
         else if (rightCell.containsInstance(player)) {
-            player.raiseEvent(GameAction.Move, { direction: Direction.Left, targetCell: clickedCell });
+            player.raiseEvent(GameAction.Move, { direction: Enum.Direction.Left, targetCell: clickedCell });
         }
         else if (leftCell.containsInstance(player)) {
-            player.raiseEvent(GameAction.Move, { direction: Direction.Right, targetCell: clickedCell });
+            player.raiseEvent(GameAction.Move, { direction: Enum.Direction.Right, targetCell: clickedCell });
         }
         else if (downLeftCell.containsInstance(player) && (downCell.containsInstanceOf(BlockActor) || downCell.containsInstanceOf(WallActor))) {
-            player.raiseEvent(GameAction.Jump, { direction: Direction.Right, targetCell: clickedCell });
+            player.raiseEvent(GameAction.Jump, { direction: Enum.Direction.Right, targetCell: clickedCell });
         }
         else if (downRightCell.containsInstance(player) && (downCell.containsInstanceOf(BlockActor) || downCell.containsInstanceOf(WallActor))) {
-            player.raiseEvent(GameAction.Jump, { direction: Direction.Left, targetCell: clickedCell });
+            player.raiseEvent(GameAction.Jump, { direction: Enum.Direction.Left, targetCell: clickedCell });
         }
     });
 
     // Keyboard input
-    LevelRoom.onKey(Key.Left, () => {
+    LevelRoom.onKey(Enum.Key.Left, () => {
         let playerCell = grid.getCellAtPosition(player.x, player.y);
-        let leftCell = playerCell.getAdjacentCell(Direction.Left);
-        let topLeftCell = leftCell.getAdjacentCell(Direction.Up);
+        let leftCell = playerCell.getAdjacentCell(Enum.Direction.Left);
+        let topLeftCell = leftCell.getAdjacentCell(Enum.Direction.Up);
 
         if (topLeftCell.isFree() && (leftCell.containsInstanceOf(WallActor) || leftCell.containsInstanceOf(BlockActor))) {
             grid.raiseClickEvent(player.x - Constants.GridCellSize, player.y - Constants.GridCellSize);
@@ -78,10 +78,10 @@ LevelRoom.onStart(() => {
         }
     });
 
-    LevelRoom.onKey(Key.Right, () => {
+    LevelRoom.onKey(Enum.Key.Right, () => {
         let playerCell = grid.getCellAtPosition(player.x, player.y);
-        let rightCell = playerCell.getAdjacentCell(Direction.Right);
-        let topRightCell = rightCell.getAdjacentCell(Direction.Up);
+        let rightCell = playerCell.getAdjacentCell(Enum.Direction.Right);
+        let topRightCell = rightCell.getAdjacentCell(Enum.Direction.Up);
 
         if (topRightCell.isFree() && (rightCell.containsInstanceOf(WallActor) || rightCell.containsInstanceOf(BlockActor))) {
             grid.raiseClickEvent(player.x + Constants.GridCellSize, player.y - Constants.GridCellSize);
@@ -91,13 +91,13 @@ LevelRoom.onStart(() => {
         }
     });
 
-    LevelRoom.onKey(Key.Down, () => {
+    LevelRoom.onKey(Enum.Key.Down, () => {
         let playerCell = grid.getCellAtPosition(player.x, player.y);
-        let leftCell = playerCell.getAdjacentCell(Direction.Left);
-        let rightCell = playerCell.getAdjacentCell(Direction.Right);
-        let topCell = playerCell.getAdjacentCell(Direction.Up);
-        let topLeftCell = topCell.getAdjacentCell(Direction.Left);
-        let topRightCell = topCell.getAdjacentCell(Direction.Right);
+        let leftCell = playerCell.getAdjacentCell(Enum.Direction.Left);
+        let rightCell = playerCell.getAdjacentCell(Enum.Direction.Right);
+        let topCell = playerCell.getAdjacentCell(Enum.Direction.Up);
+        let topLeftCell = topCell.getAdjacentCell(Enum.Direction.Left);
+        let topRightCell = topCell.getAdjacentCell(Enum.Direction.Right);
 
         if (topCell.containsInstanceOf(BlockActor)) {
             // drop

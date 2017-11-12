@@ -1,4 +1,4 @@
-import { Actor, ActorInstance, Boundary, Direction, Input, GridCell, Key, Room, Sprite } from './../../engine/vastgame';
+import { Actor, ActorInstance, Boundary, Enum, Input, GridCell, Room, Sprite } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, GameAction, SpriteID } from './../util/enum';
 
@@ -15,7 +15,7 @@ let Player = Actor.define(ActorID.Player, {
 });
 
 let heldBlock: ActorInstance;
-let lastDirection: Direction = Direction.Right;
+let lastDirection: Enum.Direction = Enum.Direction.Right;
 
 Player.onCreate(self => {
     self.animation.depth = -50;
@@ -32,7 +32,7 @@ Player.onStep(self => {
 // Moving
 Player.onEvent(GameAction.Move, (player, args) => {
     let targetCell: GridCell = args.targetCell;
-    let direction: Direction = args.direction;
+    let direction: Enum.Direction = args.direction;
     let startX = player.x;
 
     let stopCondition = (): boolean => {
@@ -42,7 +42,7 @@ Player.onEvent(GameAction.Move, (player, args) => {
     lastDirection = direction;
 
     // clearance check
-    if (!heldBlock || (heldBlock && targetCell.getAdjacentCell(Direction.Up).isFree())) {
+    if (!heldBlock || (heldBlock && targetCell.getAdjacentCell(Enum.Direction.Up).isFree())) {
         player.move(Constants.PlayerMoveSpeed, direction);
         player.raiseEventWhen(GameAction.CheckStopMoving, stopCondition, args);
     
@@ -59,9 +59,9 @@ Player.onEvent(GameAction.CheckStopMoving, (player, args) => {
     player.move(0);
     player.setPosition(targetCell.x, targetCell.y);
 
-    if (Input.clickActive || Input.keyDown(lastDirection === Direction.Left ? Key.Left : Key.Right)) {
+    if (Input.clickActive || Input.keyDown(lastDirection === Enum.Direction.Left ? Enum.Key.Left : Enum.Key.Right)) {
         let nextCell = targetCell.getAdjacentCell(lastDirection);
-        let belowCell = targetCell.getAdjacentCell(Direction.Down);
+        let belowCell = targetCell.getAdjacentCell(Enum.Direction.Down);
 
         if (nextCell.isFree() && !belowCell.isFree()) {
             args.targetCell = nextCell;
@@ -75,13 +75,13 @@ Player.onEvent(GameAction.CheckStopMoving, (player, args) => {
 // Falling
 Player.onEvent(GameAction.Fall, (player, args) => {
     let startY = player.y;
-    let direction: Direction = args.direction;
+    let direction: Enum.Direction = args.direction;
     let stopCondition = (): boolean =>  Math.abs(startY - player.y) >= Constants.GridCellSize;
 
     // move the target cell to the one below the previous target cell
-    args.targetCell = args.targetCell.getAdjacentCell(Direction.Down);
+    args.targetCell = args.targetCell.getAdjacentCell(Enum.Direction.Down);
 
-    player.move(Constants.PlayerFallSpeed, Direction.Down);
+    player.move(Constants.PlayerFallSpeed, Enum.Direction.Down);
     player.raiseEventWhen(GameAction.Stop, stopCondition, args);
 
     animate(player, direction, false);
@@ -115,12 +115,12 @@ Player.onEvent(GameAction.Stop, (player, args) => {
 // Jumping
 Player.onEvent(GameAction.Jump, (player, args) => {
     let targetCell: GridCell = args.targetCell;
-    let direction: Direction = args.direction;
+    let direction: Enum.Direction = args.direction;
     let startY = player.y;
 
     // clearance check
-    let cellAbovePlayer = targetCell.getAdjacentCell(direction === Direction.Right ? Direction.Left : Direction.Right);
-    let cellAboveBox = !!heldBlock ? cellAbovePlayer.getAdjacentCell(Direction.Up) : null;
+    let cellAbovePlayer = targetCell.getAdjacentCell(direction === Enum.Direction.Right ? Enum.Direction.Left : Enum.Direction.Right);
+    let cellAboveBox = !!heldBlock ? cellAbovePlayer.getAdjacentCell(Enum.Direction.Up) : null;
 
     let canJump = !!cellAboveBox 
         ? cellAboveBox.isFree() && cellAboveBox.getAdjacentCell(direction).isFree()
@@ -129,7 +129,7 @@ Player.onEvent(GameAction.Jump, (player, args) => {
     if (canJump) {
         // stop after moving up one space
         let stopCondition = (): boolean => Math.abs(startY - player.y) >= Constants.GridCellSize;
-        player.move(Constants.PlayerJumpSpeed, Direction.Up);
+        player.move(Constants.PlayerJumpSpeed, Enum.Direction.Up);
         player.raiseEventWhen(GameAction.Move, stopCondition, args);
     }
 });
@@ -139,10 +139,10 @@ Player.onEvent(GameAction.Lift, (player, args) => {
     let block: ActorInstance = args.block;
     let targetCell: GridCell = args.targetCell;
 
-    let validBlockLiftCell = lastDirection === Direction.Left ? Direction.Right : Direction.Left;
+    let validBlockLiftCell = lastDirection === Enum.Direction.Left ? Enum.Direction.Right : Enum.Direction.Left;
 
     // prevent lifting if there's something on top of the box or on top of the player
-    let aboveBoxCell = targetCell.getAdjacentCell(Direction.Up);
+    let aboveBoxCell = targetCell.getAdjacentCell(Enum.Direction.Up);
     let abovePlayerCell = aboveBoxCell.getAdjacentCell(validBlockLiftCell);
 
     if (!heldBlock && !(aboveBoxCell.isFree() && abovePlayerCell.isFree())) {
@@ -162,7 +162,7 @@ Player.onEvent(GameAction.Lift, (player, args) => {
 Player.onEvent(GameAction.Drop, (player, args) => {
     let block: ActorInstance = args.block;
     let targetCell: GridCell = args.targetCell;
-    let offsetX = lastDirection === Direction.Left ? -Constants.GridCellSize : Constants.GridCellSize;
+    let offsetX = lastDirection === Enum.Direction.Left ? -Constants.GridCellSize : Constants.GridCellSize;
 
     // prevent dropping if there's something in the way of the box
     if (targetCell.getAdjacentCell(lastDirection).isFree()) {
@@ -194,15 +194,15 @@ enum StackmoFrame {
     MoveHolddRight2 = 11,
 }
 
-function animate(player: ActorInstance, direction: Direction, isMoving: boolean = false): void {
+function animate(player: ActorInstance, direction: Enum.Direction, isMoving: boolean = false): void {
     const animationSpeed = 100;
     let startFrame = StackmoFrame.StandRight;
     
     if (!!heldBlock) {
-        startFrame = direction === Direction.Right ? StackmoFrame.StandHoldRight : StackmoFrame.StandHoldLeft;
+        startFrame = direction === Enum.Direction.Right ? StackmoFrame.StandHoldRight : StackmoFrame.StandHoldLeft;
     }
     else {
-        startFrame = direction === Direction.Right ? StackmoFrame.StandRight : StackmoFrame.StandLeft;
+        startFrame = direction === Enum.Direction.Right ? StackmoFrame.StandRight : StackmoFrame.StandLeft;
     }
 
     if (isMoving) {

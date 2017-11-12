@@ -1,4 +1,5 @@
 import { GameCanvasHTML2D, CanvasOptions, GameCanvas } from './canvas';
+import * as Enum from './enum';
 import { Input } from './input';
 import { GameContext } from './game-context';
 import { GameRunner } from './game-runner';
@@ -7,7 +8,7 @@ import { Room } from './room';
 // export public modules
 export { Actor, ActorInstance } from './actor';
 export { Boundary } from './boundary';
-export * from './enum';
+export { Enum }
 export { Input } from './input';
 export { Grid, GridCell } from './grid';
 export { Room } from './room';
@@ -61,8 +62,9 @@ class VastgameHTML2D {
 export class Vastgame {
     private static readonly game = new VastgameHTML2D();
 
-    static init(canvasElementID: string, options?: GameOptions): VastgameHTML2D {
+    static start(canvasElementID: string, initialRoomID: string, options?: GameOptions): VastgameHTML2D {
         this.game.init(canvasElementID, options);
+        this.game.start(initialRoomID);
 
         return this.game;
     }
