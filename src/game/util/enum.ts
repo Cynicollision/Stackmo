@@ -40,6 +40,7 @@ export enum GameAction {
     Jump = 'Jump',
     Lift = 'Lift',
     Move = 'Move',
+    CheckStopMoving = 'CheckStopMoving',
     Stop = 'Stop',
     Win = 'Win',
 }

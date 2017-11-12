@@ -21,7 +21,7 @@ export class GameContext {
 
         Input.registerClickHandler(ev => {
             if (this._instance.currentRoom) {
-                this._instance.currentRoom.handleClick({ button: ev.button, x: ev.offsetX, y: ev.offsetY });
+                this._instance.currentRoom.handleClick(ev);
             }
         })
     }

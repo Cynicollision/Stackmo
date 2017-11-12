@@ -1,7 +1,7 @@
 import { Actor, ActorInstance, CollisionCallback } from './actor';
-import { CanvasClickEvent, GameCanvasContext, RoomDrawEvent } from './canvas';
+import { GameCanvasContext, RoomDrawEvent } from './canvas';
 import { Key } from './enum';
-import { EventHandler, Input } from './input';
+import { EventHandler, Input, PointerInputEvent } from './input';
 import { GameContext } from './game-context';
 import { Grid } from './grid';
 import { GameLifecycleCallback } from './vastgame';
@@ -106,11 +106,6 @@ export class Room {
 
     step(): void {
 
-        // TODO: revisit. add "preStep"?
-        // if (this.view) {
-        //     this.view.updatePosition();
-        // }
-
         this.getInstances().forEach(instance => {
             let parent = instance.parent;
 
@@ -214,8 +209,7 @@ export class Room {
         return this.view;
     }
 
-    // TODO: remove CanvasClickEvent
-    handleClick(event: CanvasClickEvent): void {
+    handleClick(event: PointerInputEvent): void {
         let clickX = event.x;
         let clickY = event.y;
 

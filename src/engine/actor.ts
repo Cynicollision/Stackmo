@@ -1,8 +1,9 @@
 import { Boundary } from './boundary';
-import { ActorInstanceDrawEvent, CanvasClickEvent, GameCanvasContext } from './canvas';
+import { ActorInstanceDrawEvent, GameCanvasContext } from './canvas';
 import { ActorState, Direction } from './enum';
 import { DeferredEvent } from './events';
 import { GameContext } from './game-context';
+import { PointerInputEvent } from './input';
 import { Sprite, SpriteAnimation } from './sprite';
 import { MathUtil } from './util';
 
@@ -31,7 +32,7 @@ export interface ActorOptions {
 }
 
 interface ClickEventCallback {
-    (self: ActorInstance, event: CanvasClickEvent): void;
+    (self: ActorInstance, event: PointerInputEvent): void;
 }
 
 export interface CollisionCallback {
@@ -118,7 +119,7 @@ export class Actor {
         this.onClickCallback = callback;
     }
 
-    callClick(selfInstance: ActorInstance, event: CanvasClickEvent): void {
+    callClick(selfInstance: ActorInstance, event: PointerInputEvent): void {
         this.onClickCallback(selfInstance, event);
     }
 

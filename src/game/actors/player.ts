@@ -29,21 +29,49 @@ Player.onStep(self => {
     }
 });
 
-// Walking
+// Moving
 Player.onEvent(GameAction.Move, (player, args) => {
     let targetCell: GridCell = args.targetCell;
     let direction: Direction = args.direction;
     let startX = player.x;
-    let stopCondition = (): boolean => Math.abs(startX - player.x) >= Constants.GridCellSize;
+
+    let stopCondition = (): boolean => {
+        return Math.abs(startX - player.x) >= Constants.GridCellSize;
+    };
 
     lastDirection = direction;
 
-    // don't if the held block prevents it
+    // clearance check
     if (!heldBlock || (heldBlock && targetCell.getAdjacentCell(Direction.Up).isFree())) {
         player.move(Constants.PlayerMoveSpeed, direction);
-        player.raiseEventWhen(GameAction.Stop, stopCondition, args);
+        //player.raiseEventWhen(GameAction.Stop, stopCondition, args);
+        player.raiseEventWhen(GameAction.CheckStopMoving, stopCondition, args);
     
         animate(player, direction, true);
+    }
+});
+
+// Stop moving or continue
+Player.onEvent(GameAction.CheckStopMoving, (player, args) => {
+    let targetCell: GridCell = args.targetCell;
+
+    player.move(0);
+    player.setPosition(targetCell.x, targetCell.y);
+
+    if (Input.clickActive) {
+        let nextCell = targetCell.getAdjacentCell(lastDirection);
+        let belowCell = targetCell.getAdjacentCell(Direction.Down);
+
+        if (nextCell.isFree() && !belowCell.isFree()) {
+            args.targetCell = nextCell;
+            player.raiseEvent(GameAction.Move, args);
+        }
+        else {
+            player.raiseEvent(GameAction.Stop, args);
+        }
+    }
+    else {
+        player.raiseEvent(GameAction.Stop, args);
     }
 });
 
@@ -66,14 +94,10 @@ Player.onEvent(GameAction.Fall, (player, args) => {
 Player.onEvent(GameAction.Stop, (player, args) => {
     let room: Room = args.game.currentRoom;
     let targetCell: GridCell = args.targetCell;
-    let WinActor = Actor.get(ActorID.Win);
 
-    // don't stop if the click/touch is still being held
-    if (!Input.clickActive) {
-        // snap to the grid
-        player.move(0);
-        player.setPosition(targetCell.x, targetCell.y);
-    }
+    // snap to the grid
+    player.move(0);
+    player.setPosition(targetCell.x, targetCell.y);
 
     // check if falling
     if (room.isPositionFree(player.x + 1, player.y + Constants.GridCellSize + 1)) {
@@ -84,6 +108,7 @@ Player.onEvent(GameAction.Stop, (player, args) => {
     }
 
     // check for victory
+    let WinActor = Actor.get(ActorID.Win);
     if (targetCell.containsInstanceOf(WinActor)) {
         let win = room.getInstances().find(actorInstance => actorInstance.parent === WinActor);
         win.raiseEvent(GameAction.Win);

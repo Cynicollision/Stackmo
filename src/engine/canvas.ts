@@ -8,12 +8,6 @@ export interface CanvasOptions {
     width?: number;
 }
 
-export interface CanvasClickEvent {
-    button: number;
-    x: number;
-    y: number;
-}
-
 export interface ActorInstanceDrawEvent {
     (self: ActorInstance, context: GameCanvasContext): void;
 }
@@ -53,12 +47,6 @@ export class GameCanvasHTML2D implements GameCanvas {
     init(options: CanvasOptions = {}): void {
         this.canvasElement.height = options.height || DefaultHeight;
         this.canvasElement.width = options.width || DefaultWidth;
-    }
-
-    onMouseDown(callback: (event: CanvasClickEvent) => void): void {
-        this.canvasElement.onmousedown = <any>((ev: MouseEvent) => {
-            callback({ button: ev.button, x: ev.offsetX, y: ev.offsetY });
-        });
     }
 
     // TODO: separate canvas interactions from room/instance logic
