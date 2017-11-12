@@ -136,7 +136,7 @@ export class Room {
         });
 
         if (this.view) {
-            this.view.updatePosition();
+            this.view.update();
         }
     }
 

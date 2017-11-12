@@ -14,11 +14,3 @@ let ExitButton = Actor.define(ActorID.ExitButton, {
 });
 
 ExitButton.onClick(() => Vastgame.get().setRoom(RoomID.LevelSelect));
-
-ExitButton.onStep(self => {
-    let view = Room.current.view;
-    let buffer = Constants.GridCellSize / 4;
-
-    self.x = view.x + view.width - Constants.GridCellSize - buffer;
-    self.y = view.y + buffer;
-});

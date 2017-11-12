@@ -14,7 +14,7 @@ describe('View', () => {
         let actorInstance = ActorBuilder.newInstance(200, 200, { boundary: new Boundary(20, 20) })
         testView.follow(actorInstance);
 
-        testView.updatePosition();
+        testView.update();
 
         expect(testView.x).toEqual(actorInstance.x);
         expect(testView.y).toEqual(actorInstance.y);
@@ -24,7 +24,7 @@ describe('View', () => {
         let actorInstance = ActorBuilder.newInstance(200, 200, { boundary: new Boundary(20, 20) })
         testView.follow(actorInstance, true);
 
-        testView.updatePosition();
+        testView.update();
 
         expect(testView.x).toEqual(10);
         expect(testView.y).toEqual(10);
@@ -35,6 +35,25 @@ describe('View', () => {
 
         testView.follow(actorInstance);
         
-        expect(testView.updatePosition).toThrow();
+        expect(testView.update).toThrow();
     });
+
+    it('updates the positions of its attachments after updating its own position', () => {
+        let actorInstance = ActorBuilder.newInstance(50, 50, { boundary: new Boundary(20, 20) } );
+        let attachment1 = ActorBuilder.newInstance();
+        let attachment2 = ActorBuilder.newInstance();
+
+        testView.follow(actorInstance);
+        testView.attach(attachment1, 100, 120);
+        testView.attach(attachment2, 200, 220);
+
+        testView.update();
+
+        expect(testView.x).toEqual(actorInstance.x);
+        expect(testView.y).toEqual(actorInstance.y);
+        expect(attachment1.x).toEqual(150);
+        expect(attachment1.y).toEqual(170);
+        expect(attachment2.x).toEqual(250);
+        expect(attachment2.y).toEqual(270);
+    })
 });

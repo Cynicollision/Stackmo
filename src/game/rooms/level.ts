@@ -8,10 +8,8 @@ import { Vastgame } from './../../engine/vastgame';
 let LevelRoom = Room.define(RoomID.Level);
 
 LevelRoom.onStart(() => {
-    let ExitButtonActor = Actor.get(ActorID.ExitButton);
-    LevelRoom.createActor(ExitButtonActor);
-
     let BlockActor = Actor.get(ActorID.Block);
+    let ExitButtonActor = Actor.get(ActorID.ExitButton);
     let PlayerActor = Actor.get(ActorID.Player);
     let WallActor = Actor.get(ActorID.Wall);
     let WinActor = Actor.get(ActorID.Win);
@@ -20,13 +18,17 @@ LevelRoom.onStart(() => {
 
     SpriteFader.fadeIn([ExitButtonActor.sprite, BlockActor.sprite, PlayerActor.sprite, WallActor.sprite, DoorSprite]);
 
+    // assumes the level has already been populated before starting
     let player = LevelRoom.getInstances().find(actorInstance => actorInstance.parent === PlayerActor);
 
-    // define a view that follows the player
-    let canvasWidth = Registry.get(Settings.CanvasWidth);
-    let canvasHeight = Registry.get(Settings.CanvasHeight);
+    // define a view that follows the player and has the "X" button attached
+    const canvasWidth = Registry.get(Settings.CanvasWidth);
+    const canvasHeight = Registry.get(Settings.CanvasHeight);
+    const viewHUDBuffer = Constants.GridCellSize / 4;
+
     let playerView = LevelRoom.defineView(0, 0, canvasWidth, canvasHeight);
     playerView.follow(player, true);
+    playerView.attach(LevelRoom.createActor(ExitButtonActor), canvasWidth - Constants.GridCellSize - viewHUDBuffer, viewHUDBuffer);
 
     // define the movement grid and player behavior
     let grid = LevelRoom.defineGrid(Constants.GridCellSize);
