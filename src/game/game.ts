@@ -4,11 +4,11 @@ import { Settings, RoomID } from './util/enum';
 import { Registry } from './util/registry';
 
 // load game modules
-requireModules('actors', ['block', 'exit', 'player', 'wall', 'win']);
+requireModules('actors', ['block', 'hud', 'player', 'wall', 'win']);
 requireModules('rooms', ['level', 'level-select', 'title']);
 
 // determine canvas dimensions based on viewport size
-let [canvasWidth, canvasHeight] = getCanvasDimensions();
+let [canvasWidth, canvasHeight] = buildCanvasDimensions();
 
 Registry.set(Settings.CanvasWidth, canvasWidth);
 Registry.set(Settings.CanvasHeight, canvasHeight);
@@ -37,7 +37,7 @@ function requireModules(rootDir: string, fileNames: string[]) {
     fileNames.forEach(name => require('./' + rootDir + '/' + name));
 }
 
-function getCanvasDimensions(): [number, number] {
+function buildCanvasDimensions(): [number, number] {
     let fillScreen = window.innerWidth < Constants.CanvasMaxWidth;
 
     let canvasWidth = fillScreen ? window.innerWidth : Constants.CanvasMaxWidth;

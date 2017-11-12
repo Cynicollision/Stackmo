@@ -67,7 +67,7 @@ export class Vastgame {
         return this.game;
     }
 
-    static get(): VastgameHTML2D {
-        return this.game;
+    static setRoom(roomID: string) {
+        this.game.setRoom(roomID);
     }
 }

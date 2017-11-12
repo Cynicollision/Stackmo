@@ -111,7 +111,7 @@ LevelIcon.onClick(self => {
             
             LevelBuilder.populateRoom(level, levelNumber);
             
-            Vastgame.get().setRoom(RoomID.Level);
+            Vastgame.setRoom(RoomID.Level);
         });
     } 
 });

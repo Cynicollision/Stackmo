@@ -1,5 +1,5 @@
-import { Actor, Key, Input, Room, Sprite, SpriteTransformation, Vastgame } from './../../engine/vastgame';
-import { ActorID, RoomID, Settings, SpriteID } from './../util/enum';
+import { Key, Room, Sprite, Vastgame } from './../../engine/vastgame';
+import { RoomID, Settings, SpriteID } from './../util/enum';
 import { SpriteFader } from './../util/sprite-fader';
 import { Registry } from './../util/registry';
 
@@ -37,6 +37,6 @@ TitleRoom.onKey(Key.Any, goToLevelSelect);
 function goToLevelSelect() {
 
     SpriteFader.fadeOut([TitleSprite], () => {
-        Vastgame.get().setRoom(RoomID.LevelSelect);
+        Vastgame.setRoom(RoomID.LevelSelect);
     });
 }
