@@ -22,7 +22,7 @@ npm run watch
 ```
 
 ### Building Android package
-Full build plus minification and a copy to the Android app's "assetss" folder:
+Full build plus minification and a copy to the Android app's "assets" folder:
 ```
 npm run build
 gulp minify
