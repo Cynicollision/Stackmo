@@ -1,4 +1,4 @@
-import { Actor, ActorInstance, Boundary, Direction, Input, GridCell, Room, Sprite } from './../../engine/vastgame';
+import { Actor, ActorInstance, Boundary, Direction, Input, GridCell, Key, Room, Sprite } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, GameAction, SpriteID } from './../util/enum';
 
@@ -44,7 +44,6 @@ Player.onEvent(GameAction.Move, (player, args) => {
     // clearance check
     if (!heldBlock || (heldBlock && targetCell.getAdjacentCell(Direction.Up).isFree())) {
         player.move(Constants.PlayerMoveSpeed, direction);
-        //player.raiseEventWhen(GameAction.Stop, stopCondition, args);
         player.raiseEventWhen(GameAction.CheckStopMoving, stopCondition, args);
     
         animate(player, direction, true);
@@ -54,25 +53,23 @@ Player.onEvent(GameAction.Move, (player, args) => {
 // Stop moving or continue
 Player.onEvent(GameAction.CheckStopMoving, (player, args) => {
     let targetCell: GridCell = args.targetCell;
+    let action = GameAction.Stop;
 
+    // snap to the grid
     player.move(0);
     player.setPosition(targetCell.x, targetCell.y);
 
-    if (Input.clickActive) {
+    if (Input.clickActive || Input.keyDown(lastDirection === Direction.Left ? Key.Left : Key.Right)) {
         let nextCell = targetCell.getAdjacentCell(lastDirection);
         let belowCell = targetCell.getAdjacentCell(Direction.Down);
 
         if (nextCell.isFree() && !belowCell.isFree()) {
             args.targetCell = nextCell;
-            player.raiseEvent(GameAction.Move, args);
-        }
-        else {
-            player.raiseEvent(GameAction.Stop, args);
+            action = GameAction.Move
         }
     }
-    else {
-        player.raiseEvent(GameAction.Stop, args);
-    }
+
+    player.raiseEvent(action, args);
 });
 
 // Falling

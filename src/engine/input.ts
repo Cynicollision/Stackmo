@@ -3,6 +3,7 @@ import { Key } from './enum';
 export class Input {
     private static clickHandlers: ConcreteEventHandler<PointerInputEvent>[] = [];
     private static keyboardHandlers: { [code: number]: ConcreteEventHandler<KeyboardEvent> } = {};
+    private static keyboardActivity: { [code: number]: boolean } = {};
 
     private static _activePointerEvent: PointerInputEvent = null;
     static get clickActive(): boolean {
@@ -45,14 +46,27 @@ export class Input {
 
         // register keyboard input
         document.body.onkeydown = (ev: KeyboardEvent) => {
-            let handler: ConcreteEventHandler<KeyboardEvent> = this.keyboardHandlers[ev.keyCode || ev.code];
+            let keyCode = ev.keyCode || ev.code
+            let handler: ConcreteEventHandler<KeyboardEvent> = this.keyboardHandlers[keyCode];
 
-            if (!handler) {
-                handler = this.keyboardHandlers[Key.Any];
+            if (handler && handler.isAlive && !this.keyboardActivity[keyCode]) {
+                this.keyboardActivity[keyCode] = true;
+                handler.callback(ev);
             }
 
+            let globalHandler = this.keyboardHandlers[Key.Any];
+            if (globalHandler && globalHandler.isAlive && !this.keyboardActivity[Key.Any])           {
+                this.keyboardActivity[Key.Any] = true;
+                globalHandler.callback(ev);
+            }
+        };
+        document.body.onkeyup = (ev: KeyboardEvent) => {
+            let keyCode = ev.keyCode || ev.code
+            let handler: ConcreteEventHandler<KeyboardEvent> = this.keyboardHandlers[keyCode];
+            this.keyboardActivity[Key.Any] = false;
+
             if (handler && handler.isAlive) {
-                handler.callback(ev);
+                this.keyboardActivity[keyCode] = false;
             }
         };
     }
@@ -69,6 +83,10 @@ export class Input {
         Input.keyboardHandlers[key] = keyHandler
         
         return keyHandler;
+    }
+
+    static keyDown(key: Key): boolean {
+        return !!this.keyboardActivity[key];
     }
 }
 
@@ -93,17 +111,11 @@ export class PointerInputEvent {
     y: number;
 
     static fromMouseEvent(ev: MouseEvent): PointerInputEvent {
-        console.log('CLICK at x = ' + ev.offsetX + ', y = ' + ev.offsetY);
-        // console.log('ev.type = ' + ev.type);
         return { x: ev.offsetX, y: ev.offsetY };
     }
 
     static fromTouchEvent(ev: TouchEvent): PointerInputEvent {
         let touch = ev.touches[0];
-        let x = touch ? touch.clientX : 0;
-        let y = touch ? touch.clientY : 0;
-        console.log('TOUCH at x = ' + x + ', y = ' + y);
-        // console.log('ev.type = ' + ev.type);
-        return { x: x, y: y};
+        return { x: touch ? touch.clientX : 0, y: touch ? touch.clientY : 0 };
     }
 }
