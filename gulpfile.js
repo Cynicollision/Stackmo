@@ -6,7 +6,7 @@ var uglify = require('gulp-uglify');
 var cleanCompiledTypeScript = require('gulp-clean-compiled-typescript');
  
 gulp.task('clean', function () {
-    return del(['build','dist']);
+    return del(['build','dist','src/**/*.js','src/**/*.js.map','!src/test/main.js']);
 });
 
 gulp.task('minify', function () {
