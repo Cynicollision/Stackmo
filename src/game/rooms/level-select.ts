@@ -46,7 +46,8 @@ LevelSelectRoom.onStart((args) => {
 
     let unlockedLevelCount = Number(Registry.get(Settings.StackmoProgress));
     if (args && args.win && _lastLevelNumber === unlockedLevelCount) {
-        Registry.set(Settings.StackmoProgress, unlockedLevelCount + 1, true);
+        unlockedLevelCount++;
+        Registry.set(Settings.StackmoProgress, unlockedLevelCount, true);
     }
 
     // create level icons
