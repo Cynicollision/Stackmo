@@ -1,5 +1,5 @@
 import { Actor, ActorInstance, Room, Vastgame } from './../../engine/vastgame';
-import { LevelBgColor } from './enum';
+import { ActorID, LevelBgColor } from './enum';
 import * as Constants from './constants';
 
 export class LevelBuilder {
@@ -30,19 +30,19 @@ export class LevelBuilder {
                 switch (row.charAt(j)) {
 
                     case 'X':
-                        instances.push(room.createActor(Block, j * cellSize, i * cellSize));
+                        instances.push(room.createActor(ActorID.Block, j * cellSize, i * cellSize));
                         break;
 
                     case 'P':
-                        instances.push(room.createActor(Player, j * cellSize, i * cellSize));
+                        instances.push(room.createActor(ActorID.Player, j * cellSize, i * cellSize));
                         break;
 
                     case 'W':
-                        instances.push(room.createActor(Win, j * cellSize, i * cellSize));
+                        instances.push(room.createActor(ActorID.Win, j * cellSize, i * cellSize));
                         break;
 
                     case '#':
-                        let wall = room.createActor(Wall, j * cellSize, i * cellSize); 
+                        let wall = room.createActor(ActorID.Wall, j * cellSize, i * cellSize); 
                         let frame = this.getWallFrame(levelMap, i, j);
                         wall.spriteAnimation.set(frame);
                         instances.push(wall);

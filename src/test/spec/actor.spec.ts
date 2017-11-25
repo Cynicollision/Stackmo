@@ -1,24 +1,64 @@
 import { Actor, ActorInstance } from './../../engine/actor';
 import { Boundary } from './../../engine/boundary';
 import { Direction } from './../../engine/enum';
+import { Room } from './../../engine/room';
 import { ActorBuilder } from './../test-util';
+import { GameCanvasContext2D } from '../../engine/canvas';
 
 describe('ActorInstance', () => {
+    let TestRoom = Room.define('ActorInstance_TestRoom');
+
     let options = { boundary: new Boundary(5, 5) };
-    let TestActorA: Actor = Actor.define('TestActorA', options);
-    let TestActorB: Actor = Actor.define('TestActorB', options);
+    let TestActorA: Actor = Actor.define('ActorInstance_TestActorA', options);
+    let TestActorB: Actor = Actor.define('ActorInstance_TestActorB', options);
     let testInstanceA: ActorInstance;
     let testInstanceB: ActorInstance;
 
     beforeEach(() => {
-        TestActorA.onCollide('TestActorB', (self, other) => {});
+        TestActorA.onCollide('ActorInstance_TestActorB', (self, other) => {});
 
-        testInstanceA = ActorBuilder.newInstanceOf(TestActorA, 0, 0);
-        testInstanceB = ActorBuilder.newInstanceOf(TestActorB, 0, 0);
+        testInstanceA = TestRoom.createActor('ActorInstance_TestActorA', 0, 0);
+        testInstanceB = TestRoom.createActor('ActorInstance_TestActorB', 0, 0);
     });
 
     it('is an instance of its parent Actor', () => {
         expect(testInstanceA.parent).toBe(TestActorA);
+    });
+
+    describe('can define lifecycle events', () => {
+
+        it('to be called upon creation', () => {
+            let createSpy = jasmine.createSpy('create');
+            TestActorA.onCreate(createSpy);
+
+            TestRoom.createActor('ActorInstance_TestActorA');
+
+            expect(createSpy).toHaveBeenCalled();
+        });
+
+        it('to be called at each game step', () => {
+            let stepSpy = jasmine.createSpy('step');
+            TestActorA.onStep(stepSpy);
+
+            TestRoom.step();
+
+            expect(stepSpy).toHaveBeenCalled();
+        });
+
+        it('to be called when the containing room is drawn', () => {
+            let drawSpy = jasmine.createSpy('draw');
+            TestActorA.onDraw(drawSpy);
+
+            const mockGameCanvasContext = {
+                clear: () => null,
+                fill: () => null,
+                drawSprite: () => null,
+            };
+
+            TestRoom.draw(mockGameCanvasContext);
+
+            expect(drawSpy).toHaveBeenCalled();
+        });
     });
 
     describe('when checking for collisions', () => {

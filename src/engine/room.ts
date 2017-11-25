@@ -114,13 +114,7 @@ export class Room {
 
                 this.checkCollisions(instance);
 
-                // call actor 'step' callbacks
-                if (parent.hasStep) {
-                    parent.callStep(instance);
-                }
-
-                // internal 'post-step'
-                instance.doPostStep();
+                parent.step(instance);
             }
             else {
                 this.destroyActorInstance(instance);
@@ -198,7 +192,9 @@ export class Room {
         canvas.getContext().drawSprite(sprite, x - offsetX, y - offsetY, frame);
     }
 
-    createActor(parentActor: Actor, x?: number, y?: number): ActorInstance {
+    createActor(actorID: string, x?: number, y?: number): ActorInstance {
+        let parentActor = Actor.get(actorID);
+
         let newActorInstanceID = Room.nextActorInstanceID();
         let newInstance = new ActorInstance(this, parentActor, newActorInstanceID, x, y);
 

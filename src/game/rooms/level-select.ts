@@ -52,7 +52,7 @@ LevelSelectRoom.onStart((args) => {
     let currentRow = 0;
     let currentPosition = 0;
     for (let i = 0; i < Levels.count; i++) {
-        let icon = LevelSelectRoom.createActor(LevelIcon, startX + currentPosition * iconSizeWithPadding, startY + currentRow * iconSizeWithPadding);
+        let icon = LevelSelectRoom.createActor(ActorID.LevelIcon, startX + currentPosition * iconSizeWithPadding, startY + currentRow * iconSizeWithPadding);
         (<any>icon).levelNumber = i + 1;
         (<any>icon).enabled = i < unlockedLevelCount;
 
@@ -66,12 +66,12 @@ LevelSelectRoom.onStart((args) => {
 
     // create scroll icons if needed
     if (showScrollbars) {
-        let upArrow = LevelSelectRoom.createActor(ScrollArrow);
+        let upArrow = LevelSelectRoom.createActor(ActorID.ScrollArrow);
         upArrow.spriteAnimation.set(1);
         upArrow.x = canvasWidth - iconPadding - ScrollArrow.sprite.width;
         (<any>upArrow).direction = Enum.Direction.Up;
 
-        let downArrow = LevelSelectRoom.createActor(ScrollArrow);
+        let downArrow = LevelSelectRoom.createActor(ActorID.ScrollArrow);
         downArrow.x = upArrow.x;
         (<any>downArrow).direction = Enum.Direction.Down;
     }

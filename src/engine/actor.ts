@@ -88,6 +88,16 @@ export class Actor {
         this.onCreateCallback(selfInstance);
     }
 
+    step(selfInstance: ActorInstance) {
+        
+        if (this.hasStep) {
+            this.callStep(selfInstance);
+        }
+
+        selfInstance.previousX = selfInstance.x;
+        selfInstance.previousY = selfInstance.y;
+    }
+
     get hasStep(): boolean {
         return !!this.onStepCallback;
     }
@@ -211,11 +221,6 @@ export class ActorInstance {
 
     destroy(): void {
         this.state = ActorState.Destroyed;
-    }
-
-    doPostStep(): void {
-        this.previousX = this.x;
-        this.previousY = this.y;
     }
 
     collidesWith(other: ActorInstance): boolean {

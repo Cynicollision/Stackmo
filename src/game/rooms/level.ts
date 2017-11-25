@@ -28,7 +28,7 @@ LevelRoom.onStart(() => {
 
     let playerView = LevelRoom.defineView(0, 0, canvasWidth, canvasHeight);
     playerView.follow(player, true);
-    playerView.attach(LevelRoom.createActor(ExitButtonActor), canvasWidth - Constants.GridCellSize - viewHUDBuffer, viewHUDBuffer);
+    playerView.attach(LevelRoom.createActor(ActorID.ExitButton), canvasWidth - Constants.GridCellSize - viewHUDBuffer, viewHUDBuffer);
 
     // define the movement grid and player behavior
     let grid = LevelRoom.defineGrid(Constants.GridCellSize);

@@ -2,43 +2,31 @@ import { Actor, ActorInstance } from './../../engine/actor';
 import { Room } from './../../engine/room';
 
 describe('Room', () => {
-    let TestActor: Actor;
     let testInstance1: ActorInstance;
-    let testRoom: Room;
+    let TestRoom: Room = Room.define('Room_TestRoom');
+    let TestActor: Actor = Actor.define('Room_TestActor');
 
     beforeEach(() => {
-        TestActor = buildTestActorWithLifecycle();
-        testRoom = new Room();
-
-        testInstance1 = testRoom.createActor(TestActor);
+        testInstance1 = TestRoom.createActor('Room_TestActor');
     });
 
     it('instantiates actors with numeric IDs and tracks instances', () => {
-        let instances = testRoom.getInstances();
+        let instances = TestRoom.getInstances();
 
         expect(instances.some(instance => instance.id === testInstance1.id)).toBe(true);
-        expect(testInstance1.id).toBe(1);
-        expect(testRoom.createActor(TestActor).id).toBe(2);
+        expect(testInstance1.id).toBeGreaterThanOrEqual(1);
+        expect(TestRoom.createActor('Room_TestActor').id).toBe(testInstance1.id + 1);
+        expect(TestRoom.createActor('Room_TestActor').id).toBe(testInstance1.id + 2);
     });
 
     describe('on step', () => {
 
         it('releases destroyed actors', () => {
             testInstance1.destroy();
-            testRoom.step();
+            TestRoom.step();
 
-            let instances = testRoom.getInstances();
+            let instances = TestRoom.getInstances();
             expect(instances.some(instance => instance.id === testInstance1.id)).toBe(false);
         });
     });
 });
-
-function buildTestActorWithLifecycle(): Actor {
-    let actor = new Actor('TestActor');
-
-    actor.onCreate(() => null);
-    actor.onStep(() => null);
-    actor.onDestroy(() => null);
-
-    return actor;
-}
