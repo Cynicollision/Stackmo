@@ -18,6 +18,7 @@ const iconSizeWithPadding = Constants.GridCellSize + (iconPadding * 2);
 const LevelSelectRoom = Room.define(RoomID.LevelSelect);
 
 let _lastLevelNumber = 1;
+let levelSelectLock = false;
 
 LevelSelectRoom.onStart((args) => {
     canvasWidth = Registry.get(Settings.CanvasWidth);
@@ -109,7 +110,8 @@ const LevelIcon = Actor.define(ActorID.LevelIcon, {
 });
 
 LevelIcon.onClick(self => {
-    if ((<any>self).enabled) {
+    if ((<any>self).enabled && !levelSelectLock) {
+        levelSelectLock = true;
 
         SpriteFader.fadeOut([TextSprite, DigitsSprite, LevelIconSprite, ArrowSprite], () => {
             let levelNumber: number = (<any>self).levelNumber;
@@ -119,6 +121,8 @@ LevelIcon.onClick(self => {
             
             _lastLevelNumber = levelNumber;
             Vastgame.setRoom(RoomID.Level);
+
+            levelSelectLock = false;
         });
     } 
 });
