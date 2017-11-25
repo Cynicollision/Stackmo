@@ -1,21 +1,20 @@
 import { Actor, ActorInstance } from './../../engine/actor';
 import { Boundary } from './../../engine/boundary';
 import { Direction } from './../../engine/enum';
+import { ActorBuilder } from './../test-util';
 
 describe('ActorInstance', () => {
     let options = { boundary: new Boundary(5, 5) };
     let TestActorA: Actor = Actor.define('TestActorA', options);
     let TestActorB: Actor = Actor.define('TestActorB', options);
-    let testInstanceA: ActorInstance, testInstanceB: ActorInstance;
+    let testInstanceA: ActorInstance;
+    let testInstanceB: ActorInstance;
 
     beforeEach(() => {
-        TestActorA.onCollide('TestActorB', (self, other) => {
-        });
+        TestActorA.onCollide('TestActorB', (self, other) => {});
 
-        testInstanceA = new ActorInstance(TestActorA, 1, 0, 0);
-        testInstanceB = new ActorInstance(TestActorA, 1, 0, 0);
-
-        testInstanceA.direction = Direction.Right;
+        testInstanceA = ActorBuilder.newInstanceOf(TestActorA, 0, 0);
+        testInstanceB = ActorBuilder.newInstanceOf(TestActorB, 0, 0);
     });
 
     it('is an instance of its parent Actor', () => {

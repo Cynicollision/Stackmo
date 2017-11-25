@@ -1,10 +1,9 @@
-import { ActorBuilder } from './../test-util';
 import { Boundary } from './../../engine/boundary';
 import { View } from './../../engine/view';
+import { ActorBuilder } from './../test-util';
 
 describe('View', () => {
-
-    let testView;
+    let testView: View;
 
     beforeEach(() => {
         testView = new View(0,0, 400, 400);
@@ -55,5 +54,5 @@ describe('View', () => {
         expect(attachment1.y).toEqual(170);
         expect(attachment2.x).toEqual(250);
         expect(attachment2.y).toEqual(270);
-    })
+    });
 });

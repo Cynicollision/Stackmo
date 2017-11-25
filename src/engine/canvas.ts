@@ -3,98 +3,75 @@ import { Background, Room } from './room';
 import { Sprite, SpriteAnimation, SpriteTransformation } from './sprite';
 import { View } from './view';
 
-export interface CanvasOptions {
-    height?: number;
-    width?: number;
+const DefaultHeight = 480;
+const DefaultWidth = 640;
+
+export interface GameCanvasOptions {
+    height: number;
+    width: number;
 }
 
 export interface ActorInstanceDrawEvent {
-    (self: ActorInstance, context: GameCanvasContext): void;
+    (self: ActorInstance): void;
 }
 
 export interface RoomDrawEvent {
-    (context: GameCanvasContext): void;
+    (self: Room): void;
 }
 
 export interface GameCanvas {
-    drawRoom(room: Room);
-    drawSprite(sprite: Sprite, x: number, y: number, frame: number): void;
+    init(options: GameCanvasOptions): void;
+    getContext(): GameCanvasContext;
 }
 
-const DefaultHeight = 480;
-const DefaultWidth = 640;
-const DefaultOpacity = 1;
-
 export class GameCanvasHTML2D implements GameCanvas {
-    private gameCanvasContext: GameCanvasContext;
+    readonly gameCanvasContext: GameCanvasContext;
 
     constructor(public readonly canvasElement: HTMLCanvasElement) {
-        this.gameCanvasContext = new GameCanvasContext(this);
+        this.gameCanvasContext = new GameCanvasContext2D(this.canvasElement);
     }
 
-    private get context(): CanvasRenderingContext2D {
+    getContext(): GameCanvasContext {
+        return this.gameCanvasContext;
+    }
+
+    init(options: GameCanvasOptions) {
+        if (this.canvasElement) {
+            this.canvasElement.height = options.height;
+            this.canvasElement.width = options.width;
+        }
+    }
+}
+
+export interface GameCanvasContext {
+    clear(): void;
+    fill(x: number, y: number, width: number, height: number, color: string): void;
+    drawSprite(sprite: Sprite, x: number, y: number, frame?: number): void;
+}
+
+export class GameCanvasContext2D implements GameCanvasContext {
+
+    constructor(private canvasElement: HTMLCanvasElement) {
+    }
+
+    private get canvasContext2D(): CanvasRenderingContext2D {
         return this.canvasElement.getContext('2d');
     }
 
-    get height(): number {
-        return this.canvasElement.height;
+    clear() {
+        this.canvasContext2D.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
     }
 
-    get width(): number {
-        return this.canvasElement.width;
-    }
-
-    init(options: CanvasOptions = {}): void {
-        this.canvasElement.height = options.height || DefaultHeight;
-        this.canvasElement.width = options.width || DefaultWidth;
-    }
-
-    // TODO: separate canvas interactions from room/instance logic
-    drawRoom(room: Room) {
-        // clear the canvas
-        this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
-
-        // get view offset
-        let [offsetX, offsetY] = this.getViewOffset(room.getView());
-
-        // draw room background
-        if (room.background) {
-            this.context.beginPath();
-            this.context.rect(-offsetX, -offsetY, room.background.width, room.background.height);
-            this.context.fillStyle = room.background.color;
-            this.context.fill();
-        }
-
-        // call room draw event callback
-        if (room.hasDraw) {
-            room.callDraw(this.gameCanvasContext);
-        }
-
-        let orderedInstances = room.getInstances().sort((a, b) => {
-            return (b.spriteAnimation ? b.spriteAnimation.depth : 0) - (a.spriteAnimation ? a.animation.depth : 0);
-        });
-
-        orderedInstances.forEach(instance => {
-            // call actor draw event callbacks
-            if (instance.parent.hasDraw) {
-                instance.parent.callDraw(instance, this.gameCanvasContext);
-            }
-
-            // draw sprites
-            if (instance.animation && instance.visible) {
-                this.drawSprite(instance.animation.source, instance.x - offsetX, instance.y - offsetY, instance.spriteAnimation.frame);
-            }
-        });
-    }
-
-    private getViewOffset(view: View): [number, number] {
-        let offsetX = view ? view.x : 0;
-        let offsetY = view ? view.y : 0;
-
-        return [offsetX, offsetY];
+    fill(x: number, y: number, width: number, height: number, color: string) {
+        this.canvasContext2D.beginPath();
+        this.canvasContext2D.rect(x, y, width, height);
+        this.canvasContext2D.fillStyle = color;
+        this.canvasContext2D.fill();
     }
 
     drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0): void {
+        const defaultOpacity = 1;
+
         let image = sprite.image;
         let frameBorder = sprite.frameBorder || 0;
         let width = sprite.width;
@@ -102,34 +79,20 @@ export class GameCanvasHTML2D implements GameCanvas {
 
         let frameOffset = frame * frameBorder;
 
+        // set opacity
         let opacity = sprite.getTransform(SpriteTransformation.Opacity);
         let previousOpacity: number = null;
 
-        if (opacity !== DefaultOpacity && opacity !== null && opacity !== undefined) {
-            previousOpacity = this.context.globalAlpha;
-            this.context.globalAlpha = opacity;
+        if (opacity !== defaultOpacity && opacity !== null && opacity !== undefined) {
+            previousOpacity = this.canvasContext2D.globalAlpha;
+            this.canvasContext2D.globalAlpha = opacity;
         }
 
-        this.context.drawImage(image, frame * width + frameOffset, 0, width, height, Math.floor(x), Math.floor(y), width, height);
+        this.canvasContext2D.drawImage(image, frame * width + frameOffset, 0, width, height, Math.floor(x), Math.floor(y), width, height);
 
         // reset opacity
         if (previousOpacity !== null) {
-            this.context.globalAlpha = previousOpacity;
+            this.canvasContext2D.globalAlpha = previousOpacity;
         }
-    }
-
-    drawSpriteViewRelative(sprite: Sprite, x: number, y: number, frame: number, view: View): void {
-        let [offsetX, offsetY] = this.getViewOffset(view);
-        this.drawSprite(sprite, x - offsetX, y - offsetY, frame);
-    }
-}
-
-export class GameCanvasContext {
-
-    constructor(private gameCanvas: GameCanvasHTML2D) {
-    }
-
-    drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0, view?: View) {
-        this.gameCanvas.drawSpriteViewRelative(sprite, x, y, frame, view);
     }
 }

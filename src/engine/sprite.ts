@@ -1,5 +1,5 @@
 import { Actor } from './actor';
-import { GameContext } from './game-context';
+import { Vastgame } from './vastgame';
 
 export enum SpriteTransformation {
     Opacity = 0,
@@ -10,13 +10,13 @@ export class Sprite {
 
     static define(name: string, options: SpriteOptions): Sprite {
         let sprite = new Sprite(options);
-        GameContext.defineSprite(name, sprite);
+        Vastgame.getContext().defineSprite(name, sprite);
 
         return sprite;
     }
 
     static get(name: string): Sprite {
-        return GameContext.getSprite(name);
+        return Vastgame.getContext().getSprite(name);
     }
 
     readonly image: HTMLImageElement;

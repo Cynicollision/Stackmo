@@ -1,4 +1,4 @@
-import { CanvasOptions, GameCanvas } from './canvas';
+import { GameCanvasOptions, GameCanvas } from './canvas';
 import { GameState } from './enum';
 import { GameContext } from './game-context';
 import { GameOptions } from './vastgame';
@@ -9,7 +9,7 @@ export class GameRunner {
     private state: GameState = GameState.Paused;
     readonly targetFPS: number;
 
-    constructor(private canvas: GameCanvas, private options: GameOptions) {
+    constructor(private options: GameOptions) {
         this.targetFPS = options.targetFPS || DefaultFPS;
     }
 
@@ -21,13 +21,15 @@ export class GameRunner {
         this.state = GameState.Paused;
     }
 
-    start(): void {
+    start(gameContext: GameContext): void {
         let stepSize: number = 1 / this.targetFPS;
         let offset: number = 0;
         let previous: number = window.performance.now();
 
+        let canvasDrawingContext = gameContext.getCanvas().getContext();
+
         let gameLoop: FrameRequestCallback = (): void => {
-            let room = GameContext.getCurrentRoom();
+            let room = gameContext.getCurrentRoom();
             let current: number = window.performance.now();
             
             offset += (Math.min(1, (current - previous) / 1000));
@@ -35,7 +37,7 @@ export class GameRunner {
             while (offset > stepSize) {
 
                 if (this.isRunning) {
-                    GameContext.checkAndFireEvents();
+                    gameContext.checkAndFireEvents();
                     room.step();
                 }
                 else {
@@ -46,7 +48,8 @@ export class GameRunner {
             }
 
             if (this.isRunning) {
-                this.canvas.drawRoom(room);
+                canvasDrawingContext.clear();
+                room.draw(canvasDrawingContext);
             }
 
             previous = current;

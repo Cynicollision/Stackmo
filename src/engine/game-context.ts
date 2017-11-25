@@ -1,112 +1,108 @@
 import { Actor } from './actor';
-import { GameCanvasHTML2D } from './canvas';
+import { GameCanvas } from './canvas';
 import { DeferredEvent } from './events';
 import { Input } from './input';
 import { Room } from './room';
 import { Sprite } from './sprite';
 
 export class GameContext {
-    private static _instance: GameContext = new GameContext();
-
     private readonly actors: { [index: string]: Actor } = {};
     private readonly events: { [index: number]: DeferredEvent } = {};
     private readonly rooms: { [index: string]: Room } = {};
     private readonly sprites: { [index: string]: Sprite} = {};
 
-    private canvas: GameCanvasHTML2D;
     private currentRoom: Room;
 
-    static setCanvas(canvas: GameCanvasHTML2D): void {
-        this._instance.canvas = canvas;
+    constructor(private canvas: GameCanvas) {
+    }
 
-        Input.registerClickHandler(ev => {
-            if (this._instance.currentRoom) {
-                this._instance.currentRoom.handleClick(ev);
-            }
-        })
+    getCanvas(): GameCanvas {
+        return this.canvas;
     }
 
     // actors
-    static defineActor(name: string, actor: Actor): void {
-        if (this._instance.actors[name]) {
+    defineActor(name: string, actor: Actor): void {
+        if (this.actors[name]) {
             throw new Error(`Actor ${name} has already been defined.`);
         }
 
-        this._instance.actors[name] = actor;
+        this.actors[name] = actor;
     }
 
-    static getActor(name: string): Actor {
-        if (!this._instance.actors[name]) {
+    getActor(name: string): Actor {
+        if (!this.actors[name]) {
             throw new Error(`Actor ${name} has not been defined.`);
         }
 
-        return this._instance.actors[name];
-    }
-
-    // rooms
-    static defineRoom(name: string, room: Room): void {
-        if (this._instance.rooms[name]) {
-            throw new Error(`Room ${name} has already been defined.`);
-        }
-
-        this._instance.rooms[name] = room;
-    }
-
-    static getRoom(name: string): Room {
-        if (!this._instance.rooms[name]) {
-            throw new Error(`Room ${name} has not been defined.`);
-        }
-
-        return this._instance.rooms[name];
-    }
-
-    static getCurrentRoom(): Room {
-        return this._instance.currentRoom;
-    }
-
-    static setCurrentRoom(room: Room): void {
-        this._instance.currentRoom = room;
-    }
-
-    // sprites
-    static defineSprite(name: string, sprite: Sprite): void {
-        if (this._instance.sprites[name]) {
-            throw new Error(`Sprite ${name} has already been defined.`);
-        }
-
-        this._instance.sprites[name] = sprite;
-    }
-
-    static getSprite(name: string): Sprite {
-        if (!this._instance.sprites[name]) {
-            throw new Error (`Sprite ${name} has not been defined.`);
-        }
-
-        return this._instance.sprites[name];
+        return this.actors[name];
     }
 
     // events
-    static registerEvent(event: DeferredEvent): void {
-        this._instance.events[this._instance.nextEventID()] = event;
+    private nextEventID = (() => {
+        let currentID = 0;
+        return (() => ++currentID);
+    })();
+
+    registerEvent(event: DeferredEvent): void {
+        this.events[this.nextEventID()] = event;
     }
 
-    static checkAndFireEvents(): void {
+    checkAndFireEvents(): void {
         
-        for (let eventID in this._instance.events) {
-            let event = this._instance.events[eventID];
+        for (let eventID in this.events) {
+            let event = this.events[eventID];
 
             if (event.conditionCallback()) {
                 event.actionCallback();
 
                 if (event.fireOnce) {
-                    delete this._instance.events[eventID];
+                    delete this.events[eventID];
                 }
             }
         }
     }
 
-    private nextEventID = (() => {
-        let currentID = 0;
-        return (() => ++currentID);
-    })();
+    // rooms
+    defineRoom(name: string, room: Room): void {
+        if (this.rooms[name]) {
+            throw new Error(`Room ${name} has already been defined.`);
+        }
+
+        this.rooms[name] = room;
+    }
+
+    getRoom(name: string): Room {
+        if (!this.rooms[name]) {
+            throw new Error(`Room ${name} has not been defined.`);
+        }
+
+        return this.rooms[name];
+    }
+
+    getCurrentRoom(): Room {
+        return this.currentRoom;
+    }
+
+    setCurrentRoom(room: Room): void {
+        this.currentRoom = room;
+
+        Input.registerClickHandler(ev => room.handleClick(ev));
+    }
+
+    // sprites
+    defineSprite(name: string, sprite: Sprite): void {
+        if (this.sprites[name]) {
+            throw new Error(`Sprite ${name} has already been defined.`);
+        }
+
+        this.sprites[name] = sprite;
+    }
+
+    getSprite(name: string): Sprite {
+        if (!this.sprites[name]) {
+            throw new Error (`Sprite ${name} has not been defined.`);
+        }
+
+        return this.sprites[name];
+    }
 }

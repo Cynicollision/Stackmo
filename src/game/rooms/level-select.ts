@@ -25,7 +25,7 @@ LevelSelectRoom.onStart((args) => {
 
     console.log(_lastLevelNumber);
     
-    LevelSelectRoom.setBackground(Constants.Black, canvasWidth, canvasHeight);
+    LevelSelectRoom.setBackground(Constants.Black, canvasWidth, canvasHeight, Constants.Black);
     scrollView = LevelSelectRoom.defineView(0, 0, canvasWidth, canvasHeight);
 
     let iconsPerRow = Math.floor(canvasWidth / iconSizeWithPadding);
@@ -86,9 +86,9 @@ const TextSprite = Sprite.define(SpriteID.TextSheet, {
     width: 320,
 });
 
-LevelSelectRoom.onDraw(context => {
-    context.drawSprite(TextSprite, startX, Math.floor(startY / 2 - TextSprite.height), 0, scrollView);
-})
+LevelSelectRoom.onDraw(self => {
+    self.drawSprite(TextSprite, startX, Math.floor(startY / 2 - TextSprite.height), 0);
+});
 
 // Level icons
 const DigitsSprite = Sprite.define(SpriteID.Digits, {
@@ -123,23 +123,23 @@ LevelIcon.onClick(self => {
     } 
 });
 
-LevelIcon.onDraw((self, context) => {
+LevelIcon.onDraw(self => {
     if ((<any>self).enabled) {
         let levelNumber: number = (<any>self).levelNumber;
         let singleDigitMargin = Math.floor((LevelIconSprite.width - DigitsSprite.width) / 2);
         
         if (levelNumber < 10) {
             let frame = levelNumber;
-            context.drawSprite(DigitsSprite, self.x + singleDigitMargin, self.y + singleDigitMargin, frame, scrollView);
+            self.drawSprite(DigitsSprite, self.x + singleDigitMargin, self.y + singleDigitMargin, frame);
         }
         else {
             let tensFrame = Math.floor(levelNumber / 10);
             let tensMargin = Math.floor(singleDigitMargin / 2) - 3;
-            context.drawSprite(DigitsSprite, self.x + tensMargin, self.y + singleDigitMargin, tensFrame, scrollView);
+            self.drawSprite(DigitsSprite, self.x + tensMargin, self.y + singleDigitMargin, tensFrame);
     
             let onesFrame = levelNumber % 10;
             let onesMargin = Math.floor(singleDigitMargin * 2) - 3;
-            context.drawSprite(DigitsSprite, self.x + onesMargin, self.y + singleDigitMargin, onesFrame, scrollView);
+            self.drawSprite(DigitsSprite, self.x + onesMargin, self.y + singleDigitMargin, onesFrame);
         }
     }
 });

@@ -2,10 +2,11 @@ import { Actor, ActorInstance, CollisionCallback } from './actor';
 import { GameCanvasContext, RoomDrawEvent } from './canvas';
 import { Key } from './enum';
 import { EventHandler, Input, PointerInputEvent } from './input';
-import { GameContext } from './game-context';
 import { Grid } from './grid';
 import { GameLifecycleCallback } from './vastgame';
+import { Sprite } from './sprite';
 import { View } from './view';
+import { Vastgame } from './vastgame';
 
 export class Background {
 
@@ -26,16 +27,12 @@ export class Room {
 
     static define(name: string): Room {
         let room = new Room();
-        GameContext.defineRoom(name, room);
+        Vastgame.getContext().defineRoom(name, room);
         return room;
     }
 
     static get(name: string): Room {
-        return GameContext.getRoom(name);
-    }
-
-    static get current(): Room {
-        return GameContext.getCurrentRoom();
+        return Vastgame.getContext().getRoom(name);
     }
 
     private actorInstanceMap: { [index: number]: ActorInstance } = {};
@@ -70,8 +67,8 @@ export class Room {
         this.onDrawCallback = callback;
     }
 
-    callDraw(gameCanvasContext: GameCanvasContext): void {
-        this.onDrawCallback(gameCanvasContext);
+    callDraw(): void {
+        this.onDrawCallback(this);
     }
 
     onClick(callback: (event: MouseEvent) => void) {
@@ -164,9 +161,46 @@ export class Room {
         };
     }
 
+    draw(canvasContext: GameCanvasContext): void {
+        // get view offset
+        let [offsetX, offsetY] = this.getViewOffset();
+
+        // draw room background
+        if (this.background) {
+            canvasContext.fill(-offsetX, -offsetY, this.background.width, this.background.height, this.background.color);
+        }
+
+        // call room draw event callback
+        if (this.hasDraw) {
+            this.callDraw();
+        }
+
+        let orderedInstances = this.getInstances().sort((a, b) => {
+            return (b.spriteAnimation ? b.spriteAnimation.depth : 0) - (a.spriteAnimation ? a.animation.depth : 0);
+        });
+
+        orderedInstances.forEach(instance => {
+            // call actor draw event callbacks
+            if (instance.parent.hasDraw) {
+                instance.parent.callDraw(instance);
+            }
+
+            // draw sprites
+            if (instance.animation && instance.visible) {
+                canvasContext.drawSprite(instance.animation.source, instance.x - offsetX, instance.y - offsetY, instance.spriteAnimation.frame);
+            }
+        });
+    }
+
+    drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0) {
+        let [offsetX, offsetY] = this.getViewOffset();
+        let canvas = Vastgame.getContext().getCanvas();
+        canvas.getContext().drawSprite(sprite, x - offsetX, y - offsetY, frame);
+    }
+
     createActor(parentActor: Actor, x?: number, y?: number): ActorInstance {
         let newActorInstanceID = Room.nextActorInstanceID();
-        let newInstance = new ActorInstance(parentActor, newActorInstanceID, x, y);
+        let newInstance = new ActorInstance(this, parentActor, newActorInstanceID, x, y);
 
         this.actorInstanceMap[newActorInstanceID] = newInstance;
 
@@ -185,6 +219,13 @@ export class Room {
         }
 
         delete this.actorInstanceMap[instance.id];
+    }
+
+    private getViewOffset(): [number, number] {
+        let offsetX = this.view ? this.view.x : 0;
+        let offsetY = this.view ? this.view.y : 0;
+
+        return [offsetX, offsetY];
     }
 
     getInstances(): ActorInstance[] {

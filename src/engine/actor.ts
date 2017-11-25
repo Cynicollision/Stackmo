@@ -2,10 +2,11 @@ import { Boundary } from './boundary';
 import { ActorInstanceDrawEvent, GameCanvasContext } from './canvas';
 import { ActorState, Direction } from './enum';
 import { DeferredEvent } from './events';
-import { GameContext } from './game-context';
 import { PointerInputEvent } from './input';
+import { Room } from './room';
 import { Sprite, SpriteAnimation } from './sprite';
 import { MathUtil } from './util';
+import { Vastgame } from './vastgame';
 
 export interface ActorLifecycle {
     onCreate: LifecycleCallback;
@@ -43,13 +44,13 @@ export class Actor {
 
     static define(name: string, options?: ActorOptions): Actor {
         let actor = new Actor(name, options);
-        GameContext.defineActor(name, actor);
+        Vastgame.getContext().defineActor(name, actor);
 
         return actor;
     }
 
     static get(name: string): Actor {
-        return GameContext.getActor(name);
+        return Vastgame.getContext().getActor(name);
     }
 
     // lifecycle callbacks
@@ -99,16 +100,16 @@ export class Actor {
         this.onStepCallback(selfInstance);
     }
 
-    get hasDestroy(): boolean {
-        return !!this.onDestroyCallback;
+    get hasDraw(): boolean {
+        return !!this.onDrawCallback;
     }
 
-    onDestroy(callback: LifecycleCallback): void {
-        this.onDestroyCallback = callback;
+    onDraw(callback: ActorInstanceDrawEvent): void {
+        this.onDrawCallback = callback;
     }
 
-    callDestroy(selfInstance: ActorInstance): void {
-        this.onDestroyCallback(selfInstance);
+    callDraw(selfInstance: ActorInstance): void {
+        this.onDrawCallback(selfInstance);
     }
 
     get hasClick(): boolean {
@@ -123,24 +124,24 @@ export class Actor {
         this.onClickCallback(selfInstance, event);
     }
 
-    get hasDraw(): boolean {
-        return !!this.onDrawCallback;
-    }
-
-    onDraw(callback: ActorInstanceDrawEvent): void {
-        this.onDrawCallback = callback;
-    }
-
-    callDraw(selfInstance: ActorInstance, gameCanvasContext: GameCanvasContext): void {
-        this.onDrawCallback(selfInstance, gameCanvasContext);
-    }
-
     onCollide(actorName: string, callback: CollisionCallback): void {
         this.collisionHandlers[actorName] = callback;
     }
 
     onEvent(eventName: string, callback: ActorEventCallback): void {
         this.actorEventHandlers[eventName] = callback;
+    }
+
+    get hasDestroy(): boolean {
+        return !!this.onDestroyCallback;
+    }
+
+    onDestroy(callback: LifecycleCallback): void {
+        this.onDestroyCallback = callback;
+    }
+
+    callDestroy(selfInstance: ActorInstance): void {
+        this.onDestroyCallback(selfInstance);
     }
 }
 
@@ -155,7 +156,7 @@ export class ActorInstance {
 
     readonly spriteAnimation: SpriteAnimation;
 
-    constructor(public parent: Actor, public id: number, public x: number = 0, public y: number = 0) {
+    constructor(private room: Room, public parent: Actor, public id: number, public x: number = 0, public y: number = 0) {
         this.state = ActorState.Active;
         this.previousX = this.x;
         this.previousY = this.y;
@@ -181,6 +182,10 @@ export class ActorInstance {
         return this.spriteAnimation;
     }
 
+    drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0) {
+        this.room.drawSprite(sprite, x, y, frame);
+    }
+
     raiseEvent(eventName: string, eventArgs?: any): void {
         // register an event to fire immediately
         this.raiseEventWhen(eventName, () => true, eventArgs);
@@ -200,7 +205,7 @@ export class ActorInstance {
 
     private setGameContextEventArgs(eventArgs: any): void {
         eventArgs.game = {
-            currentRoom: GameContext.getCurrentRoom(),
+            currentRoom: Vastgame.getContext().getCurrentRoom(),
         };
     }
 
