@@ -16,6 +16,7 @@ let TitleSprite = Sprite.define(SpriteID.Title, {
 });
 
 let TitleRoom = Room.define(RoomID.Title);
+let canStart = true;
 
 TitleRoom.onStart(() => {
     let canvasWidth = Registry.get(Settings.CanvasWidth);
@@ -35,8 +36,11 @@ TitleRoom.onClick(goToLevelSelect);
 TitleRoom.onKey(Enum.Key.Any, goToLevelSelect);
 
 function goToLevelSelect() {
+    if (canStart) {
+        canStart = false;
 
-    SpriteFader.fadeOut([TitleSprite], () => {
-        Vastgame.setRoom(RoomID.LevelSelect);
-    });
+        SpriteFader.fadeOut([TitleSprite], () => {
+            Vastgame.setRoom(RoomID.LevelSelect);
+        });
+    }
 }
