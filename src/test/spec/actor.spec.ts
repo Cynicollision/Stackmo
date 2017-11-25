@@ -2,8 +2,7 @@ import { Actor, ActorInstance } from './../../engine/actor';
 import { Boundary } from './../../engine/boundary';
 import { Direction } from './../../engine/enum';
 import { Room } from './../../engine/room';
-import { ActorBuilder } from './../test-util';
-import { GameCanvasContext2D } from '../../engine/canvas';
+import { Vastgame } from './../../engine/vastgame';
 
 describe('ActorInstance', () => {
     let TestRoom = Room.define('ActorInstance_TestRoom');
@@ -58,6 +57,22 @@ describe('ActorInstance', () => {
             TestRoom.draw(mockGameCanvasContext);
 
             expect(drawSpy).toHaveBeenCalled();
+        });
+
+        it('when a particular condition is true', () => {
+            let raiseTheEvent: boolean;
+            let eventSpy = jasmine.createSpy('someEvent');
+
+            TestActorA.onEvent('Actor_TestEvent', eventSpy);
+            testInstanceA.raiseEventWhen('Actor_TestEvent', () => !!raiseTheEvent);
+
+            raiseTheEvent = false;
+            Vastgame.getContext().checkAndFireEvents();
+            expect(eventSpy).not.toHaveBeenCalled();
+
+            raiseTheEvent = true;
+            Vastgame.getContext().checkAndFireEvents();
+            expect(eventSpy).toHaveBeenCalled();
         });
     });
 
