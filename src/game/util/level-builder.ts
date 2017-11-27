@@ -2,7 +2,7 @@ import { Actor, ActorInstance, Room, Vastgame } from './../../engine/vastgame';
 import { ActorID, LevelBgColor } from './enum';
 import * as Constants from './constants';
 
-const MaxLevelVariations = 2;
+const MaxLevelVariations = 4;
 
 export class LevelBuilder {
 
@@ -20,6 +20,8 @@ export class LevelBuilder {
         let colorEnumMap = {
             0: [ LevelBgColor.Teal, LevelBgColor.DarkTeal ],
             1: [ LevelBgColor.Green, LevelBgColor.DarkGreen ],
+            2: [ LevelBgColor.Red, LevelBgColor.DarkRed ],
+            3: [ LevelBgColor.Purple, LevelBgColor.DarkPurple ],
         };
 
         let levelVariation = (roomID - 1) % MaxLevelVariations;

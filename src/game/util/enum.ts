@@ -49,6 +49,10 @@ export enum GameAction {
 export enum LevelBgColor {
     DarkTeal = '#001820',
     Teal = '#006070',
-    DarkGreen = '#006810',
-    Green = '#a8e8a0',
+    DarkGreen = '#001800',
+    Green = '#085800',
+    DarkRed = '#580000',
+    Red = '#d01000',
+    DarkPurple = '#380050',
+    Purple = '#a008a8',
 }
