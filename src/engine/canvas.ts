@@ -70,16 +70,10 @@ export class GameCanvasContext2D implements GameCanvasContext {
     }
 
     drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0): void {
-        const defaultOpacity = 1;
-
-        let image = sprite.image;
-        let frameBorder = sprite.frameBorder || 0;
-        let width = sprite.width;
-        let height = sprite.height;
-
-        let frameOffset = frame * frameBorder;
+        let [srcX, srcY] = sprite.getFrameImageSourceCoords(frame);
 
         // set opacity
+        const defaultOpacity = 1;
         let opacity = sprite.getTransform(SpriteTransformation.Opacity);
         let previousOpacity: number = null;
 
@@ -88,7 +82,8 @@ export class GameCanvasContext2D implements GameCanvasContext {
             this.canvasContext2D.globalAlpha = opacity;
         }
 
-        this.canvasContext2D.drawImage(image, frame * width + frameOffset, 0, width, height, Math.floor(x), Math.floor(y), width, height);
+        // draw the image
+        this.canvasContext2D.drawImage(sprite.image, srcX, srcY, sprite.width, sprite.height, Math.floor(x), Math.floor(y), sprite.width, sprite.height);
 
         // reset opacity
         if (previousOpacity !== null) {

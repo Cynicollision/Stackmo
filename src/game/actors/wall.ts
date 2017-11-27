@@ -1,9 +1,9 @@
-import { Actor, Boundary, Sprite } from './../../engine/vastgame';
+import { Actor, Boundary, Sprite, Vastgame } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, SpriteID } from './../util/enum';
 
 let Stone = Sprite.define(SpriteID.Wall, {
-    imageSource: '../resources/wall_sheet_teal.png',
+    imageSource: '../resources/wall_sheet.png',
     height: Constants.GridCellSize,
     width: Constants.GridCellSize,
     frameBorder: 1,

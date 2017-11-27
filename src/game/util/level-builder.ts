@@ -2,6 +2,8 @@ import { Actor, ActorInstance, Room, Vastgame } from './../../engine/vastgame';
 import { ActorID, LevelBgColor } from './enum';
 import * as Constants from './constants';
 
+const MaxLevelVariations = 2;
+
 export class LevelBuilder {
 
     static populateRoom(room: Room, roomID: number): ActorInstance[] {
@@ -16,11 +18,12 @@ export class LevelBuilder {
         let levelMap = Levels.get(roomID);
 
         let colorEnumMap = {
-            0: [ LevelBgColor.Teal, LevelBgColor.DarkTeal ]
+            0: [ LevelBgColor.Teal, LevelBgColor.DarkTeal ],
+            1: [ LevelBgColor.Green, LevelBgColor.DarkGreen ],
         };
 
-        // TODO: randomize/cycle colors (take as parameter?)
-        room.setBackground(colorEnumMap[0][0], levelMap[0].length * cellSize, levelMap.length * cellSize, colorEnumMap[0][1]);
+        let levelVariation = (roomID - 1) % MaxLevelVariations;
+        room.setBackground(colorEnumMap[levelVariation][0], levelMap[0].length * cellSize, levelMap.length * cellSize, colorEnumMap[levelVariation][1]);
 
         for (let i = 0; i < levelMap.length; i++) {
             let row = levelMap[i];
@@ -43,7 +46,8 @@ export class LevelBuilder {
 
                     case '#':
                         let wall = room.createActor(ActorID.Wall, j * cellSize, i * cellSize); 
-                        let frame = this.getWallFrame(levelMap, i, j);
+                        let frame = this.getWallFrame(levelMap, roomID, i, j);
+                        frame = this.getWallFrameRowOffeset(levelVariation, frame);
                         wall.spriteAnimation.set(frame);
                         instances.push(wall);
                         break;
@@ -54,8 +58,14 @@ export class LevelBuilder {
         return instances;
     }
 
-    private static getWallFrame(levelMap: string[], row: number, position: number): number {
-        let wallChar = '#';
+    private static getWallFrameRowOffeset(levelVariation: number, wallFrame: WallStyle): number {
+        const framesPerRow = 29;
+        return wallFrame + (framesPerRow * levelVariation);
+    }
+
+    private static getWallFrame(levelMap: string[], levelNumber: number, row: number, position: number): number {
+        const wallChar = '#';
+        
         let maxX = levelMap[0].length - 1;
         let maxY = levelMap.length - 1;
 

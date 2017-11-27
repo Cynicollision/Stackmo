@@ -36,8 +36,6 @@ export class Room {
     }
 
     private actorInstanceMap: { [index: number]: ActorInstance } = {};
-    private propertyMap: { [name: string]: any } = {};
-
     private eventHandlers: EventHandler[] = [];
 
     // TODO: Grid, View RoomBehavior? classes?
@@ -48,14 +46,6 @@ export class Room {
     private onDrawCallback: RoomDrawEvent;
     
     background: Background;
-
-    get(name: string): any {
-        return this.propertyMap[name];
-    }
-
-    set(name: string, value: any) {
-        this.propertyMap[name] = value;
-    }
 
     // lifecycle callbacks
     get hasStart(): boolean {

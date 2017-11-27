@@ -27,25 +27,27 @@ LevelSelectRoom.onStart((args) => {
     LevelSelectRoom.setBackground(Constants.Black, canvasWidth, canvasHeight, Constants.Black);
     scrollView = LevelSelectRoom.defineView(0, 0, canvasWidth, canvasHeight);
 
+    // determine/update level-unlock progress
+    let unlockedLevelCount = Number(Registry.get(Settings.StackmoProgress));
+    if (args && args.win && _lastLevelNumber === unlockedLevelCount) {
+        unlockedLevelCount++;
+        Registry.set(Settings.StackmoProgress, unlockedLevelCount, true);
+    }
+
+    // adjust icons per row for scroll bar if rows overflow the canvas
     let iconsPerRow = Math.floor(canvasWidth / iconSizeWithPadding);
+
+    let showScrollbars = false;
+    let rowCount = Math.ceil(Levels.count / iconsPerRow);
 
     startX = Math.floor((canvasWidth - (iconsPerRow * iconSizeWithPadding)) / 2);
     startY = Math.floor(canvasHeight / 6);
 
-    // adjust icons per row for scroll bar if rows overflow the canvas
-    let showScrollbars = false;
-    let rowCount = Math.ceil(Levels.count / iconsPerRow);
     if (startY + (rowCount * iconSizeWithPadding) > canvasHeight) {
         iconsPerRow--;
         rowCount = Math.ceil(Levels.count / iconsPerRow);
         overflowedRows = Math.ceil(((rowCount * iconSizeWithPadding) - canvasHeight) / iconSizeWithPadding);
         showScrollbars = true;
-    }
-
-    let unlockedLevelCount = Number(Registry.get(Settings.StackmoProgress));
-    if (args && args.win && _lastLevelNumber === unlockedLevelCount) {
-        unlockedLevelCount++;
-        Registry.set(Settings.StackmoProgress, unlockedLevelCount, true);
     }
 
     // create level icons
@@ -92,7 +94,7 @@ LevelSelectRoom.onDraw(self => {
 
 // Level icons
 const DigitsSprite = Sprite.define(SpriteID.Digits, {
-    imageSource: '../resources/digits_32px.png',
+    imageSource: '../resources/digits_sheet.png',
     height: Constants.GridCellSize / 2,
     width: Constants.GridCellSize / 2,
 });
