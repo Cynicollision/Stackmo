@@ -70,10 +70,12 @@ LevelRoom.onStart(() => {
         let leftCell = playerCell.getAdjacentCell(Enum.Direction.Left);
         let topLeftCell = leftCell.getAdjacentCell(Enum.Direction.Up);
 
-        if (topLeftCell.isFree() && (leftCell.containsInstanceOf(WallActor) || leftCell.containsInstanceOf(BlockActor))) {
+        let isLeftBlocked = leftCell.containsInstanceOf(WallActor) || leftCell.containsInstanceOf(BlockActor);
+
+        if (topLeftCell.isFree() && isLeftBlocked) {
             grid.raiseClickEvent(player.x - Constants.GridCellSize, player.y - Constants.GridCellSize);
         }
-        else if (leftCell.isFree()) {
+        else if (!isLeftBlocked) {
             grid.raiseClickEvent(player.x - Constants.GridCellSize, player.y);
         }
     });
@@ -83,10 +85,12 @@ LevelRoom.onStart(() => {
         let rightCell = playerCell.getAdjacentCell(Enum.Direction.Right);
         let topRightCell = rightCell.getAdjacentCell(Enum.Direction.Up);
 
-        if (topRightCell.isFree() && (rightCell.containsInstanceOf(WallActor) || rightCell.containsInstanceOf(BlockActor))) {
+        let isRightBlocked = rightCell.containsInstanceOf(WallActor) || rightCell.containsInstanceOf(BlockActor);
+
+        if (topRightCell.isFree() && isRightBlocked) {
             grid.raiseClickEvent(player.x + Constants.GridCellSize, player.y - Constants.GridCellSize);
         }
-        else if (rightCell.isFree()) {
+        else if (!isRightBlocked) {
             grid.raiseClickEvent(player.x + Constants.GridCellSize, player.y);
         }
     });
