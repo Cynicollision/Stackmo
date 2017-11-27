@@ -1,7 +1,7 @@
 import { Actor } from './actor';
 import { GameCanvas } from './canvas';
 import { DeferredEvent } from './events';
-import { Input } from './input';
+import { Input, ConcreteEventHandler, PointerInputEvent } from './input';
 import { Room } from './room';
 import { Sprite } from './sprite';
 
@@ -12,6 +12,7 @@ export class GameContext {
     private readonly sprites: { [index: string]: Sprite} = {};
 
     private currentRoom: Room;
+    private currentRoomClickHandler: ConcreteEventHandler<PointerInputEvent>;
 
     constructor(private canvas: GameCanvas) {
     }
@@ -86,7 +87,12 @@ export class GameContext {
     setCurrentRoom(room: Room): void {
         this.currentRoom = room;
 
-        Input.registerClickHandler(ev => room.handleClick(ev));
+        // dipose previous room's click handler
+        if (this.currentRoomClickHandler) {
+            this.currentRoomClickHandler.dispose();
+        }
+
+        this.currentRoomClickHandler = Input.registerClickHandler(ev => room.handleClick(ev));
     }
 
     // sprites

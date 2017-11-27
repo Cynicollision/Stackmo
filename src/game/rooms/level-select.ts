@@ -24,8 +24,6 @@ LevelSelectRoom.onStart((args) => {
     canvasWidth = Registry.get(Settings.CanvasWidth);
     canvasHeight = Registry.get(Settings.CanvasHeight);
 
-    console.log(_lastLevelNumber);
-    
     LevelSelectRoom.setBackground(Constants.Black, canvasWidth, canvasHeight, Constants.Black);
     scrollView = LevelSelectRoom.defineView(0, 0, canvasWidth, canvasHeight);
 

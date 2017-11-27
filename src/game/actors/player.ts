@@ -15,10 +15,11 @@ let Player = Actor.define(ActorID.Player, {
 });
 
 let heldBlock: ActorInstance;
-let lastDirection: Enum.Direction = Enum.Direction.Right;
+let lastDirection: Enum.Direction;
 
 Player.onCreate(self => {
     self.animation.depth = -50;
+    lastDirection = Enum.Direction.Right;
     heldBlock = null;
 });
 
@@ -139,11 +140,11 @@ Player.onEvent(GameAction.Lift, (player, args) => {
     let block: ActorInstance = args.block;
     let targetCell: GridCell = args.targetCell;
 
-    let validBlockLiftCell = lastDirection === Enum.Direction.Left ? Enum.Direction.Right : Enum.Direction.Left;
+    let validBlockLiftCellDirection = lastDirection === Enum.Direction.Left ? Enum.Direction.Right : Enum.Direction.Left;
 
     // prevent lifting if there's something on top of the box or on top of the player
     let aboveBoxCell = targetCell.getAdjacentCell(Enum.Direction.Up);
-    let abovePlayerCell = aboveBoxCell.getAdjacentCell(validBlockLiftCell);
+    let abovePlayerCell = aboveBoxCell.getAdjacentCell(validBlockLiftCellDirection);
 
     if (!heldBlock && !(aboveBoxCell.isFree() && abovePlayerCell.isFree())) {
         return;
@@ -152,7 +153,7 @@ Player.onEvent(GameAction.Lift, (player, args) => {
     if (heldBlock && block === heldBlock) {
         player.raiseEvent(GameAction.Drop, args);
     }
-    else if (!heldBlock && targetCell.getAdjacentCell(validBlockLiftCell).containsInstance(player)) {
+    else if (!heldBlock && targetCell.getAdjacentCell(validBlockLiftCellDirection).containsInstance(player)) {
         heldBlock = block;
         animate(player, lastDirection);
     }

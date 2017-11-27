@@ -71,14 +71,18 @@ export class Room {
         this.onDrawCallback(this);
     }
 
-    onClick(callback: (event: MouseEvent) => void) {
+    onClick(callback: (event: MouseEvent) => void): EventHandler {
         let clickHandler = Input.registerClickHandler(callback);
         this.eventHandlers.push(clickHandler);
+
+        return clickHandler;
     }
 
-    onKey(key: Key, callback: (event: KeyboardEvent) => void) {
+    onKey(key: Key, callback: (event: KeyboardEvent) => void): EventHandler {
         let keyHandler = Input.registerKeyHandler(key, callback);
         this.eventHandlers.push(keyHandler);
+
+        return keyHandler;
     }
 
     defineGrid(tileSize: number): Grid {

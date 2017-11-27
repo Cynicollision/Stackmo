@@ -95,7 +95,7 @@ export interface EventHandler {
     dispose: () => void;
 }
 
-class ConcreteEventHandler<T> implements EventHandler {
+export class ConcreteEventHandler<T> implements EventHandler {
     isAlive: boolean = true;
 
     constructor(public callback: (event: T) => void) {
