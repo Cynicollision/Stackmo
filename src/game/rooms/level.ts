@@ -1,9 +1,10 @@
-import { Actor, ActorInstance, Enum, GridCell, Input, Room, Sprite } from './../../engine/vastgame';
+import { Actor, ActorInstance, Enum, GridCell, Input, Room, ViewedRoomBehavior, Sprite } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, RoomID, SpriteID, GameAction, Settings } from './../util/enum';
 import { Registry } from './../util/registry';
 import { SpriteFader } from './../util/sprite-fader';
 import { Vastgame } from './../../engine/vastgame';
+import { GridRoomBehavior } from '../../engine/room-ext';
 
 let LevelRoom = Room.define(RoomID.Level);
 
@@ -26,12 +27,19 @@ LevelRoom.onStart(() => {
     const canvasHeight = Registry.get(Settings.CanvasHeight);
     const viewHUDBuffer = Constants.GridCellSize / 4;
 
-    let playerView = LevelRoom.defineView(0, 0, canvasWidth, canvasHeight);
+    let viewBehavior = new ViewedRoomBehavior(0, 0, canvasWidth, canvasHeight);
+    LevelRoom.use(viewBehavior);
+    
+    let playerView = viewBehavior.getView();
     playerView.follow(player, true);
     playerView.attach(LevelRoom.createActor(ActorID.ExitButton), canvasWidth - Constants.GridCellSize - viewHUDBuffer, viewHUDBuffer);
 
     // define the movement grid and player behavior
-    let grid = LevelRoom.defineGrid(Constants.GridCellSize);
+    let gridBehavior = new GridRoomBehavior(Constants.GridCellSize, LevelRoom);
+    LevelRoom.use(gridBehavior);
+    // let grid = LevelRoom.defineGrid(Constants.GridCellSize);
+    let grid = gridBehavior.getGrid();
+
     grid.onClick(gridClickEvent => {
         let clickedCell = gridClickEvent.getCell();
 

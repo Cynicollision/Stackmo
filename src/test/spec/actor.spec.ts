@@ -49,8 +49,10 @@ describe('ActorInstance', () => {
             TestActorA.onDraw(drawSpy);
 
             const mockGameCanvasContext = {
+                origin: <[number, number]>[0, 0],
                 clear: () => null,
                 fill: () => null,
+                fillArea: () => null,
                 drawSprite: () => null,
             };
 

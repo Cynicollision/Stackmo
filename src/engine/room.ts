@@ -2,11 +2,9 @@ import { Actor, ActorInstance, CollisionCallback } from './actor';
 import { GameCanvasContext, RoomDrawEvent } from './canvas';
 import { Key } from './enum';
 import { EventHandler, Input, PointerInputEvent } from './input';
-import { Grid } from './grid';
-import { GameLifecycleCallback } from './vastgame';
+import { RoomBehavior } from './room-ext';
 import { Sprite } from './sprite';
-import { View } from './view';
-import { Vastgame } from './vastgame';
+import { GameLifecycleCallback, Vastgame } from './vastgame';
 
 export class Background {
 
@@ -37,15 +35,32 @@ export class Room {
 
     private actorInstanceMap: { [index: number]: ActorInstance } = {};
     private eventHandlers: EventHandler[] = [];
-
-    // TODO: Grid, View RoomBehavior? classes?
-    private grid: Grid;
-    view: View;
+    private behaviors: RoomBehavior[] = [];
 
     private onStartCallback: GameLifecycleCallback;
     private onDrawCallback: RoomDrawEvent;
     
     background: Background;
+
+    setBackground(color: string, width: number, height: number, pageColor?: string): void {
+        this.background = new Background(color, pageColor, width, height);
+
+        if (pageColor) {
+            document.body.style.backgroundColor = pageColor;
+        }
+    }
+
+    end(): void {
+        this.actorInstanceMap = {};
+        this.behaviors = [];
+        this.eventHandlers.forEach(eventHandler => eventHandler.dispose());
+    }
+
+    // mix-in behaviors
+    use(behavior: RoomBehavior): RoomBehavior {
+        this.behaviors.push(behavior);
+        return behavior;
+    }
 
     // lifecycle callbacks
     get hasStart(): boolean {
@@ -87,33 +102,6 @@ export class Room {
         return keyHandler;
     }
 
-    // TODO: GridRoomBehavior
-    defineGrid(tileSize: number): Grid {
-        this.grid = new Grid(tileSize, this);
-
-        return this.grid;
-    }
-
-    // TODO: ViewRoomBehavior
-    defineView(x: number, y: number, width: number, height: number): View {
-        this.view = new View(x, y, width, height);
-
-        return this.view;
-    }
-
-    setBackground(color: string, width: number, height: number, pageColor?: string): void {
-        this.background = new Background(color, pageColor, width, height);
-
-        if (pageColor) {
-            document.body.style.backgroundColor = pageColor;
-        }
-    }
-
-    end(): void {
-        this.actorInstanceMap = {};
-        this.eventHandlers.forEach(eventHandler => eventHandler.dispose());
-    }
-
     // step behavior
     step(): void {
 
@@ -135,9 +123,7 @@ export class Room {
             }
         });
 
-        if (this.view) {
-            this.view.update();
-        }
+        this.behaviors.forEach(behavior => behavior.postStep(this));
     }
 
     private applyInstanceMovement(instance: ActorInstance): void {
@@ -171,12 +157,12 @@ export class Room {
 
     // draw behavior
     draw(canvasContext: GameCanvasContext): void {
-        // get view offset
-        let [offsetX, offsetY] = this.getViewOffset();
+        // call pre-draw behaviors
+        this.behaviors.forEach(behavior => behavior.preDraw(this, canvasContext));
 
         // draw room background
         if (this.background) {
-            canvasContext.fill(-offsetX, -offsetY, this.background.width, this.background.height, this.background.color);
+            canvasContext.fill(this.background.width, this.background.height, this.background.color);
         }
 
         // call room draw event callback
@@ -196,32 +182,28 @@ export class Room {
 
             // draw sprites
             if (instance.animation && instance.visible) {
-                canvasContext.drawSprite(instance.animation.source, instance.x - offsetX, instance.y - offsetY, instance.spriteAnimation.frame);
+                canvasContext.drawSprite(instance.animation.source, instance.x, instance.y, instance.spriteAnimation.frame);
             }
         });
     }
 
     drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0) {
-        let [offsetX, offsetY] = this.getViewOffset();
         let canvas = Vastgame.getContext().getCanvas();
-        canvas.getContext().drawSprite(sprite, x - offsetX, y - offsetY, frame);
-    }
+        let canvasContext = canvas.getContext();
 
-    private getViewOffset(): [number, number] {
-        let offsetX = this.view ? this.view.x : 0;
-        let offsetY = this.view ? this.view.y : 0;
+        // call pre-draw behaviors
+        this.behaviors.forEach(behavior => behavior.preDraw(this, canvasContext));
 
-        return [offsetX, offsetY];
+        canvasContext.drawSprite(sprite, x, y, frame);
     }
 
     handleClick(event: PointerInputEvent): void {
-        let [offsetX, offsetY] = this.getViewOffset();
-        let clickX = event.x + offsetX;
-        let clickY = event.y + offsetY;
-
-        if (this.grid) {
-            this.grid.raiseClickEvent(clickX, clickY);
-        }
+        // call pre-click behaviors
+        this.behaviors.forEach(behavior => behavior.preHandleClick(event));
+        
+        // pass click event to actor instances
+        let clickX = event.x;
+        let clickY = event.y;
 
         this.getInstancesAtPosition(clickX, clickY).forEach(instance => {
             let parent = instance.parent;
@@ -230,6 +212,9 @@ export class Room {
                 parent.callClick(instance, event);
             }
         });
+
+        // call post-click behaviors
+        this.behaviors.forEach(behavior => behavior.postHandleClick(event));
     }
 
     createActor(actorID: string, x?: number, y?: number): ActorInstance {
@@ -274,6 +259,4 @@ export class Room {
     isPositionFree(x: number, y: number): boolean {
         return !this.getInstancesAtPosition(x, y).length;
     }
-
-    
 }

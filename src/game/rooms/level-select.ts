@@ -1,4 +1,4 @@
-import { Actor, Boundary, Enum, Input, Room, Sprite, Vastgame, View } from './../../engine/vastgame';
+import { Actor, Boundary, Enum, Input, Room, ViewedRoomBehavior, Sprite, Vastgame, View } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, LevelBgColor, RoomID, Settings, SpriteID } from './../util/enum';
 import { Levels, LevelBuilder } from './../util/level-builder';
@@ -25,7 +25,7 @@ LevelSelectRoom.onStart((args) => {
     canvasHeight = Registry.get(Settings.CanvasHeight);
 
     LevelSelectRoom.setBackground(Constants.Black, canvasWidth, canvasHeight, Constants.Black);
-    scrollView = LevelSelectRoom.defineView(0, 0, canvasWidth, canvasHeight);
+    LevelSelectRoom.use(new ViewedRoomBehavior(0, 0, canvasWidth, canvasHeight));
 
     // determine/update level-unlock progress
     let unlockedLevelCount = Number(Registry.get(Settings.StackmoProgress));

@@ -12,6 +12,7 @@ export { Enum }
 export { Input } from './input';
 export { Grid, GridCell } from './grid';
 export { Room } from './room';
+export { GridRoomBehavior, ViewedRoomBehavior } from './room-ext';
 export { Sprite, SpriteTransformation } from './sprite';
 export { View } from './view';
 
