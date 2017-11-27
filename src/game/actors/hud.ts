@@ -13,4 +13,6 @@ let ExitButton = Actor.define(ActorID.ExitButton, {
     sprite: XSprite,
 });
 
+ExitButton.onCreate(self => self.animation.depth = -10);
+
 ExitButton.onClick(() => Vastgame.setRoom(RoomID.LevelSelect));
