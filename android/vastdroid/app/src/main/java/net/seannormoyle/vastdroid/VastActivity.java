@@ -5,8 +5,9 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebChromeClient;
+import android.webkit.ConsoleMessage;
 
 public class VastActivity extends Activity
 {
@@ -29,8 +30,15 @@ public class VastActivity extends Activity
     private void startWebView() {
         webView = (WebView)findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
-        //webView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
-        //webView.getSettings().setPluginState(android.webkit.WebSettings.PluginState.ON_DEMAND);;
+        webView.getSettings().setDomStorageEnabled(true);
+
+        // for debugging
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                return true;
+            }
+        });
 
         // disable scroll on touch
         webView.setOnTouchListener(new View.OnTouchListener() {

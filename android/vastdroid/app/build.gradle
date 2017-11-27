@@ -4,8 +4,8 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId 'net.seannormoyle.vastdroid'
-        minSdkVersion 4
-        targetSdkVersion 4
+        minSdkVersion 7
+        targetSdkVersion 7
     }
     buildTypes {
         release {
