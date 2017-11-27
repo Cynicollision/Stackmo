@@ -2,6 +2,7 @@ import { Actor, ActorInstance, Room, Vastgame } from './../../engine/vastgame';
 import { ActorID, LevelBgColor } from './enum';
 import * as Constants from './constants';
 
+const FramePerWallSheetRow = 41;
 const MaxLevelVariations = 4;
 
 export class LevelBuilder {
@@ -61,8 +62,7 @@ export class LevelBuilder {
     }
 
     private static getWallFrameRowOffeset(levelVariation: number, wallFrame: WallStyle): number {
-        const framesPerRow = 29;
-        return wallFrame + (framesPerRow * levelVariation);
+        return wallFrame + (FramePerWallSheetRow * levelVariation);
     }
 
     private static getWallFrame(levelMap: string[], levelNumber: number, row: number, position: number): number {
@@ -80,58 +80,167 @@ export class LevelBuilder {
         let leftFree = (position > 0) ? levelMap[row][position - 1] !== wallChar : false;
         let rightFree = (position < maxX) ? levelMap[row][position + 1] !== wallChar : false;
 
+        if (!topFree && !topLeftFree && !topRightFree && !leftFree && !rightFree && !bottomLeftFree && !bottomFree && !bottomRightFree) {
+            return WallStyle.Inner;
+        }
+        
+        if (!topFree && !topLeftFree && !topRightFree && !leftFree && !rightFree && !bottomLeftFree && !bottomFree) {
+            return WallStyle.InnerCornerTopLeft
+        }
+
+        if (!topFree && !topLeftFree && !topRightFree && !leftFree && !rightFree && !bottomFree && !bottomRightFree) {
+            return WallStyle.InnerCornerTopRight;
+        }
+
+        if (!topFree && !topLeftFree && !leftFree && !rightFree && !bottomLeftFree && !bottomFree && !bottomRightFree) {
+            return WallStyle.InnerCornerBottomLeft;
+        }
+
+        if (!topFree&& !topRightFree && !leftFree && !rightFree && !bottomLeftFree && !bottomFree && !bottomRightFree) {
+            return WallStyle.InnerCornerBottomRight;
+        }
+
+        if (!topFree && !topLeftFree && !leftFree && !bottomLeftFree && !bottomFree && !rightFree) {
+            return WallStyle.ThreewayRight;
+        }
+
+        if (!topFree && !topRightFree && !rightFree && !bottomRightFree && !bottomFree && !leftFree) {
+            return WallStyle.ThreewayLeft;
+        }
+
+        if (!leftFree && !bottomLeftFree && !bottomFree && !bottomRightFree && !rightFree && !topFree) {
+            return WallStyle.ThreewayTop;
+        }
+
+        if (!leftFree && !topLeftFree && !topFree && !topRightFree && !rightFree && !bottomFree) {
+            return WallStyle.ThreewayBottom;
+        }
+
+        if (!topFree && !topLeftFree && !leftFree && !bottomLeftFree && !bottomFree) {
+            return WallStyle.FlatLeft;
+        }
+
+        if (!topFree && !topRightFree && !rightFree && !bottomRightFree && !bottomFree) {
+            return WallStyle.FlatRight;
+        }
+
+        if (!leftFree && !bottomLeftFree && !bottomFree && !bottomRightFree && !rightFree) {
+            return WallStyle.FlatBottom;
+        }
+
+        if (!leftFree && !topLeftFree && !topFree && !topRightFree && !rightFree) {
+            return WallStyle.FlatTop;
+        }
+
+        if (!topFree && !leftFree && !bottomFree && !rightFree && !bottomRightFree) {
+            return WallStyle.TwoWayTopLeft;
+        }
+
+        if (!topFree && !leftFree && !bottomFree && !rightFree && !bottomLeftFree) {
+            return WallStyle.TwoWayTopRight;
+        }
+
+        if (!topFree && !leftFree && !bottomFree && !rightFree && !topRightFree) {
+            return WallStyle.TwoWayBottomLeft; 
+        }
+
+        if (!topFree && !leftFree && !bottomFree && !rightFree && !topLeftFree) {
+            return WallStyle.TwoWayBottomRight;
+        }
+
+        if (!topFree && !leftFree && !bottomFree && !rightFree) {
+            return WallStyle.Fourway;
+        }
+
+        if (!leftFree && !rightFree && !bottomRightFree && !bottomFree) {
+            return WallStyle.FlatTopNarrowLeft;
+        }
+
+        if (!leftFree && !rightFree && !bottomLeftFree && !bottomFree) {
+            return WallStyle.FlatTopNarrowRight;
+        }
+
+        if (!leftFree && !rightFree && !topRightFree && !topFree) {
+            return WallStyle.FlatBottomNarrowLeft;
+        }
+
+        if (!leftFree && !rightFree && !topLeftFree && !topFree) {
+            return WallStyle.FlatBottomNarrowRight;
+        }
+
+        if (!topFree && !rightFree && !bottomRightFree && !bottomFree) {
+            return WallStyle.FlatLeftNarrowTop;
+        }
+
+        if (!topFree && !leftFree && !bottomLeftFree && !bottomFree) {
+            return WallStyle.FlatRightNarrowTop; 
+        }
+
+        if (!bottomFree && !rightFree && !topRightFree && !topFree) {
+            return WallStyle.FlatLeftNarrowBottom;
+        }
+
+        if (!bottomFree && !leftFree && !topLeftFree && !topFree) {
+            return WallStyle.FlatRightNarrowBottom;
+        }
+
+        if (!rightFree && !bottomRightFree && !bottomFree) {
+            return WallStyle.OuterCornerTopLeft;
+        }
+
+        if (!leftFree && !bottomLeftFree && !bottomFree) {
+            return WallStyle.OuterCornerTopRight;
+        }
+
+        if (!rightFree && !topRightFree && !topFree) {
+            return WallStyle.OuterCornerBottomLeft;
+        }
+
+        if (!leftFree && !topLeftFree && !topFree) {
+            return WallStyle.OuterCornerBottomRight;
+        }
+
+        if (!topFree && !bottomFree && !leftFree) {
+            return WallStyle.ThreewayNarrowLeft;
+        }
+
+        if (!topFree && !bottomFree && !rightFree) {
+            return WallStyle.ThreewayNarrowRight;
+        }
+
+        if (!topFree && !leftFree && !rightFree) {
+            return WallStyle.ThreewayNarrowTop;
+        }
+
+        if (!leftFree && !rightFree && !bottomFree) {
+            return WallStyle.ThreewayNarrowBottom;
+        }
+
+        if (!leftFree && !rightFree) {
+            return WallStyle.NarrowHorizontal;
+        }
+
+        if (!topFree && !bottomFree) { 
+            return WallStyle.NarrowVertical;
+        }
+
         if (!topFree) {
-            if (!leftFree) {
-                if (!rightFree) {
-                    if (!bottomFree) {
-                        if (!topLeftFree) {
-                            if (!topRightFree) {
-                                if (!bottomLeftFree) {
-                                    return !bottomRightFree ? WallStyle.Inner : WallStyle.InnerCornerTopLeft;
-                                }
-                                return !bottomRightFree ? WallStyle.InnerCornerTopRight : WallStyle.ThreewayBottom;
-                            }
-                            if (!bottomLeftFree) {
-                                return !bottomRightFree ? WallStyle.InnerCornerBottomLeft : WallStyle.ThreewayRight;
-                            }
-                        }
-                        if (!topRightFree && !bottomRightFree) {
-                            return !bottomLeftFree ? WallStyle.InnerCornerBottomRight : WallStyle.ThreewayLeft;
-                        }
-                        return !bottomLeftFree && !bottomRightFree ? WallStyle.ThreewayTop : WallStyle.Fourway;
-                    }
-                    return !topLeftFree && !topRightFree ? WallStyle.FlatTop : WallStyle.ThreewayNarrowTop;
-                }
-                if (!bottomFree) {
-                    return !topLeftFree && !bottomLeftFree ? WallStyle.FlatLeft : WallStyle.ThreewayNarrowLeft;
-                }
-                if (!topLeftFree) {
-                    return WallStyle.OuterCornerBottomRight;
-                }
-            }
-            if (!rightFree) {
-                if (!bottomFree) {
-                    return !topRightFree && !bottomRightFree ? WallStyle.FlatRight : WallStyle.ThreewayNarrowRight;
-                }
-                if (!topRightFree) {
-                    return WallStyle.OuterCornerBottomLeft;
-                }
-            }
-            return !bottomFree ? WallStyle.NarrowVertical : WallStyle.CappedBottom;
+            return WallStyle.CappedBottom;
         }
+
         if (!leftFree) {
-            if (!rightFree) {
-                if (!bottomFree) {
-                    return !bottomLeftFree && !bottomRightFree ? WallStyle.FlatBottom : WallStyle.ThreewayNarrowBottom;
-                }
-                return WallStyle.NarrowHorizontal;
-            }
-            return !bottomLeftFree && !bottomFree ? WallStyle.OuterCornerTopRight : WallStyle.CappedRight;
+            return WallStyle.CappedRight;
         }
+
+        if (!bottomFree) {
+            return WallStyle.CappedTop;
+        }
+
         if (!rightFree) {
-            return !bottomRightFree && !bottomFree ? WallStyle.OuterCornerTopLeft : WallStyle.CappedLeft;
+            return WallStyle.CappedLeft;
         }
-        return !bottomFree ? WallStyle.CappedTop : WallStyle.Solo;
+
+        return WallStyle.Solo;
     }
 }
 
@@ -147,54 +256,91 @@ export class Levels {
 
     static levels: { [id: number]: string[] } = {
         1: [
-            '##################',
-            '#                #',
-            '#       ##       #',
-            '#       ##       #',
-            '#XW              #',
-            '#####           X#',
-            '#######       P###',
-            '##########    ####',
-            '##########  ######',
-            '##################',
+            '################',
+            '#              #',
+            '#              #',
+            '#              #',
+            '#X        #    #',
+            '### P  #  #  W #',
+            '################',
         ],
         2: [
-            '##################',
-            '#    #      #    #',
-            '#   ##   #  ##   #',
-            '#P   #      #    #',
-            '##       #       #',
-            '#W      ###  #####',
-            '####     #       #',
-            '#                #',
-            '# XX X  #    XXXX#',
-            '##################',
+            '#################',
+            '#               #',
+            '#               #',
+            '#          #    #',
+            '#XX        #    #',
+            '#### P   # #  W #',
+            '#################',
         ],
         3: [
-            '##################',
-            '#                #',
-            '#                #',
-            '#                #',
-            '#                #',
-            '#                #',
-            '# W       #      #',
-            '# XXX      #     #',
-            '# XXXX  P # #  XX#',
-            '##################',
+            '################',
+            '#              #',
+            '#              #',
+            '#         #    #',
+            '#XX       #    #',
+            '###X  P   #  W #',
+            '################',
         ],
         4: [
+            '################',
+            '#              #',
+            '#              #',
+            '#X        #  W #',
+            '#XX       #  ###',
+            '###X  P   #  ###',
+            '################',
+        ],
+        5: [
+            '################',
+            '#       #      #',
+            '#       #    W #',
+            '#            ###',
+            '#X      #      #',
+            '#XX P   #X   XX#',
+            '################',
+        ],
+        6: [
             '##################',
             '#                #',
-            '#   #            #',
-            '#         #      #',
-            '#    #           #',
-            '#  #         XX  #',
-            '#           XXXXX#',
-            '#          XXXXXX#',
-            '#  P    XXXXXXXXX#',
+            '#              W #',
+            '#              ###',
+            '#        X     ###',
+            '#X       #    X###',
+            '#XX P #      XX###',
             '##################',
-        ], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [], 13: [], 14: [], 15: [], 16: [], 17: [], 18: [], 
-        19: [], 20: [], 21: [], 22: [], 23: [], 24: [], 25: [], 26: [], 27: [], 28: [], 29: [], 30: [], 31: [],32: [],  
+        ],
+        7: [
+            '#############################',
+            '#                           #',
+            '#  # #               # #    #',
+            '#  ###    #####     #####   #',
+            '#  ###     ###       ###    #',
+            '#  # #    #####     #####   #',
+            '#                    # #    #',
+            '#   P                       #',
+            '#############################',
+        ],
+        100: [
+            '########################',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#                      #',
+            '#   P      X       W   #',
+            '########################',
+        ],
     };
 
     static get(levelNumber: number): string[] {
@@ -233,4 +379,16 @@ enum WallStyle {
     ThreewayRight = 26,
     ThreewayBottom = 27,
     ThreewayLeft = 28,
+    FlatTopNarrowLeft = 29,
+    FlatTopNarrowRight = 30,
+    FlatBottomNarrowLeft = 31,
+    FlatBottomNarrowRight = 32,
+    FlatLeftNarrowTop = 33,
+    FlatRightNarrowTop = 34,
+    FlatLeftNarrowBottom = 35,
+    FlatRightNarrowBottom = 36,
+    TwoWayTopLeft = 37,
+    TwoWayTopRight = 38,
+    TwoWayBottomLeft = 39,
+    TwoWayBottomRight = 40,
 }
