@@ -34,6 +34,10 @@ LevelSelectRoom.onStart((args) => {
         Registry.set(Settings.StackmoProgress, unlockedLevelCount, true);
     }
 
+    if (!unlockedLevelCount) {
+        unlockedLevelCount = 0;
+    }
+
     // adjust icons per row for scroll bar if rows overflow the canvas
     let iconsPerRow = Math.floor(canvasWidth / iconSizeWithPadding);
 
