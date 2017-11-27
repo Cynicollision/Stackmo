@@ -36,9 +36,11 @@ export class Room {
     }
 
     private actorInstanceMap: { [index: number]: ActorInstance } = {};
+    private propertyMap: { [name: string]: any } = {};
 
     private eventHandlers: EventHandler[] = [];
-    // TODO: consider moving Grid to extended class or decorator
+
+    // TODO: Grid, View RoomBehavior? classes?
     private grid: Grid;
     view: View;
 
@@ -47,6 +49,15 @@ export class Room {
     
     background: Background;
 
+    get(name: string): any {
+        return this.propertyMap[name];
+    }
+
+    set(name: string, value: any) {
+        this.propertyMap[name] = value;
+    }
+
+    // lifecycle callbacks
     get hasStart(): boolean {
         return !!this.onStartCallback;
     }
@@ -71,6 +82,7 @@ export class Room {
         this.onDrawCallback(this);
     }
 
+    // event callbacks
     onClick(callback: (event: MouseEvent) => void): EventHandler {
         let clickHandler = Input.registerClickHandler(callback);
         this.eventHandlers.push(clickHandler);
@@ -85,12 +97,14 @@ export class Room {
         return keyHandler;
     }
 
+    // TODO: GridRoomBehavior
     defineGrid(tileSize: number): Grid {
         this.grid = new Grid(tileSize, this);
 
         return this.grid;
     }
 
+    // TODO: ViewRoomBehavior
     defineView(x: number, y: number, width: number, height: number): View {
         this.view = new View(x, y, width, height);
 
@@ -105,6 +119,12 @@ export class Room {
         }
     }
 
+    end(): void {
+        this.actorInstanceMap = {};
+        this.eventHandlers.forEach(eventHandler => eventHandler.dispose());
+    }
+
+    // step behavior
     step(): void {
 
         this.getInstances().forEach(instance => {
@@ -159,6 +179,7 @@ export class Room {
         };
     }
 
+    // draw behavior
     draw(canvasContext: GameCanvasContext): void {
         // get view offset
         let [offsetX, offsetY] = this.getViewOffset();
@@ -196,6 +217,31 @@ export class Room {
         canvas.getContext().drawSprite(sprite, x - offsetX, y - offsetY, frame);
     }
 
+    private getViewOffset(): [number, number] {
+        let offsetX = this.view ? this.view.x : 0;
+        let offsetY = this.view ? this.view.y : 0;
+
+        return [offsetX, offsetY];
+    }
+
+    handleClick(event: PointerInputEvent): void {
+        let [offsetX, offsetY] = this.getViewOffset();
+        let clickX = event.x + offsetX;
+        let clickY = event.y + offsetY;
+
+        if (this.grid) {
+            this.grid.raiseClickEvent(clickX, clickY);
+        }
+
+        this.getInstancesAtPosition(clickX, clickY).forEach(instance => {
+            let parent = instance.parent;
+
+            if (parent.hasClick && instance.occupiesPosition(clickX, clickY)) {
+                parent.callClick(instance, event);
+            }
+        });
+    }
+
     createActor(actorID: string, x?: number, y?: number): ActorInstance {
         let parentActor = Actor.get(actorID);
 
@@ -221,13 +267,6 @@ export class Room {
         delete this.actorInstanceMap[instance.id];
     }
 
-    private getViewOffset(): [number, number] {
-        let offsetX = this.view ? this.view.x : 0;
-        let offsetY = this.view ? this.view.y : 0;
-
-        return [offsetX, offsetY];
-    }
-
     getInstances(): ActorInstance[] {
         let instances = [];
 
@@ -246,34 +285,5 @@ export class Room {
         return !this.getInstancesAtPosition(x, y).length;
     }
 
-    getView(): View {
-        return this.view;
-    }
-
-    handleClick(event: PointerInputEvent): void {
-        let clickX = event.x;
-        let clickY = event.y;
-
-        if (this.view) {
-            clickX += this.view.x;
-            clickY += this.view.y;
-        }
-
-        if (this.grid) {
-            this.grid.raiseClickEvent(clickX, clickY);
-        }
-
-        this.getInstancesAtPosition(clickX, clickY).forEach(instance => {
-            let parent = instance.parent;
-
-            if (parent.hasClick && instance.occupiesPosition(clickX, clickY)) {
-                parent.callClick(instance, event);
-            }
-        });
-    }
-
-    end(): void {
-        this.actorInstanceMap = {};
-        this.eventHandlers.forEach(eventHandler => eventHandler.dispose());
-    }
+    
 }
