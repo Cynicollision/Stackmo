@@ -18,10 +18,10 @@ Vastgame.init('game', {
 requireModules('actors', ['block', 'hud', 'player', 'wall', 'win']);
 requireModules('rooms', ['level', 'level-select', 'title']);
 
-// TODO: hacks to reset from the beginning...
-Registry.set(Settings.StackmoProgress, 1, true);
-
+// load game progress
 Registry.load(Settings.StackmoProgress);
+// debug: hacks to reset from the beginning...
+// Registry.set(Settings.StackmoProgress, 1, true);
 
 // start the game with the title room
 Vastgame.start(RoomID.Title);
