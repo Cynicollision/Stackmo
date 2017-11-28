@@ -1,5 +1,5 @@
 # Vastgame
-[![Build Status](https://travis-ci.org/Cynicollision/Vastgame.svg?branch=master)](https://travis-ci.org/Cynicollision/vastengine) [![devDependencies Status](https://david-dm.org/Cynicollision/Vastgame/dev-status.svg)](https://david-dm.org/Cynicollision/Vastgame?type=dev)
+[![Build Status](https://travis-ci.org/Cynicollision/Vastgame.svg?branch=master)](https://travis-ci.org/Cynicollision/Vastgame) [![devDependencies Status](https://david-dm.org/Cynicollision/Vastgame/dev-status.svg)](https://david-dm.org/Cynicollision/Vastgame?type=dev)
 
 Vastgame is a 2D game engine written in Typescript for the HTML Canvas. I'm using it to build *Stackmo*, a puzzle game for the browser. [You can play it here (warning: WIP!)](http://seannormoyle.net/stackmo/view/game_min.html). The plan is to have a reusable game engine that I can use for future game projects after this one.
 
