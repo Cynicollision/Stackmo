@@ -2,7 +2,6 @@ import { Actor, Boundary, Enum, Input, Room, ViewedRoomBehavior, Sprite, Vastgam
 import * as Constants from './../util/constants';
 import { ActorID, LevelBgColor, RoomID, Settings, SpriteID } from './../util/enum';
 import { Levels, LevelBuilder } from './../util/level-builder';
-import { SpriteFader } from './../util/sprite-fader';
 import { Registry } from './../util/registry';
 
 let scrollView: View;
@@ -73,7 +72,7 @@ LevelSelectRoom.onStart((args) => {
     // create scroll icons if needed
     if (showScrollbars) {
         let upArrow = LevelSelectRoom.createActor(ActorID.ScrollArrow);
-        upArrow.spriteAnimation.set(1);
+        upArrow.animation.setFrame(1);
         upArrow.x = canvasWidth - iconPadding - ScrollArrow.sprite.width;
         (<any>upArrow).direction = Enum.Direction.Up;
 
@@ -81,8 +80,6 @@ LevelSelectRoom.onStart((args) => {
         downArrow.x = upArrow.x;
         (<any>downArrow).direction = Enum.Direction.Down;
     }
-
-    SpriteFader.fadeIn([TextSprite, DigitsSprite, LevelIconSprite, ArrowSprite]);
 });
 
 // draw the banner text
@@ -92,8 +89,8 @@ const TextSprite = Sprite.define(SpriteID.TextSheet, {
     width: 320,
 });
 
-LevelSelectRoom.onDraw(self => {
-    self.drawSprite(TextSprite, startX, Math.floor(startY / 2 - TextSprite.height), 0);
+LevelSelectRoom.onDraw(() => {
+    LevelSelectRoom.drawSprite(TextSprite, startX, Math.floor(startY / 2 - TextSprite.height), 0);
 });
 
 // Level icons
@@ -118,17 +115,15 @@ LevelIcon.onClick(self => {
     if ((<any>self).enabled && !levelSelectLock) {
         levelSelectLock = true;
 
-        SpriteFader.fadeOut([TextSprite, DigitsSprite, LevelIconSprite, ArrowSprite], () => {
-            let levelNumber: number = (<any>self).levelNumber;
-            let level = Room.get(RoomID.Level);
-            
-            LevelBuilder.populateRoom(level, levelNumber);
-            
-            _lastLevelNumber = levelNumber;
-            Vastgame.setRoom(RoomID.Level);
+        let levelNumber: number = (<any>self).levelNumber;
+        let level = Room.get(RoomID.Level);
+        
+        LevelBuilder.populateRoom(level, levelNumber);
+        
+        _lastLevelNumber = levelNumber;
+        Vastgame.setRoom(RoomID.Level);
 
-            levelSelectLock = false;
-        });
+        levelSelectLock = false;
     } 
 });
 

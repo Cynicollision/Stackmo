@@ -51,7 +51,7 @@ export class LevelBuilder {
                         let wall = room.createActor(ActorID.Wall, j * cellSize, i * cellSize); 
                         let frame = this.getWallFrame(levelMap, roomID, i, j);
                         frame = this.getWallFrameRowOffeset(levelVariation, frame);
-                        wall.spriteAnimation.set(frame);
+                        wall.animation.setFrame(frame);
                         instances.push(wall);
                         break;
                 }
@@ -353,6 +353,28 @@ export class Levels {
             '#########         W##',
             '#####################',
         ],
+        // 10: [
+        //     '##############',
+        //     '#            #',
+        //     '#            #',
+        //     '#            #',
+        //     '#            #',
+        //     '#           W#',
+        //     '#           ##',
+        //     '#P #XXXXX # ##',
+        //     '##############',
+        // ],
+        // 11: [
+        //     '##############',
+        //     '#            #',
+        //     '#            #',
+        //     '#            #',
+        //     '#            #',
+        //     '#            #',
+        //     '#     X      #',
+        //     '#P   XXX  W  #',
+        //     '##############',
+        // ],
         // 7: [
         //     '#############################',
         //     '#                           #',

@@ -1,5 +1,5 @@
 import { Actor } from './actor';
-import { GameCanvas } from './canvas';
+import { GameCanvas, GameCanvasContext } from './canvas';
 import { DeferredEvent } from './events';
 import { Input, ConcreteEventHandler, PointerInputEvent } from './input';
 import { Room } from './room';
@@ -17,8 +17,8 @@ export class GameContext {
     constructor(private canvas: GameCanvas) {
     }
 
-    getCanvas(): GameCanvas {
-        return this.canvas;
+    getCanvasContext(): GameCanvasContext {
+        return this.canvas.getContext();
     }
 
     // actors

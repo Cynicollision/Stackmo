@@ -53,7 +53,7 @@ describe('ActorInstance', () => {
                 clear: () => null,
                 fill: () => null,
                 fillArea: () => null,
-                drawSprite: () => null,
+                drawImage: () => null,
             };
 
             TestRoom.draw(mockGameCanvasContext);

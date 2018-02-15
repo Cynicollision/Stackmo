@@ -1,13 +1,14 @@
 import { Actor } from './actor';
+import { GameCanvasContext } from './canvas';
 import { Vastgame } from './vastgame';
 
 export enum SpriteTransformation {
     Opacity = 0,
+    Frame = 1,
 }
 
 export class Sprite {
-    private transformatons: { [index: number]: number } = {};
-
+    
     static define(name: string, options: SpriteOptions): Sprite {
         let sprite = new Sprite(options);
         Vastgame.getContext().defineSprite(name, sprite);
@@ -23,6 +24,7 @@ export class Sprite {
     readonly height: number;
     readonly width: number;
     readonly frameBorder: number;
+    readonly defaultAnimation: SpriteAnimation;
 
     constructor(options: SpriteOptions) {
         this.image = new Image();
@@ -30,24 +32,7 @@ export class Sprite {
         this.height = options.height;
         this.width = options.width;
         this.frameBorder = options.frameBorder;
-
-        this.setDefaultTransforms();
-    }
-
-    private setDefaultTransforms(): void {
-        this.transformatons[SpriteTransformation.Opacity] = 1;
-    }
-
-    getTransform(transformation: SpriteTransformation): number {
-        return this.transformatons[transformation];
-    }
-
-    transform(transformation: SpriteTransformation, delta: number): void {
-        this.transformatons[transformation] += delta;
-    }
-
-    setTransform(transformation: SpriteTransformation, value: number): void {
-        this.transformatons[transformation] = value;
+        this.defaultAnimation = new SpriteAnimation(this);
     }
 
     getFrameImageSourceCoords(frame: number): [number, number] {
@@ -79,29 +64,27 @@ export interface SpriteOptions {
 }
 
 export class SpriteAnimation {
-    private currentFrame: number = 0;
+    private transformatons: { [index: number]: number } = {};
     private timer: any;
 
     depth: number = 0;
 
     constructor(readonly sprite: Sprite) {
-        this.currentFrame = 0;
-    }
-    
-    get frame(): number { 
-        return this.currentFrame;
-    }
-
-    get source(): Sprite {
-        return this.sprite;
+        this.setTransform(SpriteTransformation.Frame, 0);
+        this.setTransform(SpriteTransformation.Opacity, 1);
     }
 
     start(start: number, end: number, delay?: number): void {
         this.stop();
-        this.currentFrame = start;
+        this.setTransform(SpriteTransformation.Frame, start);
 
         this.timer = setInterval(() => {
-            this.currentFrame = this.currentFrame === end ? start : this.currentFrame + 1;
+            if (this.getTransform(SpriteTransformation.Frame) === end) {
+                this.setTransform(SpriteTransformation.Frame, start);
+            }
+            else {
+                this.transform(SpriteTransformation.Frame, 1);
+            }
         }, delay);
     }
 
@@ -111,8 +94,29 @@ export class SpriteAnimation {
         }
     }
 
-    set(frame: number): void {
+    setFrame(frame: number): void {
         this.stop();
-        this.currentFrame = frame;
-    }  
+        this.setTransform(SpriteTransformation.Frame, frame);
+    }
+
+    draw(canvasContext: GameCanvasContext, x: number, y: number): void {
+        let frame = this.getTransform(SpriteTransformation.Frame);
+        let opacity = this.getTransform(SpriteTransformation.Opacity);
+        let [srcX, srcY] = this.sprite.getFrameImageSourceCoords(frame);
+
+        canvasContext.drawImage(this.sprite.image, srcX, srcY, x, y, this.sprite.width, this.sprite.height, opacity);
+    }
+
+    // transformations
+    getTransform(transformation: SpriteTransformation): number {
+        return this.transformatons[transformation];
+    }
+
+    transform(transformation: SpriteTransformation, delta: number): void {
+        this.transformatons[transformation] += delta;
+    }
+
+    setTransform(transformation: SpriteTransformation, value: number): void {
+        this.transformatons[transformation] = value;
+    }
 }

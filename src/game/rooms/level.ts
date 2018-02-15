@@ -2,7 +2,6 @@ import { Actor, ActorInstance, Enum, GridCell, Input, Room, ViewedRoomBehavior, 
 import * as Constants from './../util/constants';
 import { ActorID, RoomID, SpriteID, GameAction, Settings } from './../util/enum';
 import { Registry } from './../util/registry';
-import { SpriteFader } from './../util/sprite-fader';
 import { Vastgame } from './../../engine/vastgame';
 import { GridRoomBehavior } from '../../engine/room-ext';
 
@@ -16,10 +15,6 @@ LevelRoom.onStart(() => {
     let PlayerActor = Actor.get(ActorID.Player);
     let WallActor = Actor.get(ActorID.Wall);
     let WinActor = Actor.get(ActorID.Win);
-
-    let DoorSprite = Sprite.get(SpriteID.DoorSheet);
-
-    SpriteFader.fadeIn([ExitButtonActor.sprite, BlockActor.sprite, PlayerActor.sprite, WallActor.sprite, DoorSprite]);
 
     // assumes the level has already been populated before starting
     let player = LevelRoom.getInstances().find(actorInstance => actorInstance.parent === PlayerActor);

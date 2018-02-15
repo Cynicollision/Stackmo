@@ -157,14 +157,13 @@ export class Actor {
 
 export class ActorInstance {
     private state: ActorState;
+    private spriteAnimation: SpriteAnimation;
 
     previousX: number;
     previousY: number;
     speed: number = 0;
     direction: number = Direction.Right;
     visible: boolean = true;
-
-    readonly spriteAnimation: SpriteAnimation;
 
     constructor(private room: Room, public parent: Actor, public id: number, public x: number = 0, public y: number = 0) {
         this.state = ActorState.Active;

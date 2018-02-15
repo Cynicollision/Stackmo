@@ -15,10 +15,6 @@ export interface ActorInstanceDrawEvent {
     (self: ActorInstance): void;
 }
 
-export interface RoomDrawEvent {
-    (self: Room): void;
-}
-
 export interface GameCanvas {
     init(options: GameCanvasOptions): void;
     getContext(): GameCanvasContext;
@@ -48,7 +44,7 @@ export interface GameCanvasContext {
     clear(): void;
     fill(width: number, height: number, color: string): void;
     fillArea(x: number, y: number, width: number, height: number, color: string): void;
-    drawSprite(sprite: Sprite, x: number, y: number, frame?: number): void;
+    drawImage(image: HTMLImageElement, srcX: number, srcY: number, destX: number, destY: number, width: number, height: number, opacity?: number): void;
 }
 
 export class GameCanvasContext2D implements GameCanvasContext {
@@ -78,12 +74,9 @@ export class GameCanvasContext2D implements GameCanvasContext {
         this.canvasContext2D.fill();
     }
 
-    drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0): void {
-        let [srcX, srcY] = sprite.getFrameImageSourceCoords(frame);
-
+    drawImage(image: HTMLImageElement, srcX: number, srcY: number, destX: number, destY: number, width: number, height: number, opacity?: number): void {
         // set opacity
         const defaultOpacity = 1;
-        let opacity = sprite.getTransform(SpriteTransformation.Opacity);
         let previousOpacity: number = null;
 
         if (opacity !== defaultOpacity && opacity !== null && opacity !== undefined) {
@@ -93,7 +86,7 @@ export class GameCanvasContext2D implements GameCanvasContext {
 
         // draw the image relative to the origin
         let [originX, originY] = this.origin;
-        this.canvasContext2D.drawImage(sprite.image, srcX, srcY, sprite.width, sprite.height, Math.floor(originX + x), Math.floor(originY + y), sprite.width, sprite.height);
+        this.canvasContext2D.drawImage(image, srcX, srcY, width, height, Math.floor(originX + destX), Math.floor(originY + destY), width, height);
 
         // reset opacity
         if (previousOpacity !== null) {

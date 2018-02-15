@@ -1,5 +1,5 @@
 import { Actor, ActorInstance, CollisionCallback } from './actor';
-import { GameCanvasContext, RoomDrawEvent } from './canvas';
+import { GameCanvasContext } from './canvas';
 import { Key } from './enum';
 import { EventHandler, Input, PointerInputEvent } from './input';
 import { RoomBehavior } from './room-ext';
@@ -39,7 +39,7 @@ export class Room {
     private behaviors: RoomBehavior[] = [];
 
     private onStartCallback: GameLifecycleCallback;
-    private onDrawCallback: RoomDrawEvent;
+    private onDrawCallback: () => void;
     
     private background: Background;
 
@@ -88,12 +88,12 @@ export class Room {
         return !!this.onDrawCallback;
     }
 
-    onDraw(callback: RoomDrawEvent): void {
+    onDraw(callback: () => void): void {
         this.onDrawCallback = callback;
     }
 
     callDraw(): void {
-        this.onDrawCallback(this);
+        this.onDrawCallback();
     }
 
     // event callbacks
@@ -180,7 +180,7 @@ export class Room {
         }
 
         let orderedInstances = this.getInstances().sort((a, b) => {
-            return (b.spriteAnimation ? b.spriteAnimation.depth : 0) - (a.spriteAnimation ? a.animation.depth : 0);
+            return (b.animation ? b.animation.depth : 0) - (a.animation ? a.animation.depth : 0);
         });
 
         orderedInstances.forEach(instance => {
@@ -191,19 +191,19 @@ export class Room {
 
             // draw sprites
             if (instance.animation && instance.visible) {
-                canvasContext.drawSprite(instance.animation.source, instance.x, instance.y, instance.spriteAnimation.frame);
+                instance.animation.draw(canvasContext, instance.x, instance.y);
             }
         });
     }
 
     drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0) {
-        let canvas = Vastgame.getContext().getCanvas();
-        let canvasContext = canvas.getContext();
+        let canvasContext = Vastgame.getContext().getCanvasContext();
 
         // call pre-draw behaviors
         this.behaviors.forEach(behavior => behavior.preDraw(this, canvasContext));
 
-        canvasContext.drawSprite(sprite, x, y, frame);
+        sprite.defaultAnimation.setFrame(frame);
+        sprite.defaultAnimation.draw(canvasContext, x, y);
     }
 
     handleClick(event: PointerInputEvent): void {

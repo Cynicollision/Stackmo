@@ -214,9 +214,9 @@ function animate(player: ActorInstance, direction: Enum.Direction, isMoving: boo
     }
 
     if (isMoving) {
-        player.spriteAnimation.start(startFrame + 1, startFrame + 2, animationSpeed);
+        player.animation.start(startFrame + 1, startFrame + 2, animationSpeed);
     }
     else {
-        player.spriteAnimation.set(startFrame);
+        player.animation.setFrame(startFrame);
     }
 }

@@ -26,7 +26,7 @@ export class GameRunner {
         let offset: number = 0;
         let previous: number = window.performance.now();
 
-        let canvasDrawingContext = gameContext.getCanvas().getContext();
+        let canvasDrawingContext = gameContext.getCanvasContext();
 
         let gameLoop: FrameRequestCallback = (): void => {
             let room = gameContext.getCurrentRoom();

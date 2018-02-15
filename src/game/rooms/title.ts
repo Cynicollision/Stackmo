@@ -1,7 +1,6 @@
 import { Enum, Room, Sprite, Vastgame } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { RoomID, Settings, SpriteID } from './../util/enum';
-import { SpriteFader } from './../util/sprite-fader';
 import { Registry } from './../util/registry';
 
 const TitleWidth = 360;
@@ -27,12 +26,10 @@ TitleRoom.onStart(() => {
     titleY = Math.floor((canvasHeight - TitleHeight) / 4);
 
     TitleRoom.setBackground(Constants.Black, canvasWidth, canvasHeight, Constants.Black);
-
-    SpriteFader.fadeIn([TitleSprite]);
 });
 
-TitleRoom.onDraw(context => {
-    context.drawSprite(TitleSprite, titleX, titleY);
+TitleRoom.onDraw(() => {
+    TitleRoom.drawSprite(TitleSprite, titleX, titleY);
 });
 
 let clickHandler = TitleRoom.onClick(goToLevelSelect);
@@ -40,10 +37,7 @@ let keyHandler = TitleRoom.onKey(Enum.Key.Any, goToLevelSelect);
 
 function goToLevelSelect() {
     disposeHandlers();
-
-    SpriteFader.fadeOut([TitleSprite], () => {
-        Vastgame.setRoom(RoomID.LevelSelect);
-    });
+    Vastgame.setRoom(RoomID.LevelSelect);
 }
 
 function disposeHandlers() {
