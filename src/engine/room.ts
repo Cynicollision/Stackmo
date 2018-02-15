@@ -34,13 +34,22 @@ export class Room {
     }
 
     private actorInstanceMap: { [index: number]: ActorInstance } = {};
+    private propertyMap: { [index: string]: any } = {};
     private eventHandlers: EventHandler[] = [];
     private behaviors: RoomBehavior[] = [];
 
     private onStartCallback: GameLifecycleCallback;
     private onDrawCallback: RoomDrawEvent;
     
-    background: Background;
+    private background: Background;
+
+    set(propertyName: string, value: any): void {
+        this.propertyMap[propertyName] = value;
+    }
+
+    get(propertyName: string): any {
+        return this.propertyMap[propertyName];
+    }
 
     setBackground(color: string, width: number, height: number, pageColor?: string): void {
         this.background = new Background(color, pageColor, width, height);
