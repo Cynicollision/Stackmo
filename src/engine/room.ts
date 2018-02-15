@@ -265,7 +265,14 @@ export class Room {
         return this.getInstances().filter(instance => instance.occupiesPosition(x, y));
     }
 
-    isPositionFree(x: number, y: number): boolean {
-        return !this.getInstancesAtPosition(x, y).length;
+    isPositionFree(x: number, y: number, actorNames?: string[]): boolean {
+
+        if (!actorNames || !actorNames.length) {
+            return !this.getInstancesAtPosition(x, y).length;
+        }
+
+        return !this.getInstancesAtPosition(x, y)
+            .filter(actorInstance => actorNames.indexOf(actorInstance.parent.name) !== -1)
+            .length;
     }
 }
