@@ -98,7 +98,7 @@ Player.onEvent(GameAction.Stop, (player, args) => {
     player.setPosition(targetCell.x, targetCell.y);
 
     // check if falling
-    if (room.isPositionFree(player.x + 1, player.y + Constants.GridCellSize + 1)) {
+    if (room.isPositionFree(player.x + 1, player.y + Constants.GridCellSize + 1, [ActorID.Block, ActorID.Wall])) {
         player.raiseEvent(GameAction.Fall, args);
     }
     else {
