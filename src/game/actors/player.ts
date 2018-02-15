@@ -17,10 +17,17 @@ let Player = Actor.define(ActorID.Player, {
 let heldBlock: ActorInstance;
 let lastDirection: Enum.Direction;
 
+let solidActors: Actor[];
+
 Player.onCreate(self => {
     self.animation.depth = -50;
     lastDirection = Enum.Direction.Right;
     heldBlock = null;
+
+    solidActors = [
+        Actor.get(ActorID.Block),
+        Actor.get(ActorID.Wall),
+    ];
 });
 
 Player.onStep(self => {
@@ -64,7 +71,7 @@ Player.onEvent(GameAction.CheckStopMoving, (player, args) => {
         let nextCell = targetCell.getAdjacentCell(lastDirection);
         let belowCell = targetCell.getAdjacentCell(Enum.Direction.Down);
 
-        if (nextCell.isFree() && !belowCell.isFree()) {
+        if (nextCell.isFree() && !belowCell.isFree(solidActors)) {
             args.targetCell = nextCell;
             action = GameAction.Move
         }
@@ -98,7 +105,7 @@ Player.onEvent(GameAction.Stop, (player, args) => {
     player.setPosition(targetCell.x, targetCell.y);
 
     // check if falling
-    if (room.isPositionFree(player.x + 1, player.y + Constants.GridCellSize + 1, [ActorID.Block, ActorID.Wall])) {
+    if (room.isPositionFree(player.x + 1, player.y + Constants.GridCellSize + 1, solidActors)) {
         player.raiseEvent(GameAction.Fall, args);
     }
     else {

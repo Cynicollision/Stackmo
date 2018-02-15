@@ -61,8 +61,15 @@ export class GridCell {
         return this.getContents().some(contents => contents.parent === actor);
     }
 
-    isFree(): boolean {
-        return !this.getContents().length;
+    isFree(actorTypes?: Actor[]): boolean {
+
+        if (!actorTypes || !actorTypes.length) {
+            return !this.getContents().length;
+        }
+
+        return !this.getContents()
+            .filter(actorInstance => actorTypes.indexOf(actorInstance.parent) !== -1)
+            .length;
     }
 }
 
