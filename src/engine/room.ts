@@ -73,20 +73,14 @@ export class Room {
     }
 
     // lifecycle callbacks
-    get hasStart(): boolean {
-        return !!this.onStartCallback;
-    }
-
     onStart(callback: GameLifecycleCallback): void {
         this.onStartCallback = callback;
     }
 
     callStart(args?: any): void {
-        this.onStartCallback(args);
-    }
-
-    get hasDraw(): boolean {
-        return !!this.onDrawCallback;
+        if (this.onStartCallback) {
+            this.onStartCallback(args);
+        }
     }
 
     onDraw(callback: () => void): void {
@@ -94,7 +88,9 @@ export class Room {
     }
 
     callDraw(): void {
-        this.onDrawCallback();
+        if (this.onDrawCallback) {
+            this.onDrawCallback();
+        }
     }
 
     // event callbacks
@@ -176,9 +172,7 @@ export class Room {
         }
 
         // call room draw event callback
-        if (this.hasDraw) {
-            this.callDraw();
-        }
+        this.callDraw();
 
         let orderedInstances = this.getInstances().sort((a, b) => {
             return (b.animation ? b.animation.depth : 0) - (a.animation ? a.animation.depth : 0);
@@ -186,9 +180,7 @@ export class Room {
 
         orderedInstances.forEach(instance => {
             // call actor draw event callbacks
-            if (instance.parent.hasDraw) {
-                instance.parent.callDraw(instance);
-            }
+            instance.parent.callDraw(instance);
 
             // draw sprites
             if (instance.animation && instance.visible) {

@@ -88,17 +88,10 @@ export class Actor {
 
     // step
     step(selfInstance: ActorInstance) {
-        
-        if (this.hasStep) {
-            this.callStep(selfInstance);
-        }
+        this.callStep(selfInstance);
 
         selfInstance.previousX = selfInstance.x;
         selfInstance.previousY = selfInstance.y;
-    }
-
-    get hasStep(): boolean {
-        return !!this.onStepCallback;
     }
 
     onStep(callback: LifecycleCallback): void {
@@ -106,20 +99,20 @@ export class Actor {
     }
 
     callStep(selfInstance: ActorInstance): void {
-        this.onStepCallback(selfInstance);
+        if (this.onStepCallback) {
+            this.onStepCallback(selfInstance);
+        }
     }
 
     // draw
-    get hasDraw(): boolean {
-        return !!this.onDrawCallback;
-    }
-
     onDraw(callback: ActorInstanceDrawEvent): void {
         this.onDrawCallback = callback;
     }
 
     callDraw(selfInstance: ActorInstance): void {
-        this.onDrawCallback(selfInstance);
+        if (this.onDrawCallback) {
+            this.onDrawCallback(selfInstance);
+        }
     }
 
     // click/tap
