@@ -9,6 +9,8 @@ import { GridRoomBehavior } from '../../engine/room-ext';
 let LevelRoom = Room.define(RoomID.Level);
 
 LevelRoom.onStart(() => {
+    LevelRoom.set('complete', false);
+
     let BlockActor = Actor.get(ActorID.Block);
     let ExitButtonActor = Actor.get(ActorID.ExitButton);
     let PlayerActor = Actor.get(ActorID.Player);
@@ -36,11 +38,16 @@ LevelRoom.onStart(() => {
 
     // define the movement grid and player behavior
     let gridBehavior = new GridRoomBehavior(Constants.GridCellSize, LevelRoom);
-    LevelRoom.use(gridBehavior);
-    // let grid = LevelRoom.defineGrid(Constants.GridCellSize);
     let grid = gridBehavior.getGrid();
+    LevelRoom.use(gridBehavior);
 
     grid.onClick(gridClickEvent => {
+
+        // cancel input if the level has been won
+        if (LevelRoom.get('complete')) {
+            return;
+        }
+
         let clickedCell = gridClickEvent.getCell();
 
         // do nothing if the player is moving or if a wall was clicked on

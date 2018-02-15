@@ -18,13 +18,13 @@ let opening = false;
 let closing = false;
 let doorAnimationOffsetX = 0;
 
-WinActor.onCreate(win => {
+WinActor.onCreate(self => {
     // hide and draw sprite "manually" during onDraw
-    win.animation.depth = -10;
-    win.visible = false;
+    self.animation.depth = -10;
+    self.visible = false;
 })
 
-WinActor.onStep(win => {
+WinActor.onStep(self => {
     if (opening) {
         doorAnimationOffsetX++;
     }
@@ -39,29 +39,31 @@ WinActor.onDraw(self => {
     self.drawSprite(DoorSprite, self.x + 32 + doorAnimationOffsetX, self.y, 1);
 });
 
-WinActor.onEvent(GameAction.Win, (win, args) => {
-    win.raiseEvent('open');
+WinActor.onEvent(GameAction.Win, (self, args) => {
+    let currentRoom: Room = args.game.currentRoom;
+    currentRoom.set('complete', true);
+    self.raiseEvent('open');
 });
 
-WinActor.onEvent('open', (win, args) => {
+WinActor.onEvent('open', (self, args) => {
     opening = true;
     setTimeout(() => {
-        win.raiseEvent('close');
+        self.raiseEvent('close');
     }, 500);
 });
 
-WinActor.onEvent('close', (win, args) => {
+WinActor.onEvent('close', (self, args) => {
     opening = false;
-    win.animation.depth = -100;
+    self.animation.depth = -100;
     setTimeout(() => {
         closing = true;
         setTimeout(() => {
-            win.raiseEvent('home');
+            self.raiseEvent('home');
         }, 500);
     }, 500);
 });
 
-WinActor.onEvent('home', (win, args) => {
+WinActor.onEvent('home', (self, args) => {
     doorAnimationOffsetX = 0;
     closing = false;
     setTimeout(() => {

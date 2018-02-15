@@ -1,5 +1,4 @@
-import { Room, Vastgame } from './../engine/vastgame';
-import * as Constants from './util/constants';
+import { Vastgame } from './../engine/vastgame';
 import { Settings, RoomID }from './util/enum';
 import { Registry, requireModules, buildCanvasDimensions } from './util/util';
 
@@ -12,7 +11,7 @@ Registry.set(Settings.CanvasHeight, canvasHeight);
 // initialize the game canvas
 Vastgame.init('game', {
     canvas: { width: canvasWidth, height: canvasHeight },
-})
+});
 
 // load game modules
 requireModules('actors', ['block', 'hud', 'player', 'wall', 'win']);
@@ -20,8 +19,8 @@ requireModules('rooms', ['level', 'level-select', 'title']);
 
 // load game progress
 Registry.load(Settings.StackmoProgress);
-// debug: hacks to reset from the beginning...
-// Registry.set(Settings.StackmoProgress, 1, true);
+// debug: hacks...
+Registry.set(Settings.StackmoProgress, 99, true);
 
 // start the game with the title room
 Vastgame.start(RoomID.Title);
