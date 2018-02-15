@@ -3,7 +3,8 @@ import { Boundary } from './boundary';
 import { ActorState, Direction } from './enum';
 import { DeferredEvent } from './events';
 import { Room } from './room';
-import { Sprite, SpriteAnimation } from './sprite';
+import { Sprite } from './sprite';
+import { SpriteAnimation } from './sprite-animation';
 import { MathUtil } from './util';
 
 export interface ActorInstanceDrawEvent {

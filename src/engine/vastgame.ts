@@ -14,7 +14,8 @@ export { Input } from './input';
 export { Grid, GridCell } from './grid';
 export { Room } from './room';
 export { GridRoomBehavior, ViewedRoomBehavior } from './room-ext';
-export { Sprite, SpriteAnimation, SpriteTransformation } from './sprite';
+export { Sprite } from './sprite';
+export { SpriteAnimation, SpriteTransformation } from './sprite-animation';
 export { View } from './view';
 
 export interface GameLifecycleCallback {
