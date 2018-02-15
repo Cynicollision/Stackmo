@@ -2,7 +2,7 @@ import { Actor, ActorInstance, Room, Vastgame } from './../../engine/vastgame';
 import { ActorID, LevelBgColor } from './enum';
 import * as Constants from './constants';
 
-const FramePerWallSheetRow = 41;
+const FramePerWallSheetRow = 45;
 const MaxLevelVariations = 4;
 
 export class LevelBuilder {
@@ -224,6 +224,22 @@ export class LevelBuilder {
             return WallStyle.NarrowVertical;
         }
 
+        if (!topFree && !leftFree) {
+            return WallStyle.OuterElbowBottomRight;
+        }
+
+        if (!topFree && !rightFree) {
+            return WallStyle.OuterElbowBottomLeft;
+        }
+
+        if (!bottomFree && !leftFree) {
+            return WallStyle.OuterElbowTopRight;
+        }
+
+        if (!bottomFree && !rightFree) {
+            return WallStyle.OuterElbowTopLeft;
+        }
+
         if (!topFree) {
             return WallStyle.CappedBottom;
         }
@@ -353,59 +369,6 @@ export class Levels {
             '#########         W##',
             '#####################',
         ],
-        // 10: [
-        //     '##############',
-        //     '#            #',
-        //     '#            #',
-        //     '#            #',
-        //     '#            #',
-        //     '#           W#',
-        //     '#           ##',
-        //     '#P #XXXXX # ##',
-        //     '##############',
-        // ],
-        // 11: [
-        //     '##############',
-        //     '#            #',
-        //     '#            #',
-        //     '#            #',
-        //     '#            #',
-        //     '#            #',
-        //     '#     X      #',
-        //     '#P   XXX  W  #',
-        //     '##############',
-        // ],
-        // 7: [
-        //     '#############################',
-        //     '#                           #',
-        //     '#  # #               # #    #',
-        //     '#  ###    #####     #####   #',
-        //     '#  ###     ###       ###    #',
-        //     '#  # #    #####     #####   #',
-        //     '#                    # #    #',
-        //     '#   P                       #',
-        //     '#############################',
-        // ],
-        // 99: [
-        //     '########################',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#                      #',
-        //     '#    ##  #        #    #',
-        //     '#   ##   ##  ##  ##    #',
-        //     '#         #   ## #     #',
-        //     '#   P                  #',
-        //     '########################',
-        // ],
     };
 
     static get(levelNumber: number): string[] {
@@ -456,4 +419,8 @@ enum WallStyle {
     TwoWayTopRight = 38,
     TwoWayBottomLeft = 39,
     TwoWayBottomRight = 40,
+    OuterElbowBottomLeft = 41,
+    OuterElbowBottomRight = 42,
+    OuterElbowTopLeft = 43,
+    OuterElbowTopRight = 44,
 }
