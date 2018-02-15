@@ -1,4 +1,5 @@
-import { Actor, ActorInstance, CollisionCallback } from './actor';
+import { Actor } from './actor';
+import { ActorInstance } from './actor-instance';
 import { GameCanvasContext } from './canvas';
 import { Key } from './enum';
 import { EventHandler, Input, PointerInputEvent } from './input';

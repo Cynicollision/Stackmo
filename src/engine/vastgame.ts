@@ -6,7 +6,8 @@ import { GameRunner } from './game-runner';
 import { Room } from './room';
 
 // export public modules
-export { Actor, ActorInstance } from './actor';
+export { Actor } from './actor';
+export { ActorInstance } from './actor-instance';
 export { Boundary } from './boundary';
 export { Enum }
 export { Input } from './input';

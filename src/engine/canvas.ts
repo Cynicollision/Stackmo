@@ -1,18 +1,9 @@
-import { ActorInstance } from './actor';
-import { Background, Room } from './room';
-import { Sprite, SpriteAnimation, SpriteTransformation } from './sprite';
-import { View } from './view';
-
 const DefaultHeight = 480;
 const DefaultWidth = 640;
 
 export interface GameCanvasOptions {
     height: number;
     width: number;
-}
-
-export interface ActorInstanceDrawEvent {
-    (self: ActorInstance): void;
 }
 
 export interface GameCanvas {

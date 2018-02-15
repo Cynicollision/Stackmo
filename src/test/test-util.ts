@@ -1,4 +1,5 @@
-import { Actor, ActorInstance, ActorOptions } from './../engine/actor';
+import { Actor, ActorOptions } from './../engine/actor';
+import { ActorInstance } from './../engine/actor-instance';
 import { Boundary } from './../engine/boundary';
 import { Room } from './../engine/room';
 import { Vastgame } from './../engine/vastgame';

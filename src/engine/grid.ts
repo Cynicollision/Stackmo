@@ -1,4 +1,5 @@
-import { Actor, ActorInstance } from './actor';
+import { Actor } from './actor';
+import { ActorInstance } from './actor-instance';
 import { Direction } from './enum';
 import { Room } from './room';
 
@@ -86,6 +87,7 @@ export class Grid {
     }
 
     raiseClickEvent(x: number, y: number): void {
+        // TODO: replace w/ this.getCellAtPosition(x, y).getContents()
         let instances = this.room.getInstancesAtPosition(x, y);
         let event = new GridClickEvent(this, x, y);
 

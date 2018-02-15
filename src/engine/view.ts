@@ -1,4 +1,4 @@
-import { ActorInstance } from './actor';
+import { ActorInstance } from './actor-instance';
 import { Boundary } from './boundary';
 import { GameCanvasHTML2D } from './canvas';
 
