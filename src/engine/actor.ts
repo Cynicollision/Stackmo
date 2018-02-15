@@ -200,6 +200,12 @@ export class ActorInstance {
         this.raiseEventWhen(eventName, () => true, eventArgs);
     }
 
+    raiseEventIn(eventName: string, delay: number, eventArgs?: any): void {
+        setTimeout(() => {
+            this.raiseEvent(eventName, eventArgs);
+        }, delay);
+    }
+
     raiseEventWhen(eventName: string, conditionCallback: () => boolean, eventArgs: any = {}): void {
         this.setGameContextEventArgs(eventArgs);
 

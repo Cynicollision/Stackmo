@@ -14,6 +14,8 @@ let WinActor = Actor.define(ActorID.Win, {
     sprite: DoorSprite,
 });
 
+const animationDelay = 500;
+
 let opening = false;
 let closing = false;
 let doorAnimationOffsetX = 0;
@@ -47,26 +49,26 @@ WinActor.onEvent(GameAction.Win, (self, args) => {
 
 WinActor.onEvent('open', (self, args) => {
     opening = true;
-    setTimeout(() => {
-        self.raiseEvent('close');
-    }, 500);
+    self.raiseEventIn('stopOpening', animationDelay, args);
 });
 
-WinActor.onEvent('close', (self, args) => {
+WinActor.onEvent('stopOpening', (self, args) => {
     opening = false;
     self.animation.depth = -100;
-    setTimeout(() => {
-        closing = true;
-        setTimeout(() => {
-            self.raiseEvent('home');
-        }, 500);
-    }, 500);
+    self.raiseEventIn('startClosing', animationDelay, args);
 });
 
-WinActor.onEvent('home', (self, args) => {
+WinActor.onEvent('startClosing', (self, args) => {
+    closing = true;
+    self.raiseEventIn('stopClosing', animationDelay, args);
+});
+
+WinActor.onEvent('stopClosing', (self, args) => {
     doorAnimationOffsetX = 0;
     closing = false;
-    setTimeout(() => {
-        Vastgame.setRoom(RoomID.LevelSelect, { win: true });
-    }, 500);
+    self.raiseEventIn('exitLevel', animationDelay, args);
+});
+
+WinActor.onEvent('exitLevel', (self, args) => {
+    Vastgame.setRoom(RoomID.LevelSelect, { win: true });
 });
