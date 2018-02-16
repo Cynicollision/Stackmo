@@ -1,16 +1,9 @@
 import { GameCanvasContext } from './canvas';
 import { PointerInputEvent } from './input';
 import { Grid } from './grid';
-import { Room } from './room';
+import { Room, RoomBehavior } from './room';
 import { View } from './view';
 import { Vastgame } from './vastgame';
-
-export interface RoomBehavior {
-    preHandleClick: (event: PointerInputEvent) => void;
-    postHandleClick: (event: PointerInputEvent) => void;
-    postStep: (self: Room) => void;
-    preDraw: (self: Room, canvasContext: GameCanvasContext) => void;
-}
 
 export class ViewedRoomBehavior implements RoomBehavior {
     view: View;

@@ -57,9 +57,9 @@ export class Actor {
     readonly collisionHandlers: { [index: string]: CollisionCallback } = {};
     readonly actorEventHandlers: { [index: string] : ActorEventCallback } = {};
 
-    readonly boundary: Boundary;
     readonly name: string;
-    readonly sprite: Sprite;
+    sprite: Sprite;
+    boundary: Boundary;
 
     constructor(name: string, options: ActorOptions = {}) {
         this.boundary = options.boundary;
@@ -85,17 +85,17 @@ export class Actor {
     }
 
     // step
-    step(selfInstance: ActorInstance) {
+    onStep(callback: LifecycleCallback): void {
+        this.onStepCallback = callback;
+    }
+
+    callStep(selfInstance: ActorInstance) {
         if (this.onStepCallback) {
             this.onStepCallback(selfInstance);
         }
 
         selfInstance.previousX = selfInstance.x;
         selfInstance.previousY = selfInstance.y;
-    }
-
-    onStep(callback: LifecycleCallback): void {
-        this.onStepCallback = callback;
     }
 
     // draw

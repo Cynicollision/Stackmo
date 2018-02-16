@@ -1,6 +1,30 @@
 import { Actor } from './../../engine/actor';
 import { ActorInstance } from './../../engine/actor-instance';
-import { Room } from './../../engine/room';
+import { Boundary } from './../../engine/boundary';
+import { GameCanvasContext } from './../../engine/canvas';
+import { PointerInputEvent } from './../../engine/input';
+import { Room, Background, RoomBehavior } from './../../engine/room';
+import { FakeCanvasContext } from './../test-util';
+
+class TestRoomBehavior implements RoomBehavior {
+    preHandleClickCalled = false;
+    postHandleClickCalled = false;
+    postStepCalled = false;
+    preDrawCalled = false;
+
+    preHandleClick(event: PointerInputEvent): void {
+        this.preHandleClickCalled = true;
+    }
+    postHandleClick(event: PointerInputEvent): void {
+        this.postHandleClickCalled = true;
+    }
+    postStep(self: Room): void {
+        this.postStepCalled = true;
+    }
+    preDraw(self: Room, canvasContext: GameCanvasContext): void {
+        this.preDrawCalled = true;
+    }
+}
 
 describe('Room', () => {
     let TestRoom: Room = Room.define('Room_TestRoom');
@@ -9,6 +33,19 @@ describe('Room', () => {
 
     afterEach(() => {
         TestRoom.end();
+    });
+
+    it('can store Room-level properties by name', () => {
+        TestRoom.set('someProp', { score: 123 });
+        expect(TestRoom.get('someProp').score).toBe(123);
+    });
+
+    it('can set a background', () => {
+        TestRoom.setBackground('#000', 640, 400, '#111');
+        expect(TestRoom.background.color).toBe('#000');
+        expect(TestRoom.background.width).toBe(640);
+        expect(TestRoom.background.height).toBe(400);
+        expect(TestRoom.background.pageColor).toBe('#111');
     });
 
     it('instantiates actors with numeric IDs and tracks instances', () => {
@@ -45,32 +82,119 @@ describe('Room', () => {
         expect(TestRoom.getInstance(TestActor)).toBe(testInstance1);
     });
 
+    describe('on start', () => {
+
+        it('catches errors in user-defined functionality', () => {
+            TestRoom.onStart(function throwImmediately() {
+                throw 'For testing';
+            });
+
+            function testStart() {
+                TestRoom._callStart();
+            }
+
+            expect(testStart).toThrow('Room: Room_TestRoom.start');
+        });
+    });
+
     describe('on step', () => {
 
         it('releases destroyed actors', () => {
-            let testInstance1: ActorInstance = TestRoom.createActor('Room_TestActor');
+            let testInstance: ActorInstance = TestRoom.createActor('Room_TestActor');
 
-            testInstance1.destroy();
+            testInstance.destroy();
             TestRoom.step();
 
             let instances = TestRoom.getInstances();
-            expect(instances.some(instance => instance.id === testInstance1.id)).toBe(false);
+            expect(instances.some(instance => instance.id === testInstance.id)).toBe(false);
         });
 
         it('applies actor instance movement for instances that have moved', () => {
-            let testInstance1: ActorInstance = TestRoom.createActor('Room_TestActor');
-            let originalX = testInstance1.x;
-            testInstance1.speed = 10;
+            let testInstance: ActorInstance = TestRoom.createActor('Room_TestActor');
+            let originalX = testInstance.x;
+            testInstance.speed = 10;
 
             TestRoom.step();
 
-            expect(testInstance1.x).toBeGreaterThan(originalX);
-            originalX = testInstance1.x;
-            testInstance1.speed = 0;
+            expect(testInstance.x).toBeGreaterThan(originalX);
+            originalX = testInstance.x;
+            testInstance.speed = 0;
 
             TestRoom.step();
 
-            expect(testInstance1.x).toEqual(originalX);
+            expect(testInstance.x).toEqual(originalX);
         });
+
+        it('calls behaviors\'s post-step functionality', () => {
+            let testBehavior = new TestRoomBehavior();
+            TestRoom.use(testBehavior);
+            
+            TestRoom.step();
+
+            expect(testBehavior.postStepCalled).toBe(true);
+        });
+
+        it('catches errors in user-defined collision handlers', () => {
+            TestActor.boundary = new Boundary(20, 20);
+            AlternateActor.boundary = new Boundary(20, 20);
+            TestActor.onCollide(AlternateActor.name, function throwImmediately() {
+                throw 'For testing';
+            });
+
+            let testInstance1: ActorInstance = TestRoom.createActor('Room_TestActor');
+            let testInstance2: ActorInstance = TestRoom.createActor('Room_TestActor2');
+
+            testInstance1.x = testInstance2.x;
+            testInstance1.y = testInstance2.y;
+
+            function testCollision() {
+                TestRoom.step();
+            }
+
+            expect(testCollision).toThrow()
+        });
+    });
+
+    describe('on draw', () => {
+        
+        it('calls behaviors\'s pre-draw functionality', () => {
+            let testBehavior = new TestRoomBehavior();
+            TestRoom.use(testBehavior);
+
+            TestRoom.draw(new FakeCanvasContext());
+
+            expect(testBehavior.preDrawCalled).toBe(true);
+        });
+
+        it('catches errors in user-defined functionality', () => {
+            TestRoom.onDraw(function throwImmediately() {
+                throw 'For testing';
+            });
+
+            function testDraw() {
+                TestRoom._callDraw();
+            }
+
+            expect(testDraw).toThrow('Room: Room_TestRoom.draw');
+        });
+    });
+
+    it('when ending', () => {
+        
+        it('releases the actor instance map', () => {
+            let testInstance = TestRoom.createActor('Room_TestActor');
+            let instanceID = testInstance.id;
+            expect(TestRoom[instanceID]).toBe(testInstance);
+
+            TestRoom.end();
+
+            expect(TestRoom[instanceID]).toBeUndefined();
+        });
+    });
+
+    afterEach(() => {
+        TestActor.onCollide(AlternateActor.name, null);
+        TestActor.boundary = null;
+        AlternateActor.boundary = null;
     });
 });

@@ -23,8 +23,6 @@ export class ActorInstance {
 
     constructor(private room: Room, public parent: Actor, public id: number, public x: number = 0, public y: number = 0) {
         this.state = ActorState.Active;
-        this.previousX = this.x;
-        this.previousY = this.y;
 
         if (this.parent.sprite) {
             this.spriteAnimation = new SpriteAnimation(this.parent.sprite);
@@ -74,10 +72,6 @@ export class ActorInstance {
         DeferredEvent.register(new DeferredEvent(conditionCallback, callback.bind(null, this, eventArgs)));
     }
 
-    destroy(): void {
-        this.state = ActorState.Destroyed;
-    }
-
     collidesWith(other: ActorInstance): boolean {
 
         if (this.hasMoved && this.boundary && other.boundary) {
@@ -85,14 +79,6 @@ export class ActorInstance {
         }
 
         return false;
-    }
-
-    getMovementOffsetX(): number {
-        return MathUtil.getLengthDirectionX(this.speed * 100, this.direction) / 100;
-    }
-
-    getMovementOffsetY(): number {
-        return MathUtil.getLengthDirectionY(this.speed * 100, this.direction) / 100;
     }
 
     setPositionRelative(x: number, y: number): void {
@@ -112,7 +98,22 @@ export class ActorInstance {
         this.direction = direction;
     }
 
+    _applyMovement(): void {
+        if (this.speed !== 0) {
+            let offsetX = Math.round(MathUtil.getLengthDirectionX(this.speed * 100, this.direction) / 100);
+            let offsetY = Math.round(MathUtil.getLengthDirectionY(this.speed * 100, this.direction) / 100);
+    
+            if (offsetX !== 0 || offsetY !== 0) {
+                this.setPositionRelative(offsetX, offsetY);
+            }
+        }
+    }
+
     occupiesPosition(x: number, y: number): boolean {
         return this.boundary ? this.boundary.atPosition(this.x, this.y).containsPosition(x, y) : false;
+    }
+
+    destroy(): void {
+        this.state = ActorState.Destroyed;
     }
 }

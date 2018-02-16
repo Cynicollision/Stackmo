@@ -61,7 +61,7 @@ class VastgameHTML2D {
 
         this.context.setCurrentRoom(room);
 
-        room.callStart(startArgs);
+        room._callStart(startArgs);
     }
 }
 

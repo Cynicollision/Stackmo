@@ -3,7 +3,6 @@ import { ActorInstance } from './actor-instance';
 import { GameCanvasContext } from './canvas';
 import { Key } from './enum';
 import { EventHandler, Input, PointerInputEvent } from './input';
-import { RoomBehavior, ViewedRoomBehavior } from './room-ext';
 import { Sprite } from './sprite';
 import { GameLifecycleCallback, Vastgame } from './vastgame';
 import { ActorID } from '../game/util/enum';
@@ -18,15 +17,22 @@ export class Background {
     }
 }
 
-export class Room {
+export interface RoomBehavior {
+    preHandleClick: (event: PointerInputEvent) => void;
+    postHandleClick: (event: PointerInputEvent) => void;
+    postStep: (self: Room) => void;
+    preDraw: (self: Room, canvasContext: GameCanvasContext) => void;
+}
 
+export class Room {
+    
     private static nextActorInstanceID = (() => {
         let currentID = 0;
         return (() => ++currentID);
     })();
 
     static define(name: string): Room {
-        let room = new Room();
+        let room = new Room(name);
         Vastgame.getContext().defineRoom(name, room);
         return room;
     }
@@ -42,7 +48,10 @@ export class Room {
     private onStartCallback: GameLifecycleCallback;
     private onDrawCallback: () => void;
     
-    private background: Background;
+    background: Background;
+
+    constructor(private name: string) {
+    }
 
     set(propertyName: string, value: any): void {
         this.propertyMap[propertyName] = value;
@@ -77,9 +86,14 @@ export class Room {
         this.onStartCallback = callback;
     }
 
-    callStart(args?: any): void {
+    _callStart(args?: any): void {
         if (this.onStartCallback) {
-            this.onStartCallback(args);
+            try {
+                this.onStartCallback(args);
+            }
+            catch {
+                throw `Room: ${this.name}.start`;
+            }
         }
     }
 
@@ -87,9 +101,14 @@ export class Room {
         this.onDrawCallback = callback;
     }
 
-    callDraw(): void {
+    _callDraw(): void {
         if (this.onDrawCallback) {
-            this.onDrawCallback();
+            try {
+                this.onDrawCallback();
+            }
+            catch {
+                throw `Room: ${this.name}.draw`;
+            }
         }
     }
 
@@ -115,49 +134,44 @@ export class Room {
             let parent = instance.parent;
 
             if (instance.isActive) {
-                // apply actor instance movement
-                if (instance.speed !== 0) {
-                    this.applyInstanceMovement(instance);
-                }
+                instance._applyMovement();
 
                 this.checkCollisions(instance);
 
-                parent.step(instance);
+                parent.callStep(instance);
             }
             else {
-                this.destroyActorInstance(instance);
+                instance.parent.callDestroy(instance);
+                delete this.actorInstanceMap[instance.id];
             }
         });
 
         this.behaviors.forEach(behavior => behavior.postStep(this));
     }
 
-    private applyInstanceMovement(instance: ActorInstance): void {
-        let offsetX = Math.round(instance.getMovementOffsetX());
-        let offsetY = Math.round(instance.getMovementOffsetY());
-
-        if (offsetX !== 0 || offsetY !== 0) {
-            instance.setPositionRelative(offsetX, offsetY);
-        }
-    }
-
     private checkCollisions(selfInstance: ActorInstance): void {
-        let parent = selfInstance.parent;;
+        let parent = selfInstance.parent;
         
         for (let actorName in parent.collisionHandlers) {
-            let callback = parent.collisionHandlers[actorName];
-            let otherActor = Actor.get(actorName);
 
-            for (let otherID in this.actorInstanceMap) {
-                let other = this.actorInstanceMap[otherID];
-
-                if (other.parent === otherActor) {
-
-                    if (selfInstance !== other && selfInstance.collidesWith(other)) {
-                        callback(selfInstance, other);
+            try {
+                let callback = parent.collisionHandlers[actorName];
+                let otherActor = Actor.get(actorName);
+    
+                for (let otherID in this.actorInstanceMap) {
+                    let other = this.actorInstanceMap[otherID];
+    
+                    if (other.parent === otherActor) {
+    
+                        if (selfInstance !== other && selfInstance.collidesWith(other)) {
+                            callback(selfInstance, other);
+                        }
                     }
                 }
-            };
+            }
+            catch {
+                throw `Actor: ${this.name}[${selfInstance.id}].collision(${actorName})`;
+            }
         };
     }
 
@@ -172,7 +186,7 @@ export class Room {
         }
 
         // call room draw event callback
-        this.callDraw();
+        this._callDraw();
 
         let orderedInstances = this.getInstances().sort((a, b) => {
             return (b.animation ? b.animation.depth : 0) - (a.animation ? a.animation.depth : 0);
@@ -230,11 +244,6 @@ export class Room {
         parentActor.callCreate(newInstance);
 
         return newInstance;
-    }
-
-    private destroyActorInstance(instance: ActorInstance): void {
-        instance.parent.callDestroy(instance);
-        delete this.actorInstanceMap[instance.id];
     }
 
     getInstance(actorType: Actor): ActorInstance {
