@@ -210,7 +210,7 @@ export class Room {
         this.getInstancesAtPosition(clickX, clickY).forEach(instance => {
             let parent = instance.parent;
 
-            if (parent.hasClick && instance.occupiesPosition(clickX, clickY)) {
+            if (instance.occupiesPosition(clickX, clickY)) {
                 parent.callClick(instance, event);
             }
         });
@@ -227,20 +227,13 @@ export class Room {
 
         this.actorInstanceMap[newActorInstanceID] = newInstance;
 
-        if (parentActor.hasCreate) {
-            parentActor.callCreate(newInstance);
-        }
+        parentActor.callCreate(newInstance);
 
         return newInstance;
     }
 
     private destroyActorInstance(instance: ActorInstance): void {
-        let parent = instance.parent;
-
-        if (parent.hasDestroy) {
-            parent.callDestroy(instance);
-        }
-
+        instance.parent.callDestroy(instance);
         delete this.actorInstanceMap[instance.id];
     }
 

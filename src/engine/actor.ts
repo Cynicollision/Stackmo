@@ -74,21 +74,21 @@ export class Actor {
     }
 
     // create
-    get hasCreate(): boolean {
-        return !!this.onCreateCallback;
-    }
-
     onCreate(callback: LifecycleCallback): void {
         this.onCreateCallback = callback;
     }
 
     callCreate(selfInstance: ActorInstance): void {
-        this.onCreateCallback(selfInstance);
+        if (this.onCreateCallback) {
+            this.onCreateCallback(selfInstance);
+        }
     }
 
     // step
     step(selfInstance: ActorInstance) {
-        this.callStep(selfInstance);
+        if (this.onStepCallback) {
+            this.onStepCallback(selfInstance);
+        }
 
         selfInstance.previousX = selfInstance.x;
         selfInstance.previousY = selfInstance.y;
@@ -96,12 +96,6 @@ export class Actor {
 
     onStep(callback: LifecycleCallback): void {
         this.onStepCallback = callback;
-    }
-
-    callStep(selfInstance: ActorInstance): void {
-        if (this.onStepCallback) {
-            this.onStepCallback(selfInstance);
-        }
     }
 
     // draw
@@ -116,29 +110,25 @@ export class Actor {
     }
 
     // click/tap
-    get hasClick(): boolean {
-        return !!this.onClickCallback;
-    }
-
     onClick(callback: ClickEventCallback): void {
         this.onClickCallback = callback;
     }
 
     callClick(selfInstance: ActorInstance, event: PointerInputEvent): void {
-        this.onClickCallback(selfInstance, event);
+        if (this.onClickCallback) {
+            this.onClickCallback(selfInstance, event);
+        }
     }
 
     // destroy
-    get hasDestroy(): boolean {
-        return !!this.onDestroyCallback;
-    }
-
     onDestroy(callback: LifecycleCallback): void {
         this.onDestroyCallback = callback;
     }
 
     callDestroy(selfInstance: ActorInstance): void {
-        this.onDestroyCallback(selfInstance);
+        if (this.onDestroyCallback) {
+            this.onDestroyCallback(selfInstance);
+        }
     }
 
     // collisions and other events

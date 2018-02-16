@@ -1,8 +1,7 @@
-import { Actor, ActorInstance, Enum, GridCell, Input, Room, ViewedRoomBehavior, Sprite } from './../../engine/vastgame';
+import { Actor, ActorInstance, Enum, GridCell, Input, Room, ViewedRoomBehavior, Sprite, Vastgame } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, RoomID, SpriteID, GameAction, Settings } from './../util/enum';
 import { Registry } from './../util/registry';
-import { Vastgame } from './../../engine/vastgame';
 import { GridRoomBehavior } from '../../engine/room-ext';
 
 let LevelRoom = Room.define(RoomID.Level);
