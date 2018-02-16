@@ -218,19 +218,6 @@ describe('Room', () => {
         });
     });
 
-    it('when ending', () => {
-        
-        it('releases the actor instance map', () => {
-            let testInstance = TestRoom.createActor('Room_TestActor');
-            let instanceID = testInstance.id;
-            expect(TestRoom[instanceID]).toBe(testInstance);
-
-            TestRoom.end();
-
-            expect(TestRoom[instanceID]).toBeUndefined();
-        });
-    });
-
     afterEach(() => {
         TestActor.onCollide(AlternateActor.name, null);
         TestActor.boundary = null;
