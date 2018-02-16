@@ -2,6 +2,7 @@ import { Actor } from './actor';
 import { ActorInstance } from './actor-instance';
 import { Direction } from './enum';
 import { Room } from './room';
+import { Array } from 'es6-shim';
 
 export interface GridClickCallback {
     (gridClickEvent: GridClickEvent): void;
@@ -25,7 +26,11 @@ export class GridClickEvent {
 
 export class GridCell {
 
-    constructor(private grid: Grid, public x: number, public y: number) {
+    constructor(private grid: Grid, readonly x: number, readonly y: number) {
+    }
+
+    get size(): number {
+        return this.grid.tileSize;
     }
 
     getAdjacentCell(direction: Direction): GridCell {
@@ -58,7 +63,12 @@ export class GridCell {
         return this.getContents().some(contents => contents === instance);
     }
 
-    containsInstanceOf(actor: Actor): boolean {
+    containsInstanceOf(actor: Actor | Actor[]): boolean {
+
+        if ((<any>actor).length) {
+            return this.getContents().some(contents => (<Actor[]>actor).indexOf(contents.parent) > -1);
+        }
+
         return this.getContents().some(contents => contents.parent === actor);
     }
 
@@ -82,6 +92,23 @@ export class Grid {
         readonly room: Room) {
     }
 
+    getCellAtPosition(x: number, y: number): GridCell {
+        return new GridCell(this, x, y);
+    }
+
+    find(actorType: Actor): GridCell {
+        let actorInstances = this.room.getInstances();
+
+        if (actorInstances && actorInstances.length) {
+            // assumes the match is aligned to the grid.
+            let match = actorInstances.find(a => a.parent === actorType);
+            return new GridCell(this, match.x, match.y);
+        }
+
+        return null;
+    }
+
+    // click event handling
     onClick(callback: GridClickCallback): void {
         this._onClick = callback;
     }
@@ -90,9 +117,5 @@ export class Grid {
         let event = new GridClickEvent(this, x, y);
 
         this._onClick(event);
-    }
-
-    getCellAtPosition(x: number, y: number): GridCell {
-        return new GridCell(this, x, y);
-    }
+    }    
 }

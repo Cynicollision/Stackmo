@@ -1,4 +1,4 @@
-import { Actor, Boundary, Enum, GridCell, Room, Sprite } from './../../engine/vastgame';
+import { Actor, Boundary, Direction, GridCell, Room, Sprite } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, GameAction, SpriteID } from './../util/enum';
 
@@ -25,9 +25,9 @@ Block.onEvent(GameAction.Fall, (block, args) => {
     let stopCondition = (): boolean =>  Math.abs(startY - block.y) >= Constants.GridCellSize;
 
     // move the target cell to the one below the previous target cell
-    args.targetCell = args.targetCell.getAdjacentCell(Enum.Direction.Down);
+    args.targetCell = args.targetCell.getAdjacentCell(Direction.Down);
 
-    block.move(Constants.BlockFallSpeed, Enum.Direction.Down);
+    block.move(Constants.BlockFallSpeed, Direction.Down);
     block.raiseEventWhen(GameAction.Stop, stopCondition, args);
 })
 

@@ -12,6 +12,11 @@ export class SpriteAnimation {
 
     depth: number = 0;
 
+    private _paused: boolean = true;
+    get paused(): boolean {
+        return this._paused;
+    }
+
     constructor(readonly sprite: Sprite) {
         this.setTransform(SpriteTransformation.Frame, 0);
         this.setTransform(SpriteTransformation.Opacity, 1);
@@ -21,6 +26,7 @@ export class SpriteAnimation {
         this.stop();
         this.setTransform(SpriteTransformation.Frame, start);
 
+        this._paused = false;
         this.timer = setInterval(() => {
             if (this.getTransform(SpriteTransformation.Frame) === end) {
                 this.setTransform(SpriteTransformation.Frame, start);
@@ -32,6 +38,7 @@ export class SpriteAnimation {
     }
 
     stop(): void {
+        this._paused = true;
         if (this.timer) {
             clearInterval(this.timer);
         }

@@ -37,6 +37,7 @@ export enum SpriteID {
 export enum GameAction {
     Drop = 'Drop',
     Fall = 'Fall',
+    StopFalling = 'StopFalling',
     Jump = 'Jump',
     Lift = 'Lift',
     Move = 'Move',

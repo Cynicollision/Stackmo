@@ -1,4 +1,4 @@
-import { Actor, ActorInstance, Boundary, Enum, Input, GridCell, Room, Sprite } from './../../engine/vastgame';
+import { Actor, ActorInstance, Boundary, Direction, Key, Input, GridCell, Room, Sprite } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, GameAction, SpriteID } from './../util/enum';
 
@@ -15,19 +15,22 @@ let Player = Actor.define(ActorID.Player, {
 });
 
 let heldBlock: ActorInstance;
-let lastDirection: Enum.Direction;
+let lastDirection: Direction;
 
 let solidActors: Actor[];
+let Win: Actor;
 
 Player.onCreate(self => {
     self.animation.depth = -50;
-    lastDirection = Enum.Direction.Right;
+    lastDirection = Direction.Right;
     heldBlock = null;
 
     solidActors = [
         Actor.get(ActorID.Block),
         Actor.get(ActorID.Wall),
     ];
+
+    Win = Actor.get(ActorID.Win);
 });
 
 Player.onStep(self => {
@@ -40,7 +43,7 @@ Player.onStep(self => {
 // Moving
 Player.onEvent(GameAction.Move, (player, args) => {
     let targetCell: GridCell = args.targetCell;
-    let direction: Enum.Direction = args.direction;
+    let direction: Direction = args.direction;
     let startX = player.x;
 
     let stopCondition = (): boolean => {
@@ -50,7 +53,7 @@ Player.onEvent(GameAction.Move, (player, args) => {
     lastDirection = direction;
 
     // clearance check
-    if (!heldBlock || (heldBlock && targetCell.getAdjacentCell(Enum.Direction.Up).isFree())) {
+    if (!heldBlock || (heldBlock && targetCell.getAdjacentCell(Direction.Up).isFree())) {
         player.move(Constants.PlayerMoveSpeed, direction);
         player.raiseEventWhen(GameAction.CheckStopMoving, stopCondition, args);
     
@@ -67,13 +70,24 @@ Player.onEvent(GameAction.CheckStopMoving, (player, args) => {
     player.move(0);
     player.setPosition(targetCell.x, targetCell.y);
 
-    if (Input.clickActive || Input.keyDown(lastDirection === Enum.Direction.Left ? Enum.Key.Left : Enum.Key.Right)) {
-        let nextCell = targetCell.getAdjacentCell(lastDirection);
-        let belowCell = targetCell.getAdjacentCell(Enum.Direction.Down);
+    // continue movement if input is held and we're not about to win
+    if (inputActive() && !targetCell.containsInstanceOf(Win)) {
+        let belowCell = targetCell.getAdjacentCell(Direction.Down);
 
-        if (nextCell.isFree() && !belowCell.isFree(solidActors)) {
-            args.targetCell = nextCell;
-            action = GameAction.Move
+        if (!belowCell.isFree(solidActors)) {
+            // determine the next cell based on where the current touch/click is (it may have moved)
+            let clickAdjustedX = getClickAdjustedX(args.game.currentRoom);
+            args.direction = clickAdjustedX <= player.x + (targetCell.size / 2) ? Direction.Left : Direction.Right;
+            let nextCell = targetCell.getAdjacentCell(args.direction);
+
+            if (nextCell.isFree(solidActors)) {
+                args.targetCell = nextCell;
+                action = GameAction.Move; 
+            }
+            else if (nextCell.getAdjacentCell(Direction.Up).isFree(solidActors)) {
+                args.targetCell = nextCell.getAdjacentCell(Direction.Up);
+                action = GameAction.Jump;
+            }
         }
     }
 
@@ -83,17 +97,37 @@ Player.onEvent(GameAction.CheckStopMoving, (player, args) => {
 // Falling
 Player.onEvent(GameAction.Fall, (player, args) => {
     let startY = player.y;
-    let direction: Enum.Direction = args.direction;
+    let direction: Direction = args.direction;
     let stopCondition = (): boolean =>  Math.abs(startY - player.y) >= Constants.GridCellSize;
 
     // move the target cell to the one below the previous target cell
-    args.targetCell = args.targetCell.getAdjacentCell(Enum.Direction.Down);
+    args.targetCell = args.targetCell.getAdjacentCell(Direction.Down);
 
-    player.move(Constants.PlayerFallSpeed, Enum.Direction.Down);
-    player.raiseEventWhen(GameAction.Stop, stopCondition, args);
+    player.move(Constants.PlayerFallSpeed, Direction.Down);
+    player.raiseEventWhen(GameAction.StopFalling, stopCondition, args);
 
     animate(player, direction, false);
-})
+});
+
+// Stop falling or continue moving
+Player.onEvent(GameAction.StopFalling, (player, args) => {
+    let targetCell: GridCell = args.targetCell;
+
+    // snap to the grid
+    player.move(0);
+    player.setPosition(args.targetCell.x, args.targetCell.y);
+
+    if (inputActive() && !targetCell.getAdjacentCell(Direction.Down).isFree(solidActors)) {
+        args.targetCell = targetCell.getAdjacentCell(args.direction);
+
+        if (args.targetCell.isFree(solidActors)) {
+            player.raiseEvent(GameAction.Move, args);
+        }
+    }
+    else {
+        player.raiseEvent(GameAction.Stop, args);
+    }
+});
 
 // Stopping
 Player.onEvent(GameAction.Stop, (player, args) => {
@@ -104,31 +138,31 @@ Player.onEvent(GameAction.Stop, (player, args) => {
     player.move(0);
     player.setPosition(targetCell.x, targetCell.y);
 
+    // stop animation
+    animate(player, lastDirection, false);
+
     // check if falling
     if (room.isPositionFree(player.x + 1, player.y + Constants.GridCellSize + 1, solidActors)) {
         player.raiseEvent(GameAction.Fall, args);
-    }
-    else {
-        animate(player, lastDirection);
+        return;
     }
 
     // check for victory
-    let WinActor = Actor.get(ActorID.Win);
-    if (targetCell.containsInstanceOf(WinActor)) {
-        let win = room.getInstances().find(actorInstance => actorInstance.parent === WinActor);
-        win.raiseEvent(GameAction.Win);
+    let Win = Actor.get(ActorID.Win);
+    if (targetCell.containsInstanceOf(Win)) {
+        room.getInstance(Win).raiseEvent(GameAction.Win);
     }
 });
 
 // Jumping
 Player.onEvent(GameAction.Jump, (player, args) => {
     let targetCell: GridCell = args.targetCell;
-    let direction: Enum.Direction = args.direction;
+    let direction: Direction = args.direction;
     let startY = player.y;
 
     // clearance check
-    let cellAbovePlayer = targetCell.getAdjacentCell(direction === Enum.Direction.Right ? Enum.Direction.Left : Enum.Direction.Right);
-    let cellAboveBox = !!heldBlock ? cellAbovePlayer.getAdjacentCell(Enum.Direction.Up) : null;
+    let cellAbovePlayer = targetCell.getAdjacentCell(direction === Direction.Right ? Direction.Left : Direction.Right);
+    let cellAboveBox = !!heldBlock ? cellAbovePlayer.getAdjacentCell(Direction.Up) : null;
 
     let canJump = !!cellAboveBox 
         ? cellAboveBox.isFree() && cellAboveBox.getAdjacentCell(direction).isFree()
@@ -137,7 +171,7 @@ Player.onEvent(GameAction.Jump, (player, args) => {
     if (canJump) {
         // stop after moving up one space
         let stopCondition = (): boolean => Math.abs(startY - player.y) >= Constants.GridCellSize;
-        player.move(Constants.PlayerJumpSpeed, Enum.Direction.Up);
+        player.move(Constants.PlayerJumpSpeed, Direction.Up);
         player.raiseEventWhen(GameAction.Move, stopCondition, args);
     }
 });
@@ -147,13 +181,19 @@ Player.onEvent(GameAction.Lift, (player, args) => {
     let block: ActorInstance = args.block;
     let targetCell: GridCell = args.targetCell;
 
-    let validBlockLiftCellDirection = lastDirection === Enum.Direction.Left ? Enum.Direction.Right : Enum.Direction.Left;
+    let validBlockLiftCellDirection = lastDirection === Direction.Left ? Direction.Right : Direction.Left;
+
+    // prevent lifting if the box is too far away
+    let tooFarAway = validBlockLiftCellDirection === Direction.Left 
+        ? targetCell.getAdjacentCell(Direction.Right).x < player.x - targetCell.size
+        : targetCell.getAdjacentCell(Direction.Left).x > player.x + (targetCell.size * 2);
 
     // prevent lifting if there's something on top of the box or on top of the player
-    let aboveBoxCell = targetCell.getAdjacentCell(Enum.Direction.Up);
+    let aboveBoxCell = targetCell.getAdjacentCell(Direction.Up);
     let abovePlayerCell = aboveBoxCell.getAdjacentCell(validBlockLiftCellDirection);
+    let blocked = !(aboveBoxCell.isFree() && abovePlayerCell.isFree());
 
-    if (!heldBlock && !(aboveBoxCell.isFree() && abovePlayerCell.isFree())) {
+    if (!heldBlock && (blocked || tooFarAway)) {
         return;
     }
     
@@ -170,7 +210,7 @@ Player.onEvent(GameAction.Lift, (player, args) => {
 Player.onEvent(GameAction.Drop, (player, args) => {
     let block: ActorInstance = args.block;
     let targetCell: GridCell = args.targetCell;
-    let offsetX = lastDirection === Enum.Direction.Left ? -Constants.GridCellSize : Constants.GridCellSize;
+    let offsetX = lastDirection === Direction.Left ? -Constants.GridCellSize : Constants.GridCellSize;
 
     // prevent dropping if there's something in the way of the box
     if (targetCell.getAdjacentCell(lastDirection).isFree()) {
@@ -202,15 +242,15 @@ enum StackmoFrame {
     MoveHolddRight2 = 11,
 }
 
-function animate(player: ActorInstance, direction: Enum.Direction, isMoving: boolean = false): void {
+function animate(player: ActorInstance, direction: Direction, isMoving: boolean = false): void {
     const animationSpeed = 100;
     let startFrame = StackmoFrame.StandRight;
     
     if (!!heldBlock) {
-        startFrame = direction === Enum.Direction.Right ? StackmoFrame.StandHoldRight : StackmoFrame.StandHoldLeft;
+        startFrame = direction === Direction.Right ? StackmoFrame.StandHoldRight : StackmoFrame.StandHoldLeft;
     }
     else {
-        startFrame = direction === Enum.Direction.Right ? StackmoFrame.StandRight : StackmoFrame.StandLeft;
+        startFrame = direction === Direction.Right ? StackmoFrame.StandRight : StackmoFrame.StandLeft;
     }
 
     if (isMoving) {
@@ -219,4 +259,14 @@ function animate(player: ActorInstance, direction: Enum.Direction, isMoving: boo
     else {
         player.animation.setFrame(startFrame);
     }
+}
+
+function inputActive(): boolean {
+    return (Input.clickActive || Input.keyDown(lastDirection === Direction.Left ? Key.Left : Key.Right));
+}
+
+function getClickAdjustedX(room: Room): number {
+    // wicked hack to get the room's current view.
+    let view = (<any>room).behaviors.find(b => !!b.view).view;
+    return Input.activePointerEvent.currentX + (view.x || 0);
 }

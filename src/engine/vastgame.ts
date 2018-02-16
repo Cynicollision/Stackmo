@@ -1,5 +1,5 @@
 import { GameCanvasHTML2D, GameCanvasOptions, GameCanvas } from './canvas';
-import * as Enum from './enum';
+import { Direction, Key } from './enum';
 import { Input } from './input';
 import { GameContext } from './game-context';
 import { GameRunner } from './game-runner';
@@ -9,7 +9,7 @@ import { Room } from './room';
 export { Actor } from './actor';
 export { ActorInstance } from './actor-instance';
 export { Boundary } from './boundary';
-export { Enum }
+export { Direction, Key }
 export { Input } from './input';
 export { Grid, GridCell } from './grid';
 export { Room } from './room';

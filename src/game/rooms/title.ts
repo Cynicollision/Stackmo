@@ -1,4 +1,4 @@
-import { Enum, Room, Sprite, Vastgame } from './../../engine/vastgame';
+import { Key, Room, Sprite, Vastgame } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { RoomID, Settings, SpriteID } from './../util/enum';
 import { Registry } from './../util/registry';
@@ -33,7 +33,7 @@ TitleRoom.onDraw(() => {
 });
 
 let clickHandler = TitleRoom.onClick(goToLevelSelect);
-let keyHandler = TitleRoom.onKey(Enum.Key.Any, goToLevelSelect);
+let keyHandler = TitleRoom.onKey(Key.Any, goToLevelSelect);
 
 function goToLevelSelect() {
     disposeHandlers();

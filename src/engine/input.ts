@@ -10,7 +10,22 @@ export class Input {
         return !!Input._activePointerEvent;
     }
 
+    static get activePointerEvent(): PointerInputEvent {
+        return Input._activePointerEvent;
+    }
+    
     static init() {
+
+        function trackActiveMousePosition(this: any, ev: MouseEvent) {
+            Input._activePointerEvent.currentX = getMouseEventX(ev);
+            Input._activePointerEvent.currentY = getMouseEventY(ev);
+        };
+
+        function trackActiveTouchPosition(ev: TouchEvent) {
+            document.body.onmousemove = null;
+            Input._activePointerEvent.currentX = getTouchEventX(ev);
+            Input._activePointerEvent.currentY = getTouchEventY(ev);
+        };
 
         let raisePointerEvent = (ev: PointerInputEvent) => {
             if (Input._activePointerEvent) {
@@ -18,6 +33,8 @@ export class Input {
             }
 
             Input._activePointerEvent = ev;
+            document.body.onmousemove =  trackActiveMousePosition;
+            document.body.ontouchmove = trackActiveTouchPosition;
 
             if (Input.clickHandlers.length) {
 
@@ -31,6 +48,8 @@ export class Input {
 
         let endPointerEvent = () => {
             Input._activePointerEvent = null;
+            document.body.onmousemove = null;
+            document.body.ontouchmove = null;
         };
 
         // register mouse/touch input 
@@ -110,12 +129,36 @@ export class PointerInputEvent {
     x: number;
     y: number;
 
+    currentX: number;
+    currentY: number;
+
     static fromMouseEvent(ev: MouseEvent): PointerInputEvent {
-        return { x: ev.offsetX, y: ev.offsetY };
+        let x = getMouseEventX(ev);
+        let y = getMouseEventY(ev);
+        return { x: x, y: y, currentX: x, currentY: y };
     }
 
     static fromTouchEvent(ev: TouchEvent): PointerInputEvent {
-        let touch = ev.touches[0];
-        return { x: touch ? touch.clientX : 0, y: touch ? touch.clientY : 0 };
+        let x = getTouchEventX(ev);
+        let y = getTouchEventY(ev);
+        return { x: x, y: y, currentX: x, currentY: y };
     }
+}
+
+function getMouseEventX(ev: MouseEvent): number {
+    return ev.offsetX;
+}
+
+function getMouseEventY(ev: MouseEvent): number {
+    return ev.offsetY;
+}
+
+function getTouchEventX(ev: TouchEvent): number {
+    let touch = ev.touches[0];
+    return touch ? touch.clientX : 0
+}
+
+function getTouchEventY(ev: TouchEvent): number {
+    let touch = ev.touches[0];
+    return touch ? touch.clientY : 0
 }

@@ -3,9 +3,10 @@ import { ActorInstance } from './actor-instance';
 import { GameCanvasContext } from './canvas';
 import { Key } from './enum';
 import { EventHandler, Input, PointerInputEvent } from './input';
-import { RoomBehavior } from './room-ext';
+import { RoomBehavior, ViewedRoomBehavior } from './room-ext';
 import { Sprite } from './sprite';
 import { GameLifecycleCallback, Vastgame } from './vastgame';
+import { ActorID } from '../game/util/enum';
 
 export class Background {
 
@@ -36,9 +37,8 @@ export class Room {
 
     private actorInstanceMap: { [index: number]: ActorInstance } = {};
     private propertyMap: { [index: string]: any } = {};
-    private eventHandlers: EventHandler[] = [];
     private behaviors: RoomBehavior[] = [];
-
+    private eventHandlers: EventHandler[] = [];
     private onStartCallback: GameLifecycleCallback;
     private onDrawCallback: () => void;
     
@@ -94,7 +94,7 @@ export class Room {
     }
 
     // event callbacks
-    onClick(callback: (event: MouseEvent) => void): EventHandler {
+    onClick(callback: (event: PointerInputEvent) => void): EventHandler {
         let clickHandler = Input.registerClickHandler(callback);
         this.eventHandlers.push(clickHandler);
 
@@ -237,11 +237,19 @@ export class Room {
         delete this.actorInstanceMap[instance.id];
     }
 
-    getInstances(): ActorInstance[] {
+    getInstance(actorType: Actor): ActorInstance {
+        return this.getInstances([actorType])[0];
+    }
+
+    getInstances(actorTypes: Actor[] = []): ActorInstance[] {
         let instances = [];
 
-        for (let instance in this.actorInstanceMap) {
-            instances.push(this.actorInstanceMap[instance]);
+        for (let instanceID in this.actorInstanceMap) {
+            let instance = this.actorInstanceMap[instanceID]
+
+            if (!actorTypes.length || (actorTypes && actorTypes.indexOf(instance.parent) > -1)) {
+                instances.push(this.actorInstanceMap[instanceID]);
+            }
         }
 
         return instances;

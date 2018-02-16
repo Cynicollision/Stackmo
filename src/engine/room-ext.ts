@@ -3,6 +3,7 @@ import { PointerInputEvent } from './input';
 import { Grid } from './grid';
 import { Room } from './room';
 import { View } from './view';
+import { Vastgame } from './vastgame';
 
 export interface RoomBehavior {
     preHandleClick: (event: PointerInputEvent) => void;
@@ -49,7 +50,7 @@ export class ViewedRoomBehavior implements RoomBehavior {
     }
 }
 
-export class GridRoomBehavior {
+export class GridRoomBehavior implements RoomBehavior {
     private grid: Grid;
 
     constructor(tileSize: number, parentRoom: Room) {

@@ -1,6 +1,6 @@
 import { Actor, ActorEventCallback } from './Actor';
 import { Boundary } from './boundary';
-import { ActorState, Direction } from './enum';
+import { ActorState } from './enum';
 import { DeferredEvent } from './events';
 import { Room } from './room';
 import { Sprite } from './sprite';
@@ -18,7 +18,7 @@ export class ActorInstance {
     previousX: number;
     previousY: number;
     speed: number = 0;
-    direction: number = Direction.Right;
+    direction: number = 0;
     visible: boolean = true;
 
     constructor(private room: Room, public parent: Actor, public id: number, public x: number = 0, public y: number = 0) {
@@ -107,7 +107,7 @@ export class ActorInstance {
         this.y = y;
     }
 
-    move(speed: number, direction?: Direction): void {
+    move(speed: number, direction?: number): void {
         this.speed = speed;
         this.direction = direction;
     }

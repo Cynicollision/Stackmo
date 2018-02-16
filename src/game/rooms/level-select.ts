@@ -1,4 +1,4 @@
-import { Actor, Boundary, Enum, Input, Room, ViewedRoomBehavior, Sprite, Vastgame, View } from './../../engine/vastgame';
+import { Actor, Boundary, Direction, Input, Room, ViewedRoomBehavior, Sprite, Vastgame, View } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
 import { ActorID, LevelBgColor, RoomID, Settings, SpriteID } from './../util/enum';
 import { Levels, LevelBuilder } from './../util/level-builder';
@@ -74,11 +74,11 @@ LevelSelectRoom.onStart((args) => {
         let upArrow = LevelSelectRoom.createActor(ActorID.ScrollArrow);
         upArrow.animation.setFrame(1);
         upArrow.x = canvasWidth - iconPadding - ScrollArrow.sprite.width;
-        (<any>upArrow).direction = Enum.Direction.Up;
+        (<any>upArrow).direction = Direction.Up;
 
         let downArrow = LevelSelectRoom.createActor(ActorID.ScrollArrow);
         downArrow.x = upArrow.x;
-        (<any>downArrow).direction = Enum.Direction.Down;
+        (<any>downArrow).direction = Direction.Down;
     }
 });
 
@@ -162,8 +162,8 @@ const ScrollArrow = Actor.define(ActorID.ScrollArrow, {
 
 ScrollArrow.onClick((self, event) => {
     if ((<any>self).enabled) {
-        let direction: Enum.Direction = (<any>self).direction;
-        scrollView.y += direction === Enum.Direction.Down ? 64 : -64;
+        let direction: Direction = (<any>self).direction;
+        scrollView.y += direction === Direction.Down ? 64 : -64;
 
         if (scrollView.y < 0) {
             scrollView.y = 0;
@@ -173,7 +173,7 @@ ScrollArrow.onClick((self, event) => {
 
 ScrollArrow.onStep(self => {
     // update vertical position to match scrolling
-    let isUpArrow = ((<any>self).direction === Enum.Direction.Up);
+    let isUpArrow = ((<any>self).direction === Direction.Up);
     self.y = isUpArrow ? startY + scrollView.y : canvasHeight - 82 + scrollView.y; 
 
     // enable/disable if there's no more scrolling to do
