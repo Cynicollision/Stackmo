@@ -1,4 +1,4 @@
-import { Actor, ActorEventCallback } from './Actor';
+import { Actor, ActorEventCallback } from './actor';
 import { Boundary } from './boundary';
 import { ActorState } from './enum';
 import { DeferredEvent } from './events';
