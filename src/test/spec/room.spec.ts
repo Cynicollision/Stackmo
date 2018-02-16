@@ -82,6 +82,45 @@ describe('Room', () => {
         expect(TestRoom.getInstance(TestActor)).toBe(testInstance1);
     });
 
+    it('can get actor instances at a given position', () => {
+        TestActor.boundary = new Boundary(20, 20);
+        AlternateActor.boundary = new Boundary(20, 20);
+
+        let testInstance1 = TestRoom.createActor('Room_TestActor', 0, 0);
+        let testInstance2 = TestRoom.createActor('Room_TestActor2', 5, 5);
+
+        expect(TestRoom.getInstancesAtPosition(10, 10).length).toBe(2);
+    });
+
+    describe('can determine if a given position is free', () => {
+
+        let testInstance1: ActorInstance;
+        let testInstance2: ActorInstance;
+
+        beforeEach(() => {
+            TestActor.boundary = new Boundary(20, 20);
+            AlternateActor.boundary = new Boundary(20, 20);
+
+            testInstance1 = TestRoom.createActor('Room_TestActor', 0, 0);
+            testInstance2 = TestRoom.createActor('Room_TestActor2', 5, 5);
+        });
+
+        afterEach(() => {
+            TestActor.boundary = null;
+            AlternateActor.boundary = null;
+        });
+
+        it('of any actor instances', () => {
+            expect(TestRoom.isPositionFree(10, 10)).toBe(false);
+            expect(TestRoom.isPositionFree(30, 30)).toBe(true);
+        });
+
+        it('of any actor instances of specific types', () => {
+           expect(TestRoom.isPositionFree(3, 3, [TestActor])).toBe(false);
+           expect(TestRoom.isPositionFree(3, 3, [AlternateActor])).toBe(true);
+        });
+    });
+
     describe('on start', () => {
 
         it('catches errors in user-defined functionality', () => {
