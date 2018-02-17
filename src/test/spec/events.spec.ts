@@ -11,15 +11,15 @@ describe('Events', () => {
         DeferredEvent.register(new DeferredEvent(condition, callbackSpy, true));
 
         shouldFire = false;
-        Vastgame.getContext().checkAndFireEvents();
+        Vastgame._getContext().checkAndFireEvents();
         expect(callbackSpy).not.toHaveBeenCalled();
 
         shouldFire = true;
-        Vastgame.getContext().checkAndFireEvents();
+        Vastgame._getContext().checkAndFireEvents();
         expect(callbackSpy).toHaveBeenCalled();
 
-        Vastgame.getContext().checkAndFireEvents();
-        Vastgame.getContext().checkAndFireEvents();
+        Vastgame._getContext().checkAndFireEvents();
+        Vastgame._getContext().checkAndFireEvents();
 
         expect(callbackSpy).toHaveBeenCalledTimes(1);
     });

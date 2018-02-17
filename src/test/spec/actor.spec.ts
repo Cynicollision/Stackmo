@@ -63,11 +63,11 @@ describe('ActorInstance', () => {
             testInstanceA.raiseEventWhen('Actor_TestEvent', () => !!raiseTheEvent);
 
             raiseTheEvent = false;
-            Vastgame.getContext().checkAndFireEvents();
+            Vastgame._getContext().checkAndFireEvents();
             expect(eventSpy).not.toHaveBeenCalled();
 
             raiseTheEvent = true;
-            Vastgame.getContext().checkAndFireEvents();
+            Vastgame._getContext().checkAndFireEvents();
             expect(eventSpy).toHaveBeenCalled();
         });
     });

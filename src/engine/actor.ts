@@ -35,13 +35,13 @@ export class Actor {
 
     static define(name: string, options?: ActorOptions): Actor {
         let actor = new Actor(name, options);
-        Vastgame.getContext().defineActor(name, actor);
+        Vastgame._getContext().defineActor(name, actor);
 
         return actor;
     }
 
     static get(name: string): Actor {
-        return Vastgame.getContext().getActor(name);
+        return Vastgame._getContext().getActor(name);
     }
 
     // lifecycle callbacks
@@ -69,7 +69,7 @@ export class Actor {
 
     setGameContextEventArgs(eventArgs: any): void {
         eventArgs.game = {
-            currentRoom: Vastgame.getContext().getCurrentRoom(),
+            currentRoom: Vastgame._getContext().getCurrentRoom(),
         };
     }
 

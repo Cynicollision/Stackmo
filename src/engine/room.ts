@@ -33,12 +33,12 @@ export class Room {
 
     static define(name: string): Room {
         let room = new Room(name);
-        Vastgame.getContext().defineRoom(name, room);
+        Vastgame._getContext().defineRoom(name, room);
         return room;
     }
 
     static get(name: string): Room {
-        return Vastgame.getContext().getRoom(name);
+        return Vastgame._getContext().getRoom(name);
     }
 
     private actorInstanceMap: { [index: number]: ActorInstance } = {};
@@ -204,7 +204,7 @@ export class Room {
     }
 
     drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0) {
-        let canvasContext = Vastgame.getContext().getCanvasContext();
+        let canvasContext = Vastgame._getContext().getCanvasContext();
 
         // call pre-draw behaviors
         this.behaviors.forEach(behavior => behavior.preDraw(this, canvasContext));

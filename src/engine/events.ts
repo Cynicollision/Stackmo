@@ -3,7 +3,7 @@ import { Vastgame } from './vastgame';
 export class DeferredEvent {
 
     static register(event: DeferredEvent): void {
-        Vastgame.getContext().registerEvent(event);
+        Vastgame._getContext().registerEvent(event);
     }
 
     constructor(

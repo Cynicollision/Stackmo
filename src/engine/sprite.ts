@@ -5,13 +5,13 @@ export class Sprite {
     
     static define(name: string, options: SpriteOptions): Sprite {
         let sprite = new Sprite(options);
-        Vastgame.getContext().defineSprite(name, sprite);
+        Vastgame._getContext().defineSprite(name, sprite);
 
         return sprite;
     }
 
     static get(name: string): Sprite {
-        return Vastgame.getContext().getSprite(name);
+        return Vastgame._getContext().getSprite(name);
     }
 
     readonly image: HTMLImageElement;

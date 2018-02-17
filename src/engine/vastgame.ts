@@ -78,11 +78,11 @@ export class Vastgame {
         return this.game;
     }
 
-    static getContext(): GameContext {
-        return this.game.getContext();
-    }
-
     static setRoom(roomID: string, startArgs?: any) {
         this.game.setRoom(roomID, startArgs);
+    }
+
+    static _getContext(): GameContext {
+        return this.game.getContext();
     }
 }
