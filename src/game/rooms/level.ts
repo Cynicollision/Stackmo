@@ -101,15 +101,15 @@ Room
             }
         });
     })
-    .onDraw(room => {
+    .onDraw((room, context) => {
         let hudX = playerView.x;
         let hudY = playerView.y;
 
-        room.drawSprite(Sprite.get(SpriteID.HUD), hudX, hudY, { tileX: true });
-        room.drawSprite(Sprite.get(SpriteID.ExitButton), hudX, hudY);
+        Sprite.get(SpriteID.HUD).draw(context, hudX, hudY, { tileX: true });
+        Sprite.get(SpriteID.ExitButton).draw(context, hudX, hudY);
 
         let drawInstances = getDigitDrawInstances(levelNumber, true);
-        drawInstances.forEach(draw => room.drawSprite(Sprite.get(SpriteID.Digits), hudX + (canvasWidth / 2) - 32 + draw.x, hudY + 12, { frame: draw.frame }));
+        drawInstances.forEach(draw => Sprite.get(SpriteID.Digits).draw(context, hudX + (canvasWidth / 2) - 32 + draw.x, hudY + 12, { frame: draw.frame }));
     })
     .onKey(Key.Left, (room, ev) => {
         let player = room.getInstances().find(actorInstance => actorInstance.parent === PlayerActor);

@@ -23,6 +23,6 @@ Room
     .onKey(Key.Any, () => {
         Vastgame.setRoom(RoomID.LevelSelect);
     })
-    .onDraw(room => {
-        room.drawSprite(Sprite.get(SpriteID.Title), titleX, titleY);
+    .onDraw((room, context) => {
+        Sprite.get(SpriteID.Title).draw(context, titleX, titleY);
     });

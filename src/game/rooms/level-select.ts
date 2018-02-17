@@ -104,14 +104,13 @@ Actor
             levelSelectLock = false;
         }
     })
-    .onDraw(self => {
+    .onDraw((self, context) => {
         if ((<any>self).enabled) {
-            let DigitsSheet = Sprite.get(SpriteID.Digits);
 
             let levelNumber: number = (<any>self).levelNumber;
             let drawInstances = getDigitDrawInstances(levelNumber);
 
-            drawInstances.forEach(draw => self.drawSprite(DigitsSheet, self.x + draw.x, self.y + draw.y, { frame: draw.frame }));
+            drawInstances.forEach(draw => Sprite.get(SpriteID.Digits).draw(context, self.x + draw.x, self.y + draw.y, { frame: draw.frame }));
         }
     });
 

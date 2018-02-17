@@ -1,5 +1,6 @@
 import { SpriteAnimation } from './sprite-animation';
 import { Vastgame } from './vastgame';
+import { GameCanvasContext } from './canvas';
 
 export interface SpriteOptions {
     imageSource: string;
@@ -26,6 +27,11 @@ export class Sprite {
 
     static get(name: string): Sprite {
         return Vastgame._getContext().getSprite(name);
+    }
+
+    draw(canvasContext: GameCanvasContext, x: number, y: number, options: DrawSpriteOptions = {}): void {
+        this.defaultAnimation.setFrame(options.frame || 0);
+        this.defaultAnimation.draw(canvasContext, x, y, options);
     }
 
     readonly image: HTMLImageElement;

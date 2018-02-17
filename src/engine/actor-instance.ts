@@ -6,9 +6,10 @@ import { Room } from './room';
 import { Sprite, DrawSpriteOptions } from './sprite';
 import { SpriteAnimation } from './sprite-animation';
 import { MathUtil } from './util';
+import { GameCanvasContext } from './canvas';
 
-export interface ActorInstanceDrawEvent {
-    (self: ActorInstance): void;
+export interface ActorLifecycleDrawCallback {
+    (self: ActorInstance, canvasContext: GameCanvasContext): void;
 }
 
 export class ActorInstance {
@@ -43,10 +44,6 @@ export class ActorInstance {
 
     get animation(): SpriteAnimation {
         return this.spriteAnimation;
-    }
-
-    drawSprite(sprite: Sprite, x: number, y: number, options: DrawSpriteOptions) {
-        this.room.drawSprite(sprite, x, y, options);
     }
 
     raiseEvent(eventName: string, eventArgs?: any): void {

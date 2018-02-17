@@ -18,10 +18,6 @@ export { Sprite } from './sprite';
 export { SpriteAnimation, SpriteTransformation } from './sprite-animation';
 export { View } from './view';
 
-export interface GameLifecycleCallback {
-    (selfInstance: Room, args: any): void;
-}
-
 export interface GameOptions {
     canvas?: GameCanvasOptions;
     targetFPS?: number;
@@ -80,10 +76,6 @@ export class Vastgame {
 
     static setRoom(roomID: string, startArgs?: any) {
         this.game.setRoom(roomID, startArgs);
-    }
-
-    static getCanvasContext(): GameCanvasContext {
-        return this._getContext().getCanvasContext();
     }
 
     static _getContext(): GameContext {

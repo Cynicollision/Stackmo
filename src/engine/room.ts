@@ -4,8 +4,16 @@ import { GameCanvasContext } from './canvas';
 import { Key } from './enum';
 import { EventHandler, Input, PointerInputEvent } from './input';
 import { DrawSpriteOptions, Sprite } from './sprite';
-import { GameLifecycleCallback, Vastgame } from './vastgame';
+import { Vastgame } from './vastgame';
 import { ActorID } from '../game/util/enum';
+
+interface RoomLifecycleCallback {
+    (selfInstance: Room, args?: any): void;
+}
+
+interface RoomLifecycleDrawCallback {
+    (selfInstance: Room, context: GameCanvasContext, args?: any): void;
+}
 
 export class Background {
 
@@ -20,8 +28,8 @@ export class Background {
 export interface RoomBehavior {
     preHandleClick: (event: PointerInputEvent) => void;
     postHandleClick: (event: PointerInputEvent) => void;
-    postStep: (self: Room) => void;
-    preDraw: (self: Room, canvasContext: GameCanvasContext) => void;
+    postStep: RoomLifecycleCallback;
+    preDraw: RoomLifecycleDrawCallback;
 }
 
 export class Room {
@@ -45,8 +53,8 @@ export class Room {
     private propertyMap: { [index: string]: any } = {};
     private behaviors: RoomBehavior[] = [];
     private eventHandlers: EventHandler[] = [];
-    private onStartCallback: GameLifecycleCallback;
-    private onDrawCallback: GameLifecycleCallback;
+    private onStartCallback: RoomLifecycleCallback;
+    private onDrawCallback: RoomLifecycleDrawCallback;
     
     background: Background;
 
@@ -82,7 +90,7 @@ export class Room {
     }
 
     // lifecycle callbacks
-    onStart(callback: GameLifecycleCallback): Room {
+    onStart(callback: RoomLifecycleCallback): Room {
         this.onStartCallback = callback;
         return this;
     }
@@ -100,15 +108,17 @@ export class Room {
         }
     }
 
-    onDraw(callback: GameLifecycleCallback): Room {
+    onDraw(callback: RoomLifecycleCallback): Room {
         this.onDrawCallback = callback;
         return this;
     }
 
     _callDraw(args?: any): void {
         if (this.onDrawCallback) {
+            let canvasContext = Vastgame._getContext().getCanvasContext();
+
             try {
-                this.onDrawCallback(this, args);
+                this.onDrawCallback(this, canvasContext, args);
             }
             catch {
                 throw `Room: ${this.name}.draw`;
@@ -213,16 +223,6 @@ export class Room {
 
         // call room draw event callback
         this._callDraw();
-    }
-
-    drawSprite(sprite: Sprite, x: number, y: number, options: DrawSpriteOptions = {}) {
-        let canvasContext = Vastgame.getCanvasContext();
-
-        // call pre-draw behaviors
-        this.behaviors.forEach(behavior => behavior.preDraw(this, canvasContext));
-
-        sprite.defaultAnimation.setFrame(options.frame || 0);
-        sprite.defaultAnimation.draw(canvasContext, x, y, options);
     }
 
     handleClick(event: PointerInputEvent): void {

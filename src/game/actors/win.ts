@@ -17,11 +17,11 @@ Actor
         self.animation.depth = -10;
         self.visible = false;
     })
-    .onDraw(self => {
+    .onDraw((self, context) => {
         // animate the door panels when winning
         let doorSprite = Sprite.get(SpriteID.DoorSheet);
-        self.drawSprite(doorSprite, self.x - doorAnimationOffsetX, self.y, { frame: 0 });
-        self.drawSprite(doorSprite, self.x + 32 + doorAnimationOffsetX, self.y, { frame: 1 });
+        doorSprite.draw(context, self.x - doorAnimationOffsetX, self.y, { frame: 0 });
+        doorSprite.draw(context, self.x + 32 + doorAnimationOffsetX, self.y, { frame: 1 });
     })
     .onStep(self => {
         if (opening) {

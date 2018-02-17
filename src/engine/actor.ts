@@ -1,16 +1,16 @@
-import { ActorInstance, ActorInstanceDrawEvent } from './actor-instance';
+import { ActorInstance, ActorLifecycleDrawCallback } from './actor-instance';
 import { Boundary } from './boundary';
 import { PointerInputEvent } from './input';
 import { Sprite } from './sprite';
 import { Vastgame } from './vastgame';
 
 export interface ActorLifecycle {
-    onCreate: LifecycleCallback;
-    onStep: LifecycleCallback;
-    onDestroy: LifecycleCallback;
+    onCreate: ActorLifecycleCallback;
+    onStep: ActorLifecycleCallback;
+    onDestroy: ActorLifecycleCallback;
 }
 
-export interface LifecycleCallback {
+export interface ActorLifecycleCallback {
     (self: ActorInstance): void;
 }
 
@@ -45,10 +45,10 @@ export class Actor {
     }
 
     // lifecycle callbacks
-    private onCreateCallback: LifecycleCallback;
-    private onStepCallback: LifecycleCallback;
-    private onDestroyCallback: LifecycleCallback;
-    private onDrawCallback: ActorInstanceDrawEvent;
+    private onCreateCallback: ActorLifecycleCallback;
+    private onStepCallback: ActorLifecycleCallback;
+    private onDestroyCallback: ActorLifecycleCallback;
+    private onDrawCallback: ActorLifecycleDrawCallback;
 
     // input callbacks
     private onClickCallback: ClickEventCallback;
@@ -80,7 +80,7 @@ export class Actor {
     }
 
     // create
-    onCreate(callback: LifecycleCallback): Actor {
+    onCreate(callback: ActorLifecycleCallback): Actor {
         this.onCreateCallback = callback;
         return this;
     }
@@ -97,7 +97,7 @@ export class Actor {
     }
 
     // step
-    onStep(callback: LifecycleCallback): Actor {
+    onStep(callback: ActorLifecycleCallback): Actor {
         this.onStepCallback = callback;
         return this;
     }
@@ -117,15 +117,16 @@ export class Actor {
     }
 
     // draw
-    onDraw(callback: ActorInstanceDrawEvent): Actor {
+    onDraw(callback: ActorLifecycleDrawCallback): Actor {
         this.onDrawCallback = callback;
         return this;
     }
 
     _callDraw(selfInstance: ActorInstance): void {
         if (this.onDrawCallback) {
+            let canvasContext = Vastgame._getContext().getCanvasContext();
             try {
-                this.onDrawCallback(selfInstance);
+                this.onDrawCallback(selfInstance, canvasContext);
             }
             catch {
                 throw `Actor: ${selfInstance.parent.name}[${selfInstance.id}].draw`;
@@ -151,7 +152,7 @@ export class Actor {
     }
 
     // destroy
-    onDestroy(callback: LifecycleCallback): Actor {
+    onDestroy(callback: ActorLifecycleCallback): Actor {
         this.onDestroyCallback = callback;
         return this;
     }
