@@ -22,7 +22,7 @@ export enum RoomID {
 }
 
 export enum SpriteID {
-    Arrows = 'Arrows',
+    ArrowSheet = 'Arrows',
     Digits = 'Digits',
     DoorSheet = 'DoorSheet',
     Box = 'Box',
@@ -57,4 +57,19 @@ export enum LevelBgColor {
     Red = '#d01000',
     DarkPurple = '#380050',
     Purple = '#a008a8',
+}
+
+export enum StackmoFrame {
+    StandLeft = 0,
+    MoveLeft1 = 1,
+    MoveLeft2 = 2,
+    StandRight = 3,
+    MoveRight1 = 4,
+    MoveRight2 = 5,
+    StandHoldLeft = 6,
+    MoveHoldLeft1 = 7,
+    MoveHoldLeft2 = 8,
+    StandHoldRight = 9,
+    MoveHoldRight1 = 10,
+    MoveHolddRight2 = 11,
 }

@@ -16,93 +16,79 @@ let overflowedRows: number;
 const iconPadding = 8;
 const iconSizeWithPadding = Constants.GridCellSize + (iconPadding * 2);
 
-const LevelSelectRoom = Room.define(RoomID.LevelSelect);
-
 let _lastLevelNumber = 1;
 let levelSelectLock = false;
 
-LevelSelectRoom.onStart((args) => {
-    canvasWidth = Registry.get(Settings.CanvasWidth);
-    canvasHeight = Registry.get(Settings.CanvasHeight);
+Room.define(RoomID.LevelSelect)
+    .onStart((room, args) => {
+        canvasWidth = Registry.get(Settings.CanvasWidth);
+        canvasHeight = Registry.get(Settings.CanvasHeight);
 
-    LevelSelectRoom.setBackground(Constants.Black, canvasWidth, canvasHeight, Constants.Black);
+        room.setBackground(Constants.Black, canvasWidth, canvasHeight, Constants.Black);
 
-    let viewBehavior = new ViewedRoomBehavior(0, 0, canvasWidth, canvasHeight);
-    LevelSelectRoom.use(viewBehavior);
-    scrollView = viewBehavior.getView();
+        let viewBehavior = new ViewedRoomBehavior(0, 0, canvasWidth, canvasHeight);
+        room.use(viewBehavior);
+        scrollView = viewBehavior.getView();
 
-    // determine/update level-unlock progress
-    let unlockedLevelCount = Number(Registry.get(Settings.StackmoProgress));
-    if (args && args.win && _lastLevelNumber === unlockedLevelCount) {
-        unlockedLevelCount++;
-        Registry.set(Settings.StackmoProgress, unlockedLevelCount, true);
-    }
-
-    if (!unlockedLevelCount) {
-        unlockedLevelCount = 0;
-    }
-
-    // adjust icons per row for scroll bar if rows overflow the canvas
-    let iconsPerRow = Math.floor(canvasWidth / iconSizeWithPadding);
-    let rowCount = Math.ceil(Data.Levels.count / iconsPerRow);
-    let startX = startY = Math.floor((canvasWidth - (iconsPerRow * iconSizeWithPadding)) / 2);
-    let showScrollbars = false;
-
-    if (startY + (rowCount * iconSizeWithPadding) > canvasHeight) {
-        iconsPerRow--;
-        rowCount = Math.ceil(Data.Levels.count / iconsPerRow);
-        overflowedRows = Math.ceil(((rowCount * iconSizeWithPadding) - canvasHeight) / iconSizeWithPadding);
-        showScrollbars = true;
-    }
-
-    // create level icons
-    let currentRow = 0;
-    let currentPosition = 0;
-    for (let i = 0; i < Data.Levels.count; i++) {
-        let icon = LevelSelectRoom.createActor(ActorID.LevelIcon, startX + currentPosition * iconSizeWithPadding, startY + currentRow * iconSizeWithPadding);
-        (<any>icon).levelNumber = i + 1;
-        (<any>icon).enabled = i < unlockedLevelCount;
-
-        currentPosition++;
-
-        if (currentPosition === iconsPerRow) {
-            currentPosition = 0;
-            currentRow++;
+        // determine/update level-unlock progress
+        let unlockedLevelCount = Number(Registry.get(Settings.StackmoProgress));
+        if (args && args.win && _lastLevelNumber === unlockedLevelCount) {
+            unlockedLevelCount++;
+            Registry.set(Settings.StackmoProgress, unlockedLevelCount, true);
         }
-    }
 
-    // create scroll icons if needed
-    if (showScrollbars) {
-        let upArrow = LevelSelectRoom.createActor(ActorID.ScrollArrow);
-        upArrow.animation.setFrame(1);
-        upArrow.x = canvasWidth - iconPadding - ScrollArrow.sprite.width;
-        (<any>upArrow).direction = Direction.Up;
+        if (!unlockedLevelCount) {
+            unlockedLevelCount = 0;
+        }
 
-        let downArrow = LevelSelectRoom.createActor(ActorID.ScrollArrow);
-        downArrow.x = upArrow.x;
-        (<any>downArrow).direction = Direction.Down;
-    }
-});
+        // adjust icons per row for scroll bar if rows overflow the canvas
+        let iconsPerRow = Math.floor(canvasWidth / iconSizeWithPadding);
+        let rowCount = Math.ceil(Data.Levels.count / iconsPerRow);
+        let startX = startY = Math.floor((canvasWidth - (iconsPerRow * iconSizeWithPadding)) / 2);
+        let showScrollbars = false;
+
+        if (startY + (rowCount * iconSizeWithPadding) > canvasHeight) {
+            iconsPerRow--;
+            rowCount = Math.ceil(Data.Levels.count / iconsPerRow);
+            overflowedRows = Math.ceil(((rowCount * iconSizeWithPadding) - canvasHeight) / iconSizeWithPadding);
+            showScrollbars = true;
+        }
+
+        // create level icons
+        let currentRow = 0;
+        let currentPosition = 0;
+        for (let i = 0; i < Data.Levels.count; i++) {
+            let icon = room.createActor(ActorID.LevelIcon, startX + currentPosition * iconSizeWithPadding, startY + currentRow * iconSizeWithPadding);
+            (<any>icon).levelNumber = i + 1;
+            (<any>icon).enabled = i < unlockedLevelCount;
+
+            currentPosition++;
+
+            if (currentPosition === iconsPerRow) {
+                currentPosition = 0;
+                currentRow++;
+            }
+        }
+
+        // create scroll icons if needed
+        if (showScrollbars) {
+            let upArrow = room.createActor(ActorID.ScrollArrow);
+            upArrow.animation.setFrame(1);
+            upArrow.x = canvasWidth - iconPadding - Constants.GridCellSize;
+            (<any>upArrow).direction = Direction.Up;
+
+            let downArrow = room.createActor(ActorID.ScrollArrow);
+            downArrow.x = upArrow.x;
+            (<any>downArrow).direction = Direction.Down;
+        }
+    });
 
 // Level icons
-const Digits = Sprite.define(SpriteID.Digits, {
-    imageSource: '../resources/digits_sheet.png',
-    height: Constants.GridCellSize / 2,
-    width: Constants.GridCellSize / 2,
-});
+Actor.define(ActorID.LevelIcon, {
+    sprite: Sprite.get(SpriteID.LevelIcon),
+})
+.onClick(self => {
 
-const LevelIconSprite = Sprite.define(SpriteID.LevelIcon, {
-    imageSource: '../resources/level_icon.png',
-    width: Constants.GridCellSize,
-    height: Constants.GridCellSize,
-});
-
-const LevelIcon = Actor.define(ActorID.LevelIcon, {
-    boundary: Boundary.fromSprite(LevelIconSprite),
-    sprite: LevelIconSprite,
-});
-
-LevelIcon.onClick(self => {
     if ((<any>self).enabled && !levelSelectLock) {
         levelSelectLock = true;
 
@@ -115,30 +101,24 @@ LevelIcon.onClick(self => {
         Vastgame.setRoom(RoomID.Level, { levelNumber: levelNumber });
 
         levelSelectLock = false;
-    } 
-});
-
-LevelIcon.onDraw(self => {
+    }
+})
+.onDraw(self => {
     if ((<any>self).enabled) {
+        let DigitsSheet = Sprite.get(SpriteID.Digits);
+
         let levelNumber: number = (<any>self).levelNumber;
         let drawInstances = getDigitDrawInstances(levelNumber);
-        drawInstances.forEach(draw => self.drawSprite(Digits, self.x + draw.x, self.y + draw.y, { frame: draw.frame }));
+
+        drawInstances.forEach(draw => self.drawSprite(DigitsSheet, self.x + draw.x, self.y + draw.y, { frame: draw.frame }));
     }
 });
 
 // Scroll arrows
-const ArrowSprite = Sprite.define(SpriteID.Arrows, {
-    imageSource: '../resources/arrows.png',
-    height: Constants.GridCellSize,
-    width: Constants.GridCellSize,
-});
-
-const ScrollArrow = Actor.define(ActorID.ScrollArrow, {
-    boundary: Boundary.fromSprite(ArrowSprite),
-    sprite: ArrowSprite,
-});
-
-ScrollArrow.onClick((self, event) => {
+Actor.define(ActorID.ScrollArrow, {
+    sprite: Sprite.get(SpriteID.ArrowSheet),
+})
+.onClick((self, event) => {
     if ((<any>self).enabled) {
         let direction: Direction = (<any>self).direction;
         scrollView.y += direction === Direction.Down ? 64 : -64;
@@ -147,9 +127,8 @@ ScrollArrow.onClick((self, event) => {
             scrollView.y = 0;
         }
     }
-});
-
-ScrollArrow.onStep(self => {
+})
+.onStep(self => {
     // update vertical position to match scrolling
     let isUpArrow = ((<any>self).direction === Direction.Up);
     self.y = isUpArrow ? startY + scrollView.y : canvasHeight - 82 + scrollView.y; 

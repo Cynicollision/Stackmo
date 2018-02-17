@@ -62,9 +62,15 @@ export class Actor {
     boundary: Boundary;
 
     constructor(name: string, options: ActorOptions = {}) {
-        this.boundary = options.boundary;
         this.name = name;
         this.sprite = options.sprite;
+
+        if (options.boundary) {
+            this.boundary = options.boundary
+        }
+        else if (options.sprite) {
+            this.boundary = Boundary.fromSprite(options.sprite);
+        }
     }
 
     setGameContextEventArgs(eventArgs: any): void {
@@ -74,8 +80,9 @@ export class Actor {
     }
 
     // create
-    onCreate(callback: LifecycleCallback): void {
+    onCreate(callback: LifecycleCallback): Actor {
         this.onCreateCallback = callback;
+        return this;
     }
 
     _callCreate(selfInstance: ActorInstance): void {
@@ -90,8 +97,9 @@ export class Actor {
     }
 
     // step
-    onStep(callback: LifecycleCallback): void {
+    onStep(callback: LifecycleCallback): Actor {
         this.onStepCallback = callback;
+        return this;
     }
 
     _callStep(selfInstance: ActorInstance) {
@@ -109,8 +117,9 @@ export class Actor {
     }
 
     // draw
-    onDraw(callback: ActorInstanceDrawEvent): void {
+    onDraw(callback: ActorInstanceDrawEvent): Actor {
         this.onDrawCallback = callback;
+        return this;
     }
 
     _callDraw(selfInstance: ActorInstance): void {
@@ -125,8 +134,9 @@ export class Actor {
     }
 
     // click/tap
-    onClick(callback: ClickEventCallback): void {
+    onClick(callback: ClickEventCallback): Actor {
         this.onClickCallback = callback;
+        return this;
     }
 
     _callClick(selfInstance: ActorInstance, event: PointerInputEvent): void {
@@ -141,8 +151,9 @@ export class Actor {
     }
 
     // destroy
-    onDestroy(callback: LifecycleCallback): void {
+    onDestroy(callback: LifecycleCallback): Actor {
         this.onDestroyCallback = callback;
+        return this;
     }
 
     _callDestroy(selfInstance: ActorInstance): void {
@@ -157,11 +168,13 @@ export class Actor {
     }
 
     // collisions and other events
-    onCollide(actorName: string, callback: CollisionCallback): void {
+    onCollide(actorName: string, callback: CollisionCallback): Actor {
         this.collisionHandlers[actorName] = callback;
+        return this;
     }
 
-    onEvent(eventName: string, callback: ActorEventCallback): void {
+    onEvent(eventName: string, callback: ActorEventCallback): Actor {
         this.actorEventHandlers[eventName] = callback;
+        return this;
     }
 }

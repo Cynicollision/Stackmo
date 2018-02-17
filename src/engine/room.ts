@@ -46,7 +46,7 @@ export class Room {
     private behaviors: RoomBehavior[] = [];
     private eventHandlers: EventHandler[] = [];
     private onStartCallback: GameLifecycleCallback;
-    private onDrawCallback: () => void;
+    private onDrawCallback: GameLifecycleCallback;
     
     background: Background;
 
@@ -73,6 +73,7 @@ export class Room {
         this.actorInstanceMap = {};
         this.behaviors = [];
         this.eventHandlers.forEach(eventHandler => eventHandler.dispose());
+        this.eventHandlers = [];
     }
 
     // mix-in behaviors
@@ -82,14 +83,15 @@ export class Room {
     }
 
     // lifecycle callbacks
-    onStart(callback: GameLifecycleCallback): void {
+    onStart(callback: GameLifecycleCallback): Room {
         this.onStartCallback = callback;
+        return this;
     }
 
     _callStart(args?: any): void {
         if (this.onStartCallback) {
             try {
-                this.onStartCallback(args);
+                this.onStartCallback(this, args);
             }
             catch {
                 throw `Room: ${this.name}.start`;
@@ -97,14 +99,15 @@ export class Room {
         }
     }
 
-    onDraw(callback: () => void): void {
+    onDraw(callback: GameLifecycleCallback): Room {
         this.onDrawCallback = callback;
+        return this;
     }
 
-    _callDraw(): void {
+    _callDraw(args?: any): void {
         if (this.onDrawCallback) {
             try {
-                this.onDrawCallback();
+                this.onDrawCallback(this, args);
             }
             catch {
                 throw `Room: ${this.name}.draw`;
@@ -113,18 +116,22 @@ export class Room {
     }
 
     // event callbacks
-    onClick(callback: (event: PointerInputEvent) => void): EventHandler {
-        let clickHandler = Input.registerClickHandler(callback);
+    onClick(callback: (self: Room, event: PointerInputEvent) => void): Room {
+        let room = this;
+        let clickHandler = Input.registerClickHandler(function (event) {
+            callback(room, event);
+        });
         this.eventHandlers.push(clickHandler);
-
-        return clickHandler;
+        return this;
     }
 
-    onKey(key: Key, callback: (event: KeyboardEvent) => void): EventHandler {
-        let keyHandler = Input.registerKeyHandler(key, callback);
+    onKey(key: Key, callback: (self: Room, event: KeyboardEvent) => void): Room {
+        let room = this;
+        let keyHandler = Input.registerKeyHandler(key, function (event) {
+            callback(room, event);
+        });
         this.eventHandlers.push(keyHandler);
-
-        return keyHandler;
+        return this;
     }
 
     // step behavior

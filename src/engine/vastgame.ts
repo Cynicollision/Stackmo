@@ -19,7 +19,7 @@ export { SpriteAnimation, SpriteTransformation } from './sprite-animation';
 export { View } from './view';
 
 export interface GameLifecycleCallback {
-    (args: any): void;
+    (selfInstance: Room, args: any): void;
 }
 
 export interface GameOptions {

@@ -14,7 +14,8 @@ Vastgame.init('game', {
 });
 
 // load game modules
-requireModules('actors', ['block', 'hud', 'player', 'wall', 'win']);
+require('./sprites');
+requireModules('actors', ['block', 'player', 'win']);
 requireModules('rooms', ['level', 'level-select', 'title']);
 
 // load game progress
