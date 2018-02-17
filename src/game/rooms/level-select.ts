@@ -4,6 +4,7 @@ import * as Data from './../util/data';
 import { ActorID, LevelBgColor, RoomID, Settings, SpriteID } from './../util/enum';
 import { LevelBuilder } from './../util/level-builder';
 import { Registry } from './../util/registry';
+import { getDigitDrawInstances } from './../util/util';
 
 let scrollView: View;
 let canvasHeight: number;
@@ -84,7 +85,7 @@ LevelSelectRoom.onStart((args) => {
 });
 
 // Level icons
-const DigitsSprite = Sprite.define(SpriteID.Digits, {
+const Digits = Sprite.define(SpriteID.Digits, {
     imageSource: '../resources/digits_sheet.png',
     height: Constants.GridCellSize / 2,
     width: Constants.GridCellSize / 2,
@@ -111,7 +112,7 @@ LevelIcon.onClick(self => {
         LevelBuilder.populateRoom(level, levelNumber);
         
         _lastLevelNumber = levelNumber;
-        Vastgame.setRoom(RoomID.Level);
+        Vastgame.setRoom(RoomID.Level, { levelNumber: levelNumber });
 
         levelSelectLock = false;
     } 
@@ -120,21 +121,8 @@ LevelIcon.onClick(self => {
 LevelIcon.onDraw(self => {
     if ((<any>self).enabled) {
         let levelNumber: number = (<any>self).levelNumber;
-        let singleDigitMargin = Math.floor((LevelIconSprite.width - DigitsSprite.width) / 2);
-        
-        if (levelNumber < 10) {
-            let frame = levelNumber;
-            self.drawSprite(DigitsSprite, self.x + singleDigitMargin, self.y + singleDigitMargin, frame);
-        }
-        else {
-            let tensFrame = Math.floor(levelNumber / 10);
-            let tensMargin = Math.floor(singleDigitMargin / 2) - 3;
-            self.drawSprite(DigitsSprite, self.x + tensMargin, self.y + singleDigitMargin, tensFrame);
-    
-            let onesFrame = levelNumber % 10;
-            let onesMargin = Math.floor(singleDigitMargin * 2) - 3;
-            self.drawSprite(DigitsSprite, self.x + onesMargin, self.y + singleDigitMargin, onesFrame);
-        }
+        let drawInstances = getDigitDrawInstances(levelNumber);
+        drawInstances.forEach(draw => self.drawSprite(Digits, self.x + draw.x, self.y + draw.y, { frame: draw.frame }));
     }
 });
 

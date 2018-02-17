@@ -1,13 +1,15 @@
 import { GameCanvasContext } from './canvas';
-import { Sprite } from './sprite';
+import { Sprite, DrawSpriteOptions } from './sprite';
 
 export enum SpriteTransformation {
     Opacity = 0,
     Frame = 1,
+    TileX = 2,
+    TileY = 3,
 }
 
 export class SpriteAnimation {
-    private transformatons: { [index: number]: number } = {};
+    private transformations: { [index: number]: SpriteTransformation } = {};
     private timer: any;
 
     depth: number = 0;
@@ -49,24 +51,34 @@ export class SpriteAnimation {
         this.setTransform(SpriteTransformation.Frame, frame);
     }
 
-    draw(canvasContext: GameCanvasContext, x: number, y: number): void {
+    draw(canvasContext: GameCanvasContext, x: number, y: number, options: DrawSpriteOptions = {}): void {
+        // frame
         let frame = this.getTransform(SpriteTransformation.Frame);
-        let opacity = this.getTransform(SpriteTransformation.Opacity);
-        let [srcX, srcY] = this.sprite.getFrameImageSourceCoords(frame);
+        if (options.frame !== null && options.frame !== undefined) {
+            this.setTransform(SpriteTransformation.Frame, options.frame);
+        }
 
-        canvasContext.drawImage(this.sprite.image, srcX, srcY, x, y, this.sprite.width, this.sprite.height, opacity);
+        // opacity
+        let opacity = this.getTransform(SpriteTransformation.Opacity);
+        if (options.frame !== null && options.frame !== undefined) {
+            this.setTransform(SpriteTransformation.Opacity, options.opacity);
+        }
+
+        let [srcX, srcY] = this.sprite.getFrameImageSourceCoords(frame);
+        
+        canvasContext.drawImage(this.sprite.image, srcX, srcY, x, y, this.sprite.width, this.sprite.height, options);
     }
 
     // transformations
     getTransform(transformation: SpriteTransformation): number {
-        return this.transformatons[transformation];
+        return this.transformations[transformation];
     }
 
     transform(transformation: SpriteTransformation, delta: number): void {
-        this.transformatons[transformation] += delta;
+        this.transformations[transformation] += delta;
     }
 
     setTransform(transformation: SpriteTransformation, value: number): void {
-        this.transformatons[transformation] = value;
+        this.transformations[transformation] = value;
     }
 }

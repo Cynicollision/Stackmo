@@ -3,7 +3,7 @@ import { Boundary } from './boundary';
 import { ActorState } from './enum';
 import { DeferredEvent } from './events';
 import { Room } from './room';
-import { Sprite } from './sprite';
+import { Sprite, DrawSpriteOptions } from './sprite';
 import { SpriteAnimation } from './sprite-animation';
 import { MathUtil } from './util';
 
@@ -45,8 +45,8 @@ export class ActorInstance {
         return this.spriteAnimation;
     }
 
-    drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0) {
-        this.room.drawSprite(sprite, x, y, frame);
+    drawSprite(sprite: Sprite, x: number, y: number, options: DrawSpriteOptions) {
+        this.room.drawSprite(sprite, x, y, options);
     }
 
     raiseEvent(eventName: string, eventArgs?: any): void {

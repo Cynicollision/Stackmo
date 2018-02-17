@@ -25,6 +25,6 @@ export class FakeCanvasContext implements GameCanvasContext {
     }
     fillArea(x: number, y: number, width: number, height: number, color: string): void {
     }
-    drawImage(image: HTMLImageElement, srcX: number, srcY: number, destX: number, destY: number, width: number, height: number, opacity?: number): void {
+    drawImage(image: HTMLImageElement, srcX: number, srcY: number, destX: number, destY: number, width: number, height: number, options?: any): void {
     }
 }

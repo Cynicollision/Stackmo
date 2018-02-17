@@ -3,7 +3,7 @@ import { ActorInstance } from './actor-instance';
 import { GameCanvasContext } from './canvas';
 import { Key } from './enum';
 import { EventHandler, Input, PointerInputEvent } from './input';
-import { Sprite } from './sprite';
+import { DrawSpriteOptions, Sprite } from './sprite';
 import { GameLifecycleCallback, Vastgame } from './vastgame';
 import { ActorID } from '../game/util/enum';
 
@@ -185,9 +185,6 @@ export class Room {
             canvasContext.fill(this.background.width, this.background.height, this.background.color);
         }
 
-        // call room draw event callback
-        this._callDraw();
-
         let orderedInstances = this.getInstances().sort((a, b) => {
             return (b.animation ? b.animation.depth : 0) - (a.animation ? a.animation.depth : 0);
         });
@@ -201,16 +198,19 @@ export class Room {
             // call actor draw event callbacks
             instance.parent._callDraw(instance);
         });
+
+        // call room draw event callback
+        this._callDraw();
     }
 
-    drawSprite(sprite: Sprite, x: number, y: number, frame: number = 0) {
-        let canvasContext = Vastgame._getContext().getCanvasContext();
+    drawSprite(sprite: Sprite, x: number, y: number, options: DrawSpriteOptions = {}) {
+        let canvasContext = Vastgame.getCanvasContext();
 
         // call pre-draw behaviors
         this.behaviors.forEach(behavior => behavior.preDraw(this, canvasContext));
 
-        sprite.defaultAnimation.setFrame(frame);
-        sprite.defaultAnimation.draw(canvasContext, x, y);
+        sprite.defaultAnimation.setFrame(options.frame || 0);
+        sprite.defaultAnimation.draw(canvasContext, x, y, options);
     }
 
     handleClick(event: PointerInputEvent): void {

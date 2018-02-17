@@ -3,36 +3,55 @@ import * as Constants from './../util/constants';
 import { ActorID, RoomID, SpriteID, GameAction, Settings } from './../util/enum';
 import { Registry } from './../util/registry';
 import { GridRoomBehavior } from '../../engine/room-ext';
+import { getDigitDrawInstances } from './../util/util';
 
 let LevelRoom = Room.define(RoomID.Level);
 
-LevelRoom.onStart(() => {
+LevelRoom.onStart(args => {
+    let levelNumber: number = args.levelNumber;
     LevelRoom.set('complete', false);
 
     let BlockActor = Actor.get(ActorID.Block);
     let PlayerActor = Actor.get(ActorID.Player);
     let WallActor = Actor.get(ActorID.Wall);
 
-    // assumes the level has already been populated before starting
-    let player = LevelRoom.getInstances().find(actorInstance => actorInstance.parent === PlayerActor);
-
-    // define a view that follows the player and has the "X" button attached
-    const canvasWidth = Registry.get(Settings.CanvasWidth);
-    const canvasHeight = Registry.get(Settings.CanvasHeight);
-    const viewHUDBuffer = Constants.GridCellSize / 4;
-
-    let viewBehavior = new ViewedRoomBehavior(0, 0, canvasWidth, canvasHeight);
-    LevelRoom.use(viewBehavior);
-    
-    let playerView = viewBehavior.getView();
-    playerView.follow(player, true);
-    playerView.attach(LevelRoom.createActor(ActorID.ExitButton), canvasWidth - Constants.GridCellSize - viewHUDBuffer, viewHUDBuffer);
-
     // define the movement grid and player behavior
     let gridBehavior = new GridRoomBehavior(Constants.GridCellSize, LevelRoom);
     let grid = gridBehavior.getGrid();
     LevelRoom.use(gridBehavior);
 
+    // assumes the level has already been populated before starting
+    let player = LevelRoom.getInstances().find(actorInstance => actorInstance.parent === PlayerActor);
+
+    // define a view that follows the player
+    let canvasWidth = Registry.get(Settings.CanvasWidth);
+    let canvasHeight = Registry.get(Settings.CanvasHeight);
+    let viewBehavior = new ViewedRoomBehavior(0, 0, canvasWidth, canvasHeight);
+    LevelRoom.use(viewBehavior);
+
+    let playerView = viewBehavior.getView();
+    playerView.follow(player, true, 0, -(Constants.GridCellSize / 2)); // compensate for HUD height
+    playerView.attach(LevelRoom.createActor(ActorID.ExitButton));
+
+    // Init HUD
+    let HUD = Sprite.get(SpriteID.HUD);
+    let ExitButton = Sprite.get(SpriteID.ExitButton);
+    let Digits = Sprite.get(SpriteID.Digits);
+    
+    
+    LevelRoom.onDraw(() => {
+        let hudX = playerView.x;
+        let hudY = playerView.y;
+
+        LevelRoom.drawSprite(HUD, hudX, hudY, { tileX: true });
+        LevelRoom.drawSprite(ExitButton, hudX, hudY);
+        
+        // LevelRoom.drawSprite(Digits, , , { frame: 10 + levelNumber });
+        let drawInstances = getDigitDrawInstances(levelNumber, true);
+        drawInstances.forEach(draw => LevelRoom.drawSprite(Digits, hudX + (canvasWidth / 2) - 32 + draw.x, hudY + 12, { frame: draw.frame }));
+    });
+
+    // Mouse/Touch input
     grid.onClick(gridClickEvent => {
 
         // cancel input if the level has been won or if the player is moving

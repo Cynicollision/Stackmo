@@ -12,6 +12,9 @@ export class View {
     private viewMode: ViewMode;
     private followInstance: ActorInstance;
     private attachments: ActorInstanceAttachement[] = [];
+
+    private offsetX: number = 0;
+    private offsetY: number = 0;
     
     constructor(
         public x: number, 
@@ -20,12 +23,14 @@ export class View {
         public readonly height: number) {
     }
 
-    follow(actorInstance: ActorInstance, center: boolean = false) {
+    follow(actorInstance: ActorInstance, center: boolean = false, offsetX: number = 0, offsetY: number = 0) {
         this.viewMode = center ? ViewMode.Center : ViewMode.SamePosition;
         this.followInstance = actorInstance;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
 
-    attach(actorInstance: ActorInstance, offsetX: number, offsetY: number) {
+    attach(actorInstance: ActorInstance, offsetX: number = 0, offsetY: number = 0) {
         this.attachments.push(new ActorInstanceAttachement(this, actorInstance, offsetX, offsetY));
     }
 
@@ -39,8 +44,8 @@ export class View {
             this.centerAroundBoundary(this.followInstance.boundary);
         }
         else {
-            this.x = this.followInstance.x || 0;
-            this.y = this.followInstance.y || 0;
+            this.x = this.offsetX + this.followInstance.x || 0;
+            this.y = this.offsetY + this.followInstance.y || 0;
         }
 
         this.attachments.forEach(att => att.update());
@@ -52,8 +57,8 @@ export class View {
             throw new Error(`boundary is ${boundary}`);
         }
 
-        this.x = this.followInstance.x + (boundary.width / 2) - (this.width / 2);
-        this.y = this.followInstance.y + (boundary.height / 2) - (this.height / 2);
+        this.x = this.offsetX + (this.followInstance.x + (boundary.width / 2) - (this.width / 2));
+        this.y = this.offsetY + (this.followInstance.y + (boundary.height / 2) - (this.height / 2));
     }
 }
 

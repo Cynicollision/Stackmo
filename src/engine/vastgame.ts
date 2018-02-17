@@ -1,4 +1,4 @@
-import { GameCanvasHTML2D, GameCanvasOptions, GameCanvas } from './canvas';
+import { GameCanvasHTML2D, GameCanvasContext, GameCanvasOptions, GameCanvas } from './canvas';
 import { Direction, Key } from './enum';
 import { Input } from './input';
 import { GameContext } from './game-context';
@@ -80,6 +80,10 @@ export class Vastgame {
 
     static setRoom(roomID: string, startArgs?: any) {
         this.game.setRoom(roomID, startArgs);
+    }
+
+    static getCanvasContext(): GameCanvasContext {
+        return this._getContext().getCanvasContext();
     }
 
     static _getContext(): GameContext {

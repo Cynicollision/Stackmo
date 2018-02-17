@@ -19,6 +19,16 @@ describe('View', () => {
         expect(testView.y).toEqual(actorInstance.y);
     });
 
+    it('matches the position of the ActorInstance it is following and applies an offset', () => {
+        let actorInstance = ActorBuilder.newInstance(200, 200, { boundary: new Boundary(20, 20) })
+        testView.follow(actorInstance, false, 50, 50);
+
+        testView.update();
+
+        expect(testView.x).toEqual(actorInstance.x + 50);
+        expect(testView.y).toEqual(actorInstance.y + 50);
+    });
+
     it('centers around the ActorInstance it is following', () => {
         let actorInstance = ActorBuilder.newInstance(200, 200, { boundary: new Boundary(20, 20) })
         testView.follow(actorInstance, true);
@@ -27,6 +37,16 @@ describe('View', () => {
 
         expect(testView.x).toEqual(10);
         expect(testView.y).toEqual(10);
+    });
+
+    it('centers around the ActorInstance it is following and applies an offset', () => {
+        let actorInstance = ActorBuilder.newInstance(200, 200, { boundary: new Boundary(20, 20) })
+        testView.follow(actorInstance, true, 50, 50);
+
+        testView.update();
+
+        expect(testView.x).toEqual(60);
+        expect(testView.y).toEqual(60);
     });
 
     it('throws an error when trying to follow an ActorInstance with no boundary', () => {

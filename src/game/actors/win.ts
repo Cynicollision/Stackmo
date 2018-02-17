@@ -37,8 +37,8 @@ WinActor.onStep(self => {
 
 // animate the door panels when winning
 WinActor.onDraw(self => {
-    self.drawSprite(DoorSprite, self.x - doorAnimationOffsetX, self.y, 0);
-    self.drawSprite(DoorSprite, self.x + 32 + doorAnimationOffsetX, self.y, 1);
+    self.drawSprite(DoorSprite, self.x - doorAnimationOffsetX, self.y, { frame: 0 });
+    self.drawSprite(DoorSprite, self.x + 32 + doorAnimationOffsetX, self.y, { frame: 1 });
 });
 
 WinActor.onEvent(GameAction.Win, (self, args) => {

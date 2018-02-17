@@ -2,17 +2,23 @@ import { Actor, Boundary, GridCell, Room, Sprite, Vastgame } from './../../engin
 import * as Constants from './../util/constants';
 import { ActorID, SpriteID, RoomID } from './../util/enum';
 
-let XSprite = Sprite.define(SpriteID.X, {
-    imageSource: '../resources/x.png',
+let XSprite = Sprite.define(SpriteID.ExitButton, {
+    imageSource: '../resources/exit_button.png',
+    height: Constants.GridCellSize,
+    width: Constants.GridCellSize,
+});
+
+let HudBG = Sprite.define(SpriteID.HUD, {
+    imageSource: '../resources/hud.png',
     height: Constants.GridCellSize,
     width: Constants.GridCellSize,
 });
 
 let ExitButton = Actor.define(ActorID.ExitButton, {
-    boundary: Boundary.fromSprite(XSprite),
-    sprite: XSprite,
+    boundary: new Boundary(Constants.GridCellSize, Constants.GridCellSize),
+    //sprite: XSprite,
 });
 
-ExitButton.onCreate(self => self.animation.depth = -10);
+// ExitButton.onCreate(self => self.animation.depth = -10);
 
 ExitButton.onClick(() => Vastgame.setRoom(RoomID.LevelSelect));

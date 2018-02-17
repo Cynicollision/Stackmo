@@ -26,12 +26,13 @@ export enum SpriteID {
     Digits = 'Digits',
     DoorSheet = 'DoorSheet',
     Box = 'Box',
+    HUD = 'HUD',
     LevelIcon = 'LevelIcon',
     StackmoSheet = 'StackmoSheet',
     TextSheet = 'TextSheet',
     Title = 'Title',
     Wall = 'Wall',
-    X = 'X',
+    ExitButton = 'X',
 }
 
 export enum GameAction {

@@ -30,12 +30,18 @@ export class GameCanvasHTML2D implements GameCanvas {
     }
 }
 
+export interface CanvasDrawOptions {
+    opacity?: number;
+    tileX?: boolean;
+    tileY?: boolean;
+}
+
 export interface GameCanvasContext {
     origin: [number, number];
     clear(): void;
     fill(width: number, height: number, color: string): void;
     fillArea(x: number, y: number, width: number, height: number, color: string): void;
-    drawImage(image: HTMLImageElement, srcX: number, srcY: number, destX: number, destY: number, width: number, height: number, opacity?: number): void;
+    drawImage(image: HTMLImageElement, srcX: number, srcY: number, destX: number, destY: number, width: number, height: number, options?: CanvasDrawOptions): void;
 }
 
 export class GameCanvasContext2D implements GameCanvasContext {
@@ -65,19 +71,28 @@ export class GameCanvasContext2D implements GameCanvasContext {
         this.canvasContext2D.fill();
     }
 
-    drawImage(image: HTMLImageElement, srcX: number, srcY: number, destX: number, destY: number, width: number, height: number, opacity?: number): void {
+    drawImage(image: HTMLImageElement, srcX: number, srcY: number, destX: number, destY: number, width: number, height: number, options: CanvasDrawOptions = {}): void {
         // set opacity
         const defaultOpacity = 1;
         let previousOpacity: number = null;
 
-        if (opacity !== defaultOpacity && opacity !== null && opacity !== undefined) {
+        if (options.opacity !== defaultOpacity && options.opacity !== null && options.opacity !== undefined) {
             previousOpacity = this.canvasContext2D.globalAlpha;
-            this.canvasContext2D.globalAlpha = opacity;
+            this.canvasContext2D.globalAlpha = options.opacity;
         }
 
         // draw the image relative to the origin
         let [originX, originY] = this.origin;
-        this.canvasContext2D.drawImage(image, srcX, srcY, width, height, Math.floor(originX + destX), Math.floor(originY + destY), width, height);
+
+        if (options.tileX || options.tileY) {
+            let repetition = options.tileX && options.tileY ? 'repeat' : options.tileX ? 'repeat-x' : 'repeat-y';
+            let pattern = this.canvasContext2D.createPattern(image, repetition);
+            this.canvasContext2D.fillStyle = pattern;
+            this.canvasContext2D.fillRect(originX + destX, originY + destY, this.canvasContext2D.canvas.width, this.canvasContext2D.canvas.height);
+        }
+        else {
+            this.canvasContext2D.drawImage(image, srcX, srcY, width, height, Math.floor(originX + destX), Math.floor(originY + destY), width, height);
+        }
 
         // reset opacity
         if (previousOpacity !== null) {

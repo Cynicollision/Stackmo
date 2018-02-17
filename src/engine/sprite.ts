@@ -1,6 +1,20 @@
 import { SpriteAnimation } from './sprite-animation';
 import { Vastgame } from './vastgame';
 
+export interface SpriteOptions {
+    imageSource: string;
+    height: number;
+    width: number;
+    frameBorder?: number;
+}
+
+export interface DrawSpriteOptions {
+    frame?: number;
+    opacity?: number;
+    tileX?: boolean;
+    tileY?: boolean;
+}
+
 export class Sprite {
     
     static define(name: string, options: SpriteOptions): Sprite {
@@ -48,11 +62,4 @@ export class Sprite {
 
         return [srcX, srcY];
     }
-}
-
-export interface SpriteOptions {
-    imageSource: string;
-    height: number;
-    width: number;
-    frameBorder?: number;
 }
