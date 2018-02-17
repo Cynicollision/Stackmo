@@ -167,28 +167,24 @@ Actor
         let block: ActorInstance = args.block;
         let targetCell: GridCell = args.targetCell;
 
-        let validBlockLiftCellDirection = lastDirection === Direction.Left ? Direction.Right : Direction.Left;
+        // let validBlockLiftCellDirection = lastDirection === Direction.Left ? Direction.Right : Direction.Left;
+        let liftDirection = targetCell.x < player.x ? Direction.Left : Direction.Right;
 
         // prevent lifting if the box is too far away
-        let tooFarAway = validBlockLiftCellDirection === Direction.Left 
-            ? targetCell.getAdjacentCell(Direction.Right).x < player.x - targetCell.size
-            : targetCell.getAdjacentCell(Direction.Left).x > player.x + (targetCell.size * 2);
+        let tooFarAway = targetCell.y !== player.y || Math.abs(targetCell.x - player.x) > 70;
 
         // prevent lifting if there's something on top of the box or on top of the player
         let aboveBoxCell = targetCell.getAdjacentCell(Direction.Up);
-        let abovePlayerCell = aboveBoxCell.getAdjacentCell(validBlockLiftCellDirection);
+        let abovePlayerCell = aboveBoxCell.getAdjacentCell(liftDirection === Direction.Left ? Direction.Right : Direction.Left);
         let blocked = !(aboveBoxCell.isFree() && abovePlayerCell.isFree());
 
-        if (!heldBlock && (blocked || tooFarAway)) {
-            return;
-        }
-        
         if (heldBlock && block === heldBlock) {
             player.raiseEvent(GameAction.Drop, args);
         }
-        else if (!heldBlock && targetCell.getAdjacentCell(validBlockLiftCellDirection).containsInstance(player)) {
+        else if (!heldBlock && !blocked && !tooFarAway) {
             heldBlock = block;
-            animate(player, lastDirection);
+            animate(player, lastDirection, false);
+            player.raiseEvent(GameAction.Turn, { direction: liftDirection });
         }
     })
     // Drop
@@ -206,8 +202,13 @@ Actor
             block.setPositionRelative(offsetX, 0);
             block.raiseEvent(GameAction.Fall, args);
         
-            animate(player, lastDirection);
+            animate(player, lastDirection, false);
         }
+    })
+    .onEvent(GameAction.Turn, (player, args) => {
+        let direction: Direction = args.direction;
+        lastDirection = direction;
+        animate(player, lastDirection, false);
     });
 
 // Helpers

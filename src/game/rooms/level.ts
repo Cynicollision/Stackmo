@@ -86,6 +86,9 @@ Room
                 else if (leftCell.containsInstanceOf([BlockActor, WallActor]) && upLeftCell.isFree()) {
                     player.raiseEvent(GameAction.Jump, { direction: Direction.Left, targetCell: upLeftCell });
                 }
+                else {
+                    player.raiseEvent(GameAction.Turn, { direction: Direction.Left });
+                }
             }
             else if (clickedCell.x > playerCell.x) {
                 // move or jump right
@@ -97,6 +100,9 @@ Room
                 }
                 else if (rightCell.containsInstanceOf([BlockActor, WallActor]) && upRightCell.isFree()) {
                     player.raiseEvent(GameAction.Jump, { direction: Direction.Right, targetCell: upRightCell });
+                }
+                else {
+                    player.raiseEvent(GameAction.Turn, { direction: Direction.Right });
                 }
             }
         });
