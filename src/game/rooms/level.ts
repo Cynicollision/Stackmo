@@ -10,10 +10,8 @@ LevelRoom.onStart(() => {
     LevelRoom.set('complete', false);
 
     let BlockActor = Actor.get(ActorID.Block);
-    let ExitButtonActor = Actor.get(ActorID.ExitButton);
     let PlayerActor = Actor.get(ActorID.Player);
     let WallActor = Actor.get(ActorID.Wall);
-    let WinActor = Actor.get(ActorID.Win);
 
     // assumes the level has already been populated before starting
     let player = LevelRoom.getInstances().find(actorInstance => actorInstance.parent === PlayerActor);

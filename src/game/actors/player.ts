@@ -76,8 +76,10 @@ Player.onEvent(GameAction.CheckStopMoving, (player, args) => {
 
         if (!belowCell.isFree(solidActors)) {
             // determine the next cell based on where the current touch/click is (it may have moved)
-            let clickAdjustedX = getClickAdjustedX(args.game.currentRoom);
-            args.direction = clickAdjustedX <= player.x + (targetCell.size / 2) ? Direction.Left : Direction.Right;
+            if (Input.clickActive) {
+                let clickAdjustedX = getClickAdjustedX(args.game.currentRoom);
+                args.direction = clickAdjustedX <= player.x + (targetCell.size / 2) ? Direction.Left : Direction.Right;
+            }
             let nextCell = targetCell.getAdjacentCell(args.direction);
 
             if (nextCell.isFree(solidActors)) {
@@ -266,7 +268,8 @@ function inputActive(): boolean {
 }
 
 function getClickAdjustedX(room: Room): number {
+    let inputOffsetX = Input.clickActive ? Input.activePointerEvent.currentX || 0 : 0;
     // wicked hack to get the room's current view.
     let view = (<any>room).behaviors.find(b => !!b.view).view;
-    return Input.activePointerEvent.currentX + (view.x || 0);
+    return inputOffsetX + (view.x || 0);
 }
