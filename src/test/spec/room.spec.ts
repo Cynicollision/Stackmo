@@ -45,7 +45,7 @@ describe('Room', () => {
         expect(TestRoom.background.color).toBe('#000');
         expect(TestRoom.background.width).toBe(640);
         expect(TestRoom.background.height).toBe(400);
-        expect(TestRoom.background.pageColor).toBe('#111');
+        expect(TestRoom.background.canvasColor).toBe('#111');
     });
 
     it('instantiates actors with numeric IDs and tracks instances', () => {

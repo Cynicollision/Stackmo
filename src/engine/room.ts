@@ -19,7 +19,7 @@ export class Background {
 
     constructor(
         readonly color: string,
-        readonly pageColor: string = '#000', 
+        readonly canvasColor: string = '#000', 
         readonly width: number, 
         readonly height: number) {
     }
@@ -71,10 +71,6 @@ export class Room {
 
     setBackground(color: string, width: number, height: number, pageColor?: string): void {
         this.background = new Background(color, pageColor, width, height);
-
-        if (pageColor) {
-            document.body.style.backgroundColor = pageColor;
-        }
     }
 
     end(): void {
@@ -204,6 +200,7 @@ export class Room {
 
         // draw room background
         if (this.background) {
+            canvasContext.fillArea(-this.background.width, -this.background.height, this.background.width * 3, this.background.height * 3, this.background.canvasColor);
             canvasContext.fill(this.background.width, this.background.height, this.background.color);
         }
 
