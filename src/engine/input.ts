@@ -39,7 +39,7 @@ export class Input {
             if (Input.clickHandlers.length) {
 
                 Input.clickHandlers.forEach((handler: ConcreteEventHandler<PointerInputEvent>) => {
-                    if (handler.isAlive) {
+                    if (handler.isActive) {
                         handler.callback(ev);
                     }
                 });
@@ -68,13 +68,13 @@ export class Input {
             let keyCode = ev.keyCode || ev.code
             let handler: ConcreteEventHandler<KeyboardEvent> = this.keyboardHandlers[keyCode];
 
-            if (handler && handler.isAlive && !this.keyboardActivity[keyCode]) {
+            if (handler && handler.isActive && !this.keyboardActivity[keyCode]) {
                 this.keyboardActivity[keyCode] = true;
                 handler.callback(ev);
             }
 
             let globalHandler = this.keyboardHandlers[Key.Any];
-            if (globalHandler && globalHandler.isAlive && !this.keyboardActivity[Key.Any])           {
+            if (globalHandler && globalHandler.isActive && !this.keyboardActivity[Key.Any])           {
                 this.keyboardActivity[Key.Any] = true;
                 globalHandler.callback(ev);
             }
@@ -84,7 +84,7 @@ export class Input {
             let handler: ConcreteEventHandler<KeyboardEvent> = this.keyboardHandlers[keyCode];
             this.keyboardActivity[Key.Any] = false;
 
-            if (handler && handler.isAlive) {
+            if (handler && handler.isActive) {
                 this.keyboardActivity[keyCode] = false;
             }
         };
@@ -112,16 +112,28 @@ export class Input {
 export interface EventHandler {
     callback: (event: any) => void;
     dispose: () => void;
+    sleep: () => void;
+    wake: () => void;
 }
 
 export class ConcreteEventHandler<T> implements EventHandler {
     isAlive: boolean = true;
+    isAwake: boolean = true;
 
     constructor(public callback: (event: T) => void) {
     }
-    
-    dispose() {
+
+    get isActive(): boolean {
+        return this.isAlive && this.isAwake;
+    }
+    dispose(): void {
         this.isAlive = false;
+    }
+    sleep(): void {
+        this.isAwake = false;
+    }
+    wake(): void {
+        this.isAwake = true;
     }
 }
 

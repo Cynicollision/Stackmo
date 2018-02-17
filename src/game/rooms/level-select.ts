@@ -84,55 +84,57 @@ Room.define(RoomID.LevelSelect)
     });
 
 // Level icons
-Actor.define(ActorID.LevelIcon, {
-    sprite: Sprite.get(SpriteID.LevelIcon),
-})
-.onClick(self => {
+Actor
+    .define(ActorID.LevelIcon, {
+        sprite: Sprite.get(SpriteID.LevelIcon),
+    })
+    .onClick(self => {
 
-    if ((<any>self).enabled && !levelSelectLock) {
-        levelSelectLock = true;
+        if ((<any>self).enabled && !levelSelectLock) {
+            levelSelectLock = true;
 
-        let levelNumber: number = (<any>self).levelNumber;
-        let level = Room.get(RoomID.Level);
-        
-        LevelBuilder.populateRoom(level, levelNumber);
-        
-        _lastLevelNumber = levelNumber;
-        Vastgame.setRoom(RoomID.Level, { levelNumber: levelNumber });
+            let levelNumber: number = (<any>self).levelNumber;
+            let level = Room.get(RoomID.Level);
+            
+            LevelBuilder.populateRoom(level, levelNumber);
+            
+            _lastLevelNumber = levelNumber;
+            Vastgame.setRoom(RoomID.Level, { levelNumber: levelNumber });
 
-        levelSelectLock = false;
-    }
-})
-.onDraw(self => {
-    if ((<any>self).enabled) {
-        let DigitsSheet = Sprite.get(SpriteID.Digits);
+            levelSelectLock = false;
+        }
+    })
+    .onDraw(self => {
+        if ((<any>self).enabled) {
+            let DigitsSheet = Sprite.get(SpriteID.Digits);
 
-        let levelNumber: number = (<any>self).levelNumber;
-        let drawInstances = getDigitDrawInstances(levelNumber);
+            let levelNumber: number = (<any>self).levelNumber;
+            let drawInstances = getDigitDrawInstances(levelNumber);
 
-        drawInstances.forEach(draw => self.drawSprite(DigitsSheet, self.x + draw.x, self.y + draw.y, { frame: draw.frame }));
-    }
-});
+            drawInstances.forEach(draw => self.drawSprite(DigitsSheet, self.x + draw.x, self.y + draw.y, { frame: draw.frame }));
+        }
+    });
 
 // Scroll arrows
-Actor.define(ActorID.ScrollArrow, {
-    sprite: Sprite.get(SpriteID.ArrowSheet),
-})
-.onClick((self, event) => {
-    if ((<any>self).enabled) {
-        let direction: Direction = (<any>self).direction;
-        scrollView.y += direction === Direction.Down ? 64 : -64;
+Actor
+    .define(ActorID.ScrollArrow, {
+        sprite: Sprite.get(SpriteID.ArrowSheet),
+    })
+    .onClick((self, event) => {
+        if ((<any>self).enabled) {
+            let direction: Direction = (<any>self).direction;
+            scrollView.y += direction === Direction.Down ? 64 : -64;
 
-        if (scrollView.y < 0) {
-            scrollView.y = 0;
+            if (scrollView.y < 0) {
+                scrollView.y = 0;
+            }
         }
-    }
-})
-.onStep(self => {
-    // update vertical position to match scrolling
-    let isUpArrow = ((<any>self).direction === Direction.Up);
-    self.y = isUpArrow ? startY + scrollView.y : canvasHeight - 82 + scrollView.y; 
+    })
+    .onStep(self => {
+        // update vertical position to match scrolling
+        let isUpArrow = ((<any>self).direction === Direction.Up);
+        self.y = isUpArrow ? startY + scrollView.y : canvasHeight - 82 + scrollView.y; 
 
-    // enable/disable if there's no more scrolling to do
-    (<any>self).enabled = isUpArrow ? scrollView.y > 0 : scrollView.y < (overflowedRows + 2) * iconSizeWithPadding;
-});
+        // enable/disable if there's no more scrolling to do
+        (<any>self).enabled = isUpArrow ? scrollView.y > 0 : scrollView.y < (overflowedRows + 2) * iconSizeWithPadding;
+    });

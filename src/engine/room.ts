@@ -72,8 +72,7 @@ export class Room {
     end(): void {
         this.actorInstanceMap = {};
         this.behaviors = [];
-        this.eventHandlers.forEach(eventHandler => eventHandler.dispose());
-        this.eventHandlers = [];
+        this.eventHandlers.forEach(eventHandler => eventHandler.sleep());
     }
 
     // mix-in behaviors
@@ -89,6 +88,8 @@ export class Room {
     }
 
     _callStart(args?: any): void {
+        this.eventHandlers.forEach(eventHandler => eventHandler.wake());
+        
         if (this.onStartCallback) {
             try {
                 this.onStartCallback(this, args);
@@ -119,7 +120,9 @@ export class Room {
     onClick(callback: (self: Room, event: PointerInputEvent) => void): Room {
         let room = this;
         let clickHandler = Input.registerClickHandler(function (event) {
-            callback(room, event);
+            if (Vastgame._getContext().getCurrentRoom() === room) {
+                callback(room, event);
+            }
         });
         this.eventHandlers.push(clickHandler);
         return this;
@@ -128,7 +131,9 @@ export class Room {
     onKey(key: Key, callback: (self: Room, event: KeyboardEvent) => void): Room {
         let room = this;
         let keyHandler = Input.registerKeyHandler(key, function (event) {
-            callback(room, event);
+            if (Vastgame._getContext().getCurrentRoom() === room) {
+                callback(room, event);
+            }
         });
         this.eventHandlers.push(keyHandler);
         return this;
