@@ -138,10 +138,10 @@ export class Room {
 
                 this.checkCollisions(instance);
 
-                parent.callStep(instance);
+                parent._callStep(instance);
             }
             else {
-                instance.parent.callDestroy(instance);
+                instance.parent._callDestroy(instance);
                 delete this.actorInstanceMap[instance.id];
             }
         });
@@ -193,13 +193,13 @@ export class Room {
         });
 
         orderedInstances.forEach(instance => {
-            // call actor draw event callbacks
-            instance.parent.callDraw(instance);
-
             // draw sprites
             if (instance.animation && instance.visible) {
                 instance.animation.draw(canvasContext, instance.x, instance.y);
             }
+
+            // call actor draw event callbacks
+            instance.parent._callDraw(instance);
         });
     }
 
@@ -225,7 +225,7 @@ export class Room {
             let parent = instance.parent;
 
             if (instance.occupiesPosition(clickX, clickY)) {
-                parent.callClick(instance, event);
+                parent._callClick(instance, event);
             }
         });
 
@@ -241,7 +241,7 @@ export class Room {
 
         this.actorInstanceMap[newActorInstanceID] = newInstance;
 
-        parentActor.callCreate(newInstance);
+        parentActor._callCreate(newInstance);
 
         return newInstance;
     }

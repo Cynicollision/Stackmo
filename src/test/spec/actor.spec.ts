@@ -4,6 +4,7 @@ import { Boundary } from './../../engine/boundary';
 import { Direction } from './../../engine/enum';
 import { Room } from './../../engine/room';
 import { Vastgame } from './../../engine/vastgame';
+import { FakeCanvasContext } from './../test-util';
 
 describe('ActorInstance', () => {
     let TestRoom = Room.define('ActorInstance_TestRoom');
@@ -49,15 +50,7 @@ describe('ActorInstance', () => {
             let drawSpy = jasmine.createSpy('draw');
             TestActorA.onDraw(drawSpy);
 
-            const mockGameCanvasContext = {
-                origin: <[number, number]>[0, 0],
-                clear: () => null,
-                fill: () => null,
-                fillArea: () => null,
-                drawImage: () => null,
-            };
-
-            TestRoom.draw(mockGameCanvasContext);
+            TestRoom.draw(new FakeCanvasContext());
 
             expect(drawSpy).toHaveBeenCalled();
         });
@@ -76,6 +69,64 @@ describe('ActorInstance', () => {
             raiseTheEvent = true;
             Vastgame.getContext().checkAndFireEvents();
             expect(eventSpy).toHaveBeenCalled();
+        });
+    });
+
+    describe('catches errors from user-defined functionality', () => {
+
+        afterEach(() => {
+            TestActorA.onCreate(null);
+            TestActorA.onStep(null);
+        });
+
+        it('on creation', () => {
+            TestActorA.onCreate(() => { throw 'For testing'; });
+
+            function testCreate() {
+                TestActorA._callCreate(testInstanceA);
+            }
+
+            expect(testCreate).toThrow(`Actor: ActorInstance_TestActorA[${testInstanceA.id}].create`);
+        });
+
+        it('on step', () => {
+            TestActorA.onStep(() => { throw 'For testing'; });
+
+            function testStep() {
+                TestActorA._callStep(testInstanceA);
+            }
+
+            expect(testStep).toThrow(`Actor: ActorInstance_TestActorA[${testInstanceA.id}].step`);
+        });
+
+        it('on draw', () => {
+            TestActorA.onDraw(() => { throw 'For testing'; });
+
+            function testDraw() {
+                TestActorA._callDraw(testInstanceA);
+            }
+
+            expect(testDraw).toThrow(`Actor: ActorInstance_TestActorA[${testInstanceA.id}].draw`);
+        });
+
+        it('on click', () => {
+            TestActorA.onClick(() => { throw 'For testing'; });
+
+            function testDraw() {
+                TestActorA._callClick(testInstanceA, { x: 0, y: 0, currentX: 0, currentY: 0 });
+            }
+
+            expect(testDraw).toThrow(`Actor: ActorInstance_TestActorA[${testInstanceA.id}].click`);
+        });
+
+        it('on destroy', () => {
+            TestActorA.onDestroy(() => { throw 'For testing'; });
+
+            function testDestroy() {
+                TestActorA._callDestroy(testInstanceA);
+            }
+
+            expect(testDestroy).toThrow(`Actor: ActorInstance_TestActorA[${testInstanceA.id}].destroy`);
         });
     });
 

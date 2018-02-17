@@ -1,7 +1,8 @@
 import { Actor, Boundary, Direction, Input, Room, ViewedRoomBehavior, Sprite, Vastgame, View } from './../../engine/vastgame';
 import * as Constants from './../util/constants';
+import * as Data from './../util/data';
 import { ActorID, LevelBgColor, RoomID, Settings, SpriteID } from './../util/enum';
-import { Levels, LevelBuilder } from './../util/level-builder';
+import { LevelBuilder } from './../util/level-builder';
 import { Registry } from './../util/registry';
 
 let scrollView: View;
@@ -24,7 +25,10 @@ LevelSelectRoom.onStart((args) => {
     canvasHeight = Registry.get(Settings.CanvasHeight);
 
     LevelSelectRoom.setBackground(Constants.Black, canvasWidth, canvasHeight, Constants.Black);
-    LevelSelectRoom.use(new ViewedRoomBehavior(0, 0, canvasWidth, canvasHeight));
+
+    let viewBehavior = new ViewedRoomBehavior(0, 0, canvasWidth, canvasHeight);
+    LevelSelectRoom.use(viewBehavior);
+    scrollView = viewBehavior.getView();
 
     // determine/update level-unlock progress
     let unlockedLevelCount = Number(Registry.get(Settings.StackmoProgress));
@@ -39,16 +43,13 @@ LevelSelectRoom.onStart((args) => {
 
     // adjust icons per row for scroll bar if rows overflow the canvas
     let iconsPerRow = Math.floor(canvasWidth / iconSizeWithPadding);
-
+    let rowCount = Math.ceil(Data.Levels.count / iconsPerRow);
+    let startX = startY = Math.floor((canvasWidth - (iconsPerRow * iconSizeWithPadding)) / 2);
     let showScrollbars = false;
-    let rowCount = Math.ceil(Levels.count / iconsPerRow);
-
-    startX = Math.floor((canvasWidth - (iconsPerRow * iconSizeWithPadding)) / 2);
-    startY = Math.floor(canvasHeight / 6);
 
     if (startY + (rowCount * iconSizeWithPadding) > canvasHeight) {
         iconsPerRow--;
-        rowCount = Math.ceil(Levels.count / iconsPerRow);
+        rowCount = Math.ceil(Data.Levels.count / iconsPerRow);
         overflowedRows = Math.ceil(((rowCount * iconSizeWithPadding) - canvasHeight) / iconSizeWithPadding);
         showScrollbars = true;
     }
@@ -56,7 +57,7 @@ LevelSelectRoom.onStart((args) => {
     // create level icons
     let currentRow = 0;
     let currentPosition = 0;
-    for (let i = 0; i < Levels.count; i++) {
+    for (let i = 0; i < Data.Levels.count; i++) {
         let icon = LevelSelectRoom.createActor(ActorID.LevelIcon, startX + currentPosition * iconSizeWithPadding, startY + currentRow * iconSizeWithPadding);
         (<any>icon).levelNumber = i + 1;
         (<any>icon).enabled = i < unlockedLevelCount;
@@ -80,17 +81,6 @@ LevelSelectRoom.onStart((args) => {
         downArrow.x = upArrow.x;
         (<any>downArrow).direction = Direction.Down;
     }
-});
-
-// draw the banner text
-const TextSprite = Sprite.define(SpriteID.TextSheet, {
-    imageSource:'../resources/text_sheet.png',
-    height: 32,
-    width: 320,
-});
-
-LevelSelectRoom.onDraw(() => {
-    LevelSelectRoom.drawSprite(TextSprite, startX, Math.floor(startY / 2 - TextSprite.height), 0);
 });
 
 // Level icons

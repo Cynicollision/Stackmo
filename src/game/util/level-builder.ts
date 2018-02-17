@@ -1,6 +1,7 @@
 import { Actor, ActorInstance, Room, Vastgame } from './../../engine/vastgame';
 import { ActorID, LevelBgColor } from './enum';
 import * as Constants from './constants';
+import * as Data from './data';
 
 const FramePerWallSheetRow = 45;
 const MaxLevelVariations = 4;
@@ -16,7 +17,7 @@ export class LevelBuilder {
         let Win = Actor.get('Win');
 
         let instances: ActorInstance[] = [];
-        let levelMap = Levels.get(roomID);
+        let levelMap = Data.Levels.get(roomID);
 
         let colorEnumMap = {
             0: [ LevelBgColor.Teal, LevelBgColor.DarkTeal ],
@@ -257,122 +258,6 @@ export class LevelBuilder {
         }
 
         return WallStyle.Solo;
-    }
-}
-
-export class Levels {
-
-    static get count(): number {
-        let c = 0;
-        for (let p in this.levels) {
-            c++;
-        }
-        return c;
-    }
-
-    static levels: { [id: number]: string[] } = {
-        1: [
-            '################',
-            '#              #',
-            '#              #',
-            '#              #',
-            '#X        #    #',
-            '### P  #  #  W #',
-            '################',
-        ],
-        2: [
-            '#################',
-            '#               #',
-            '#               #',
-            '#          #    #',
-            '#XX        #    #',
-            '#### P   # #  W #',
-            '#################',
-        ],
-        3: [
-            '################',
-            '#              #',
-            '#              #',
-            '#         #    #',
-            '#XX       #    #',
-            '###X  P   #  W #',
-            '################',
-        ],
-        4: [
-            '################',
-            '#              #',
-            '#              #',
-            '#X        #  W #',
-            '#XX       #  ###',
-            '###X  P   #  ###',
-            '################',
-        ],
-        5: [
-            '################',
-            '#       #      #',
-            '#       #    W #',
-            '#            ###',
-            '#X      #      #',
-            '#XX P   #X   XX#',
-            '################',
-        ],
-        6: [
-            '##################',
-            '#                #',
-            '#              W #',
-            '#              ###',
-            '#        X     ###',
-            '#X       #    X###',
-            '#XX P #      XX###',
-            '##################',
-        ],
-        7: [
-            '##################',
-            '#               W#',
-            '#               ##',
-            '#       ######  ##',
-            '#XX          #####',
-            '#######          #',
-            '#          #    X#',
-            '#XX P      #   XX#',
-            '##################',
-        ],
-        8: [
-            '##############',
-            '#W           #',
-            '##           #',
-            '##P          #',
-            '### X      XX#',
-            '#####    #####',
-            '#####        #',
-            '#####      XX#',
-            '##############',
-        ],
-        9: [
-            '#####################',
-            '###############    ##',
-            '##############   # ##',
-            '###              # ##',
-            '##      X   P   ## ##',
-            '#     ############ ##',
-            '#        ######### ##',
-            '#X    XXX######### ##',
-            '################## ##',
-            '##############     ##',
-            '#########    # ######',
-            '######### #      ####',
-            '######### #         #',
-            '######### ######    #',
-            '######### ##       ##',
-            '######### ##XXX  ####',
-            '######### ###########',
-            '#########         W##',
-            '#####################',
-        ],
-    };
-
-    static get(levelNumber: number): string[] {
-        return this.levels[levelNumber];
     }
 }
 

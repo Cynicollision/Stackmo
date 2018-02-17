@@ -78,9 +78,14 @@ export class Actor {
         this.onCreateCallback = callback;
     }
 
-    callCreate(selfInstance: ActorInstance): void {
+    _callCreate(selfInstance: ActorInstance): void {
         if (this.onCreateCallback) {
-            this.onCreateCallback(selfInstance);
+            try {
+                this.onCreateCallback(selfInstance);
+            }
+            catch {
+                throw `Actor: ${selfInstance.parent.name}[${selfInstance.id}].create`;
+            }
         }
     }
 
@@ -89,9 +94,14 @@ export class Actor {
         this.onStepCallback = callback;
     }
 
-    callStep(selfInstance: ActorInstance) {
+    _callStep(selfInstance: ActorInstance) {
         if (this.onStepCallback) {
-            this.onStepCallback(selfInstance);
+            try {
+                this.onStepCallback(selfInstance);
+            }
+            catch {
+                throw `Actor: ${selfInstance.parent.name}[${selfInstance.id}].step`;
+            }
         }
 
         selfInstance.previousX = selfInstance.x;
@@ -103,9 +113,14 @@ export class Actor {
         this.onDrawCallback = callback;
     }
 
-    callDraw(selfInstance: ActorInstance): void {
+    _callDraw(selfInstance: ActorInstance): void {
         if (this.onDrawCallback) {
-            this.onDrawCallback(selfInstance);
+            try {
+                this.onDrawCallback(selfInstance);
+            }
+            catch {
+                throw `Actor: ${selfInstance.parent.name}[${selfInstance.id}].draw`;
+            }
         }
     }
 
@@ -114,9 +129,14 @@ export class Actor {
         this.onClickCallback = callback;
     }
 
-    callClick(selfInstance: ActorInstance, event: PointerInputEvent): void {
+    _callClick(selfInstance: ActorInstance, event: PointerInputEvent): void {
         if (this.onClickCallback) {
-            this.onClickCallback(selfInstance, event);
+            try {
+                this.onClickCallback(selfInstance, event);
+            }
+            catch {
+                throw `Actor: ${selfInstance.parent.name}[${selfInstance.id}].click`;
+            }
         }
     }
 
@@ -125,9 +145,14 @@ export class Actor {
         this.onDestroyCallback = callback;
     }
 
-    callDestroy(selfInstance: ActorInstance): void {
+    _callDestroy(selfInstance: ActorInstance): void {
         if (this.onDestroyCallback) {
-            this.onDestroyCallback(selfInstance);
+            try {
+                this.onDestroyCallback(selfInstance);
+            }
+            catch {
+                throw `Actor: ${selfInstance.parent.name}[${selfInstance.id}].destroy`;
+            }
         }
     }
 

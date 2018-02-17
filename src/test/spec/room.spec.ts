@@ -124,9 +124,7 @@ describe('Room', () => {
     describe('on start', () => {
 
         it('catches errors in user-defined functionality', () => {
-            TestRoom.onStart(function throwImmediately() {
-                throw 'For testing';
-            });
+            TestRoom.onStart(() =>  { throw 'For testing'; });
 
             function testStart() {
                 TestRoom._callStart();
@@ -176,9 +174,7 @@ describe('Room', () => {
         it('catches errors in user-defined collision handlers', () => {
             TestActor.boundary = new Boundary(20, 20);
             AlternateActor.boundary = new Boundary(20, 20);
-            TestActor.onCollide(AlternateActor.name, function throwImmediately() {
-                throw 'For testing';
-            });
+            TestActor.onCollide(AlternateActor.name, () =>  { throw 'For testing'; });
 
             let testInstance1: ActorInstance = TestRoom.createActor('Room_TestActor');
             let testInstance2: ActorInstance = TestRoom.createActor('Room_TestActor2');
@@ -190,7 +186,7 @@ describe('Room', () => {
                 TestRoom.step();
             }
 
-            expect(testCollision).toThrow()
+            expect(testCollision).toThrow(`Actor: Room_TestRoom[${testInstance1.id}].collision(Room_TestActor2)`);
         });
     });
 
@@ -206,9 +202,7 @@ describe('Room', () => {
         });
 
         it('catches errors in user-defined functionality', () => {
-            TestRoom.onDraw(function throwImmediately() {
-                throw 'For testing';
-            });
+            TestRoom.onDraw(() =>  { throw 'For testing'; });
 
             function testDraw() {
                 TestRoom._callDraw();
