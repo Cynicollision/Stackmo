@@ -39,7 +39,7 @@ export function getDigitDrawInstances(number: number, useAltColor: boolean = fal
     }
     else {
         frames.push({ x: tensMargin, y: singleDigitMargin, frame: frameOffset + Math.floor(number / 10) });
-        frames.push( {x: onesMargin, y: singleDigitMargin, frame: frameOffset + (number % 10) });
+        frames.push({ x: onesMargin, y: singleDigitMargin, frame: frameOffset + (number % 10) });
     }
 
     return frames;
