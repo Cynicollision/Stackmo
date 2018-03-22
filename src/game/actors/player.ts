@@ -112,6 +112,13 @@ Actor
             if (args.targetCell.isFree(solidActors)) {
                 player.raiseEvent(GameAction.Move, args);
             }
+            else  {
+                let jumpCell = args.targetCell.getAdjacentCell(Direction.Up);
+
+                if (jumpCell.isFree(solidActors)) {
+                    player.raiseEvent(GameAction.Jump, { targetCell: jumpCell, direction: args.direction });
+                }
+            }
         }
         else {
             player.raiseEvent(GameAction.Stop, args);
