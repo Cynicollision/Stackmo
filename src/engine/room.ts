@@ -98,8 +98,8 @@ export class Room {
             try {
                 this.onStartCallback(this, args);
             }
-            catch {
-                throw `Room: ${this.name}.start`;
+            catch (error) {
+                throw `Room: ${this.name}.start: ` + error;
             }
         }
     }
@@ -116,8 +116,8 @@ export class Room {
             try {
                 this.onDrawCallback(this, canvasContext, args);
             }
-            catch {
-                throw `Room: ${this.name}.draw`;
+            catch (error) {
+                throw  `Room: ${this.name}.draw: ` + error;
             }
         }
     }
@@ -187,8 +187,8 @@ export class Room {
                     }
                 }
             }
-            catch {
-                throw `Actor: ${this.name}[${selfInstance.id}].collision(${actorName})`;
+            catch (error) {
+                throw `Actor: ${this.name}[${selfInstance.id}].collision(${actorName}): ` + error;
             }
         };
     }

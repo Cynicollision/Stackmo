@@ -124,13 +124,13 @@ describe('Room', () => {
     describe('on start', () => {
 
         it('catches errors in user-defined functionality', () => {
-            TestRoom.onStart(() =>  { throw 'For testing'; });
+            TestRoom.onStart(() =>  { throw 'For Testing'; });
 
             function testStart() {
                 TestRoom._callStart();
             }
 
-            expect(testStart).toThrow('Room: Room_TestRoom.start');
+            expect(testStart).toThrow('Room: Room_TestRoom.start: For Testing');
         });
     });
 
@@ -174,7 +174,7 @@ describe('Room', () => {
         it('catches errors in user-defined collision handlers', () => {
             TestActor.boundary = new Boundary(20, 20);
             AlternateActor.boundary = new Boundary(20, 20);
-            TestActor.onCollide(AlternateActor.name, () =>  { throw 'For testing'; });
+            TestActor.onCollide(AlternateActor.name, () =>  { throw 'For Testing'; });
 
             let testInstance1: ActorInstance = TestRoom.createActor('Room_TestActor');
             let testInstance2: ActorInstance = TestRoom.createActor('Room_TestActor2');
@@ -186,7 +186,7 @@ describe('Room', () => {
                 TestRoom.step();
             }
 
-            expect(testCollision).toThrow(`Actor: Room_TestRoom[${testInstance1.id}].collision(Room_TestActor2)`);
+            expect(testCollision).toThrow(`Actor: Room_TestRoom[${testInstance1.id}].collision(Room_TestActor2): For Testing`);
         });
     });
 
