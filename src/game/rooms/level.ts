@@ -83,7 +83,7 @@ Room
                 if (leftCell.isFree([BlockActor, WallActor])) {
                     player.raiseEvent(GameAction.Move, { direction: Direction.Left, targetCell: leftCell });
                 }
-                else if (leftCell.containsInstanceOf([BlockActor, WallActor]) && upLeftCell.isFree()) {
+                else if (leftCell.containsInstanceOf([BlockActor, WallActor]) && upLeftCell.isFree([BlockActor, WallActor])) {
                     player.raiseEvent(GameAction.Jump, { direction: Direction.Left, targetCell: upLeftCell });
                 }
                 else {
@@ -98,7 +98,7 @@ Room
                 if (rightCell.isFree([BlockActor, WallActor])) {
                     player.raiseEvent(GameAction.Move, { direction: Direction.Right, targetCell: rightCell });
                 }
-                else if (rightCell.containsInstanceOf([BlockActor, WallActor]) && upRightCell.isFree()) {
+                else if (rightCell.containsInstanceOf([BlockActor, WallActor]) && upRightCell.isFree([BlockActor, WallActor])) {
                     player.raiseEvent(GameAction.Jump, { direction: Direction.Right, targetCell: upRightCell });
                 }
                 else {
