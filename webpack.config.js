@@ -1,10 +1,13 @@
 const path = require('path');
 const webpack = require('webpack');
 
+const env = process.env.NODE_ENV || 'development';
+
 module.exports = {
     context: __dirname,
+    mode: env,
     resolve: { extensions: ['.ts', '.js'] },
-    devtool: 'inline-source-map', // TODO: only if production
+    devtool: env === 'development' ? 'inline-source-map' : false,
     entry: { 
         'vastgame': './src/engine/vastgame.ts',
         'game': './src/game/game.ts',

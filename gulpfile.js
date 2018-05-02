@@ -5,11 +5,18 @@ var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var cleanCompiledTypeScript = require('gulp-clean-compiled-typescript');
  
-gulp.task('clean', function () {
-    return del(['build','dist','src/**/*.js','src/**/*.js.map','!src/test/main.js']);
+gulp.task('clean', () => {
+
+    return del([
+        'build',
+        'dist',
+        'src/**/*.js',
+        'src/**/*.js.map',
+        '!src/test/main.js',
+    ]);
 });
 
-gulp.task('minify', function () {
+gulp.task('minify', () => {
 
     return gulp.src('dist/game.js')
         .pipe(uglify())
@@ -17,15 +24,15 @@ gulp.task('minify', function () {
         .pipe(gulp.dest('dist'));
 })
 
-gulp.task('pack', function () {
+gulp.task('pack', () => {
     var viewTask = gulp.src('view/**/*').pipe(gulp.dest('build/view'));
     var resourcesTask = gulp.src('resources/**/*').pipe(gulp.dest('build/resources'));
-    var gameTask = gulp.src(['dist/game.min.js']).pipe(gulp.dest('build/dist'))
+    var gameTask = gulp.src(['dist/game.min.js']).pipe(gulp.dest('build/dist'));
 
     return [viewTask, resourcesTask, gameTask];
 });
 
-gulp.task('copy-android', function () {
+gulp.task('copy-android', () => {
 
     return gulp
         .src(['./build/**/*'])

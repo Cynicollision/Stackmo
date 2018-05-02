@@ -1,4 +1,4 @@
-module.exports = function (config) {
+module.exports = config => {
 
     var useChrome = false,
         singleRun = false;

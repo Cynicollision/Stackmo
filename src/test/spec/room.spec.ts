@@ -191,6 +191,10 @@ describe('Room', () => {
     });
 
     describe('on draw', () => {
+
+        beforeEach(() => {
+            TestRoom.onDraw(() => undefined);
+        });
         
         it('calls behaviors\'s pre-draw functionality', () => {
             let testBehavior = new TestRoomBehavior();
@@ -208,7 +212,7 @@ describe('Room', () => {
                 TestRoom._callDraw();
             }
 
-            expect(testDraw).toThrow('Room: Room_TestRoom.draw');
+            expect(testDraw).toThrow('Room: Room_TestRoom.draw: For testing');
         });
     });
 

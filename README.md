@@ -20,17 +20,16 @@ npm test
 ```
 
 ### Developing
-Build and watch for Typescript changes:
+Build (development, includes source maps) and watch for Typescript changes:
 ```
-webpack -w
+npm run watch
 ```
 
 ### Building Android package
-Full build plus minification and a copy to the Android app's "assets" folder:
+Build (production) plus minification and a copy to the Android app's "assets" folder:
 ```
-npm run build
-gulp minify
-gulp pack
-gulp copy-android
+npm run build  //webpack production build (game.js)
+gulp minify  //minify (game.js -> game.min.js)
+gulp pack  //export required assets (.\\build)
+gulp copy-android //copy to specific directory for Android WebView project
 ```
-(webpack build (game.js), minify (game.js -> game.min.js), copy all assets (.\\build), copy to specific directory for Android WebView project)
